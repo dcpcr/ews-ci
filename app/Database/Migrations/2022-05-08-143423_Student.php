@@ -16,7 +16,7 @@ class Student extends Migration
                 'NOT NULL' => true,
 
             ],
-            'id' => [
+            'student_id' => [
                 'type' => 'BIGINT',
                 'unsigned' => true,
                 'NOT NULL' => true,
@@ -76,7 +76,11 @@ class Student extends Migration
             ],
 
         ]);
-        $this->forge->addField(array('created_at datetime default current_timestamp', 'updated_at datetime default current_timestamp on update current_timestamp',));
+        $this->forge->addField(
+            [
+            'created_at datetime default current_timestamp',
+            'updated_at datetime default current_timestamp on update current_timestamp',
+            ]);
 
         $this->forge->addPrimaryKey('id');
         $this->forge->addKey('school_id');

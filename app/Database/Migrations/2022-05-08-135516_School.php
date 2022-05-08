@@ -42,7 +42,7 @@ class School extends Migration
             ],
             'name' => [
                 'type' => 'CHAR',
-                'constraint' => '100',
+                'constraint' => '200',
                 'NOT NULL' => true,
 
             ],
