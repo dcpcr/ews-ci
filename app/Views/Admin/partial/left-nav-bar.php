@@ -28,20 +28,20 @@
             </a>
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="<?php echo site_url('AdminController/studentreport/'); ?>" class="nav-link ">
+                    <a href="<?php echo site_url('dashboard/student'); ?>" class="nav-link ">
                         <i class="far fa-chart-bar nav-icon"></i>
                         <p>Student Report</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="<?php echo site_url('AdminController/absenteeism/'); ?>" class="nav-link ">
+                    <a href="<?php echo site_url('dashboard/absenteeism/'); ?>" class="nav-link ">
                         <i class="fas fa-child nav-icon"></i>
                         <p>Absenteeism</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?php echo site_url('AdminController/suomotocases/'); ?>" class="nav-link ">
+                    <a href="<?php echo site_url('dashboard/suomoto/'); ?>" class="nav-link ">
                         <i class="nav-icon far fa-sticky-note"></i>
                         <p>
                             Suo-Moto Cases
@@ -51,7 +51,7 @@
 
                 </li>
                 <li class="nav-item">
-                    <a href="<?php echo site_url('AdminController/followup/'); ?>" class="nav-link ">
+                    <a href="<?php echo site_url('dashboard/followup/'); ?>" class="nav-link ">
                         <i class="nav-icon fas fa-phone"></i>
                         <p>
                             Calls & Follow Ups
@@ -59,7 +59,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?php echo site_url('AdminController/attendancestatus/'); ?>" class="nav-link ">
+                    <a href="<?php echo site_url('dashboard/attendance/'); ?>" class="nav-link ">
                         <i class="nav-icon fas fa-city"></i>
                         <p>
                             Attendance Status

@@ -17,7 +17,7 @@ if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
  * --------------------------------------------------------------------
  */
 $routes->setDefaultNamespace('App\Controllers');
-$routes->setDefaultController('Home');
+$routes->setDefaultController('UserController');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
@@ -31,12 +31,14 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-//$routes->get('/', 'Home::index');
+$routes->get('operator', 'OperatorController::index', ['as' => 'operator']);
+$routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
+
 
 // Myth:Auth routes file.
 $routes->group('', ['namespace' => 'Myth\Auth\Controllers'], static function ($routes) {
     // Login/out
-    $routes->get('/', 'AuthController::login', ['as' => 'login']);
+    $routes->get('login', 'AuthController::login', ['as' => 'login']);
     $routes->post('login', 'AuthController::attemptLogin');
     $routes->get('logout', 'AuthController::logout');
 });
