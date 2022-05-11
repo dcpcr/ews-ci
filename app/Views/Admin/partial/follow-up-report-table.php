@@ -22,7 +22,7 @@
                 <td>0</td>
                 <td class="project_progress">
                     <div class="progress progress-sm">
-                        <div class="progress-bar bg-yellow" role="progressbar" aria-valuenow="7" aria-valuemin="0"
+                        <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="7" aria-valuemin="0"
                              aria-valuemax="100" style="width: 7%">
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                 <td>0</td>
                 <td class="project_progress">
                     <div class="progress progress-sm">
-                        <div class="progress-bar bg-violet" role="progressbar" aria-valuenow="7" aria-valuemin="0"
+                        <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="7" aria-valuemin="0"
                              aria-valuemax="100" style="width: 7%">
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                 <td>17</td>
                 <td class="project_progress">
                     <div class="progress progress-sm">
-                        <div class="progress-bar bg-red" role="progressbar" aria-valuenow="7" aria-valuemin="0"
+                        <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="7" aria-valuemin="0"
                              aria-valuemax="100" style="width: 7%">
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                 <td>0</td>
                 <td class="project_progress">
                     <div class="progress progress-sm">
-                        <div class="progress-bar bg-green" role="progressbar" aria-valuenow="57" aria-valuemin="0"
+                        <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="57" aria-valuemin="0"
                              aria-valuemax="100" style="width: 57%">
                         </div>
                     </div>

@@ -14,7 +14,7 @@
       datasets: [
         {
           label               : 'Male',
-          backgroundColor     : 'rgba(60,141,188,0.9)',
+          backgroundColor     : 'rgb(176,230,188)',
           borderColor         : 'rgba(60,141,188,0.8)',
           pointRadius          : false,
           pointColor          : '#3b8bba',
@@ -25,7 +25,7 @@
         },
 		 {
           label               : 'Female',
-          backgroundColor     : 'rgba(160,141,188,0.9)',
+          backgroundColor     : 'rgb(107,194,225)',
           borderColor         : 'rgba(160,141,188,0.8)',
           pointRadius          : false,
           pointColor          : '#3b8bba',
@@ -40,8 +40,8 @@
           borderColor         : 'rgba(210, 214, 222, 1)',
           pointRadius         : false,
           pointColor          : 'rgba(210, 214, 222, 1)',
-          pointStrokeColor    : '#c1c7d1',
-          pointHighlightFill  : '#fff',
+          pointStrokeColor    : '#9fa8bd',
+          pointHighlightFill  : '#c6cbd7',
           pointHighlightStroke: 'rgba(220,220,220,1)',
           data                : [65, 59, 80, 81, 56, 55, 40,30]
         },

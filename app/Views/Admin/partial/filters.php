@@ -3,7 +3,7 @@
         <!-- SELECT2 EXAMPLE -->
         <div class="card card-default">
             <div class="card-header">
-                <h3 class="card-title">Filters</h3>
+                <i class="fas fa-filter"></i><h3 class="card-title"> Filters</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -12,7 +12,7 @@
                         <!-- /.form-group -->
                         <div class="form-group">
                             <label>District</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select a State"
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select a zone"
                                     style="width: 100%;">
                                 <option>All</option>
                                 <option>East</option>
@@ -31,7 +31,7 @@
                         <!-- /.form-group -->
                         <div class="form-group">
                             <label>Zone</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select a State"
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select zone"
                                     style="width: 100%;">
                                 <option>All</option>
                                 <option>Zone01</option>
@@ -50,7 +50,7 @@
                         <!-- /.form-group -->
                         <div class="form-group">
                             <label>School</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select a State"
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select a zone"
                                     style="width: 100%;">
                                 <option>All</option>
                                 <option>1001022</option>
