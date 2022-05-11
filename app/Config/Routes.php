@@ -31,7 +31,16 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Home::index');
+//$routes->get('/', 'Home::index');
+
+// Myth:Auth routes file.
+$routes->group('', ['namespace' => 'Myth\Auth\Controllers'], static function ($routes) {
+    // Login/out
+    $routes->get('/', 'AuthController::login', ['as' => 'login']);
+    $routes->post('login', 'AuthController::attemptLogin');
+    $routes->get('logout', 'AuthController::logout');
+});
+
 
 /*
  * --------------------------------------------------------------------
