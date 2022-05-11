@@ -2,7 +2,7 @@
     <div class="col-md-12 col-sm-6">
         <div class="card ">
             <div class="card-header">
-                <h3 class="card-title">Calls & Followup</h3>
+                <h3 class="card-title">Calls & Follow Ups</h3>
             </div>
             <div class="card-body">
                 <p>
