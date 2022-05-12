@@ -58,7 +58,7 @@
     <!-- /.navbar end-->
 
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <aside class="main-sidebar sidebar-light-primary elevation-1">
         <!-- Brand Logo -->
 
         <?= $this->include('admin/partial/brand-logo-name'); ?>

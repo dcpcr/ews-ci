@@ -2,7 +2,7 @@
     <div class="col-md-12 col-sm-6">
         <div class="card ">
             <div class="card-header">
-                <h3 class="card-title">Student Report </h3>
+                <h3 class="card-title " style="font-size: 2em">Student Report </h3>
             </div>
             <div class="card-body">
                 <p>
@@ -17,11 +17,12 @@
         <!-- Custom Tabs -->
         <div class="card">
             <div class="card-header d-flex p-0">
-                <h3 class="card-title p-3"><i class="far fa-chart-bar"></i></h3>
-                <ul class="nav nav-pills ml-auto p-2">
-                    <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Information</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab">List</a></li>
-                </ul>
+                <h3 class="card-title p-3">
+                    <ul class="nav nav-pills ml-auto p-2">
+                        <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Summary</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab">Details</a></li>
+                    </ul>
+                </h3>
             </div><!-- /.card-header -->
             <div class="card-body">
                 <div class="tab-content">
@@ -32,7 +33,7 @@
                                     <div class="knob-label">Cases with ESW</div>
                                     <input disabled type="text" class="knob" value="80" data-skin="tron"
                                            data-thickness="0.2" data-width="100"
-                                           data-height="100" data-fgColor="#e38c09" data-readonly="true">
+                                           data-height="100" data-fgColor="#efb155" data-readonly="true">
 
                                     <div class="knob-label">Male---------10(8%)</div>
                                     <div class="knob-label">Female-------55(90%)</div>
@@ -42,7 +43,7 @@
                                     <div class="knob-label">Suo Moto Cases</div>
                                     <input disabled type="text" class="knob" value="80" data-skin="tron"
                                            data-thickness="0.2" data-width="100"
-                                           data-height="100" data-fgColor="#e30909" data-readonly="true">
+                                           data-height="100" data-fgColor="#cd4949" data-readonly="true">
 
                                     <div class="knob-label text-center">Male---------10(8%)</div>
                                     <div class="knob-label text-center">Female-------55(90%)</div>

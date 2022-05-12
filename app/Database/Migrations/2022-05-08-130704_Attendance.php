@@ -25,7 +25,8 @@ class Attendance extends Migration
                 'constraint' => '20',
             ],
         ]);
-        $this->forge->addPrimaryKey('student_id', 'date');
+        $this->forge->addPrimaryKey(['student_id', 'date']);
+        $this->forge->addKey('student_id');
         $this->forge->addKey('date');
         $this->forge->addkey('attendance_status');
         $this->forge->createTable('attendance');

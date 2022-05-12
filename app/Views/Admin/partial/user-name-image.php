@@ -1,10 +1,7 @@
 <div class="sidebar">
     <!-- Sidebar user panel (optional) -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-            <img src="/assets-adminlte/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-        </div>
+    <!--<div class="user-panel mt-4 pb-0 mb-4 d-flex" style="background:#cd4949ff;">
         <div class="info">
-            <a href="#" class="d-block">DCPCR</a>
+            <p class="d-block text-center ">Dashboard</p>
         </div>
-    </div>
+    </div>-->

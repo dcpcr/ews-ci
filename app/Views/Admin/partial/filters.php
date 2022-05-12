@@ -3,7 +3,8 @@
         <!-- SELECT2 EXAMPLE -->
         <div class="card card-default">
             <div class="card-header">
-                <i class="fas fa-filter"></i><h3 class="card-title"> Filters</h3>
+                <i class="fas fa-filter mr-2" style="float: left; color: #DC3545"></i>
+                <h3 class="card-title" style="color: #898989">Filters</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -11,8 +12,7 @@
                     <div class="col-md-2">
                         <!-- /.form-group -->
                         <div class="form-group">
-                            <label>District</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select a zone"
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select District"
                                     style="width: 100%;">
                                 <option>All</option>
                                 <option>East</option>
@@ -20,7 +20,6 @@
                                 <option>West B</option>
                                 <option>North</option>
                                 <option>South</option>
-
                             </select>
                         </div>
                         <!-- /.form-group -->
@@ -30,8 +29,7 @@
 
                         <!-- /.form-group -->
                         <div class="form-group">
-                            <label>Zone</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select zone"
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select Zone"
                                     style="width: 100%;">
                                 <option>All</option>
                                 <option>Zone01</option>
@@ -45,12 +43,9 @@
                         </div>
                         <!-- /.form-group -->
                     </div>
-                    <div class="col-md-2">
-
-                        <!-- /.form-group -->
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label>School</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select a zone"
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select School"
                                     style="width: 100%;">
                                 <option>All</option>
                                 <option>1001022</option>
@@ -61,36 +56,22 @@
                                 <option>1001008</option>
                             </select>
                         </div>
-
-                        <!-- /.form-group -->
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="form-group">
-                            <div class="form-group">
-                                <label>Date range:</label>
-
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="far fa-calendar-alt"></i>
-                      </span>
-                                    </div>
-                                    <input type="text" class="form-control float-right" id="reservation">
-                                </div>
-                                <!-- /.input group -->
-                            </div>
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select Duration"
+                                    style="width: 100%;">
+                                <option>30 Calendar Days</option>
+                                <option>365 Calendar Days</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <div class="form-group">
-                                <label>&nbsp;</label>
-
                                 <div class="input-group">
-
-                                    <button type="button" class="btn btn-primary btn-block">Go <i
-                                                class="fas fa-arrow-right"></i></button>
+                                    <button type="button" class="btn btn-primary btn-block">View</button>
                                 </div>
                                 <!-- /.input group -->
                             </div>
