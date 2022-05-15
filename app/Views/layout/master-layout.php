@@ -101,12 +101,7 @@
             </aside>
             <!-- /.right-control-sidebar -->
 
-            <!-- Main Footer -->
         </div>
-        <?= $this->include('admin/partial/footer'); ?>
-
-        <!-- main footer end -->
-
         <!-- ./wrapper -->
 
         <!-- REQUIRED SCRIPTS -->
