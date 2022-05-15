@@ -52,9 +52,11 @@
 <div class="wrapper">
     <!-- Navbar Start-->
 
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <nav class="main-header navbar navbar-expand  navbar-light">
         <?= $this->include('admin/partial/top-nav-bar'); ?>
     </nav>
+    <!-- /.sidebar-menu -->
+
     <!-- /.navbar end-->
 
     <!-- Main Sidebar Container -->
