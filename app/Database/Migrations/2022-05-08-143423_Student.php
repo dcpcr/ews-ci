@@ -10,79 +10,61 @@ class Student extends Migration
     {
         //STUDENT TABLE
         $this->forge->addField([
-            'school_id' => [
-                'type' => 'INT',
-                'unsigned' => true,
-                'NOT NULL' => true,
-
+            'district' => [
+                'type' => 'char',
+                'constraint' => '20',
             ],
-            'student_id' => [
+            'id' => [
                 'type' => 'BIGINT',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
             ],
-            'student_name' => [
+            'name' => [
                 'type' => 'char',
-                'constraint' => '50',
+                'constraint' => '100',
                 'NOT NULL' => true,
-
+            ],
+            'dob' => [
+                'type' => 'char',
+                'constraint' => '20',
             ],
             'class' => [
                 'type' => 'char',
                 'constraint' => '10',
                 'NOT NULL' => true,
-
             ],
             'section' => [
                 'type' => 'char',
-                'constraint' => '2',
-
-            ],
-            'dob' => [
-                'type' => 'char',
-                'constraint' => '10',
-
+                'constraint' => '1',
             ],
             'gender' => [
                 'type' => 'char',
-                'constraint' => '15',
-
-            ],
-            'mobile' => [
-                'type' => 'char',
                 'constraint' => '20',
-
             ],
-            'father_name' => [
+            'father' => [
                 'type' => 'char',
                 'constraint' => '100',
-
             ],
-            'mother_name' => [
+            'mother' => [
                 'type' => 'char',
                 'constraint' => '100',
-
             ],
             'address' => [
                 'type' => 'varchar',
-                'constraint' => '200',
-
+                'constraint' => '255',
             ],
-            'pincode' => [
-                'type' => 'int',
-                'constraint' => '10',
-
+            'mobile' => [
+                'type' => 'INT',
             ],
-
+            'school_id' => [
+                'type' => 'INT',
+                'unsigned' => true,
+                'NOT NULL' => true,
+            ],
         ]);
-        $this->forge->addField(
-            [
-            'created_at datetime default current_timestamp',
-            'updated_at datetime default current_timestamp on update current_timestamp',
-            ]);
 
         $this->forge->addPrimaryKey('id');
+        $this->forge->addKey('class');
         $this->forge->addKey('school_id');
         $this->forge->addKey('gender');
         $this->forge->createTable('student');
@@ -90,7 +72,6 @@ class Student extends Migration
 
     public function down()
     {
-        //
         $this->forge->dropTable('student');
     }
 }

@@ -14,37 +14,30 @@ class School extends Migration
                 'type' => 'int',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
             ],
             'district' => [
                 'type' => 'char',
                 'NOT NULL' => true,
                 'constraint' => '20',
-
             ],
             'zone' => [
                 'type' => 'int',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
             ],
             'id' => [
                 'type' => 'int',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
             ],
             'building-id' => [
                 'type' => 'int',
                 'unsigned' => true,
-
-
             ],
             'name' => [
                 'type' => 'CHAR',
                 'constraint' => '200',
                 'NOT NULL' => true,
-
             ],
             'address' => [
                 'type' => 'CHAR',
@@ -103,7 +96,6 @@ class School extends Migration
 
     public function down()
     {
-
         $this->forge->dropTable('school');
     }
 }
