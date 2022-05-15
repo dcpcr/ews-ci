@@ -22,10 +22,10 @@ class AdminController extends AuthController
     private function doesUserHavePermission(): bool
     {
         $userId = $this->authenticate->id();
-        $result = true;
-        foreach ($this->valid_permissions_for_dashboard as $permission) {
+        $result = false;
+        foreach ($this::$valid_permissions_for_dashboard as $permission) {
             $isPermitted = $this->authorize->doesUserHavePermission($userId, $permission);
-            $result &= $isPermitted;
+            $result |= $isPermitted;
             $this->filters[] = [$permission => $isPermitted];
         }
         return $result;
