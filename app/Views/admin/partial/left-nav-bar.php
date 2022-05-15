@@ -5,27 +5,12 @@
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <!-- Add icons to the links using the .nav-icon class
              with font-awesome or any other icon font library -->
-        <li class="nav-header" style="text-decoration: underline">Menu</li>
+        <li class="nav-header ml-1 mt-4 text-sm" style="color: #898989">MENU</li>
 
         <li class="nav-item mb-1 mt-1">
-            <a href="<?php echo site_url('dashboard/student'); ?>" class="nav-link ">
-                <p>Detected Cases</p>
-                <i class="fas fa-angle-left right"></i>
+            <a href="<?php echo site_url('dashboard/case'); ?>" class="nav-link ">
+                <p>Case Status</p>
             </a>
-            <ul class="nav nav-treeview">
-                <li class="nav-item">
-                    <a href="<?php echo site_url('dashboard/student#graph'); ?>" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Summary</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?php echo site_url('dashboard/student#list'); ?>" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Details</p>
-                    </a>
-                </li>
-            </ul>
         </li>
 
         <li class="nav-item mb-1 mt-1">

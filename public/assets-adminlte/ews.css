@@ -6,3 +6,6 @@
 .card {
     box-shadow: none !important;
 }
+.content-wrapper {
+    background-color: #ffffff !important;
+}

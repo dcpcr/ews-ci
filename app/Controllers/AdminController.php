@@ -29,8 +29,8 @@ class AdminController extends AuthController
             //TODO: The filters will change based on the permission that the user has.
 
             switch ($report_type) {
-                case 'student':
-                    return $this->studentReport();
+                case 'case':
+                    return $this->caseReport();
                     break;
                 case 'absenteeism':
                     return $this->absenteeismReport();
@@ -46,42 +46,45 @@ class AdminController extends AuthController
                     break;
 
             }
-        }
-        else {
+        } else {
             //TODO: Show Forbidden Page
         }
     }
 
-    private function studentReport(): string
+    private function caseReport(): string
     {
-        return $this->prepareViewData('Student Report', 'Student', 'admin/student','page details');
+        $pageText = "Long absenteeism, i.e., uninformed absence of 7 consecutive days or for more than 66.67% days in a 
+        month (i.e., 20/30 days), is the earliest indicator that the student is facing a risk that the family is not able to overcome. 
+        This report shows the status of all the cases detected including total number of detected cases as per the absenteeism 
+        criteria, the number of students at high risk, for which the commission has raised suo moto complaints and the cases 
+        where the students have gone back to school";
+        return $this->prepareViewData('Case Status', 'admin/case', $pageText);
     }
 
     private function absenteeismReport(): string
     {
-        return $this->prepareViewData('Absenteeism Report', 'Absenteeism', 'admin/absenteeism','page details');
+        return $this->prepareViewData('Absenteeism Report', 'admin/absenteeism');
     }
 
     private function suomotoReport(): string
     {
-        return $this->prepareViewData('Suomoto Cases Report', 'Suomoto Cases', 'admin/suo-moto-case','page details');
+        return $this->prepareViewData('Suomoto Cases Report', 'admin/suo-moto-case');
     }
 
     private function followupReport(): string
     {
-        return $this->prepareViewData('Follow Up Report', 'Follow Up', 'admin/follow-up','page details');
+        return $this->prepareViewData('Follow Up Report', 'admin/follow-up');
     }
 
     private function attendanceReport(): string
     {
-        return $this->prepareViewData('Attendance Report', 'Attendance Report', 'admin/attendance-report','page details');
+        return $this->prepareViewData('Attendance Report', 'admin/attendance-report');
     }
 
-    private function prepareViewData($page_title, $breadcrumb, $view_name,$details): string
+    private function prepareViewData($page_title, $view_name, $details = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."): string
     {
         $data['page_title'] = $page_title;
-        $data['breadcrumb'] = $breadcrumb;
-        $data['details'] = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.";
+        $data['details'] = $details;
         $data['user_name'] = user()->username;
         return view($view_name, $data);
     }

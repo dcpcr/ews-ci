@@ -93,12 +93,11 @@
                     </div>
                     <div class="col-md-1">
                         <div class="form-group">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <button type="button" class="btn btn-primary btn-block">View</button>
-                                </div>
-                                <!-- /.input group -->
+                            <label>&nbsp;</label>
+                            <div class="input-group">
+                                <button type="button" class="btn btn-primary btn-block">View</button>
                             </div>
+                            <!-- /.input group -->
                         </div>
                     </div>
 
