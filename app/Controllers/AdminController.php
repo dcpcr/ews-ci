@@ -54,33 +54,34 @@ class AdminController extends AuthController
 
     private function studentReport(): string
     {
-        return $this->prepareViewData('Student Report', 'Student', 'admin/student');
+        return $this->prepareViewData('Student Report', 'Student', 'admin/student','page details');
     }
 
     private function absenteeismReport(): string
     {
-        return $this->prepareViewData('Absenteeism Report', 'Absenteeism', 'admin/absenteeism');
+        return $this->prepareViewData('Absenteeism Report', 'Absenteeism', 'admin/absenteeism','page details');
     }
 
     private function suomotoReport(): string
     {
-        return $this->prepareViewData('Suomoto Cases Report', 'Suomoto Cases', 'admin/suo-moto-case');
+        return $this->prepareViewData('Suomoto Cases Report', 'Suomoto Cases', 'admin/suo-moto-case','page details');
     }
 
     private function followupReport(): string
     {
-        return $this->prepareViewData('Follow Up Report', 'Follow Up', 'admin/follow-up');
+        return $this->prepareViewData('Follow Up Report', 'Follow Up', 'admin/follow-up','page details');
     }
 
     private function attendanceReport(): string
     {
-        return $this->prepareViewData('Attendance Report', 'Attendance Report', 'admin/attendance-report');
+        return $this->prepareViewData('Attendance Report', 'Attendance Report', 'admin/attendance-report','page details');
     }
 
-    private function prepareViewData($page_title, $breadcrumb, $view_name): string
+    private function prepareViewData($page_title, $breadcrumb, $view_name,$details): string
     {
         $data['page_title'] = $page_title;
         $data['breadcrumb'] = $breadcrumb;
+        $data['details'] = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.";
         $data['user_name'] = user()->username;
         return view($view_name, $data);
     }

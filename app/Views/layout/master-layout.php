@@ -22,7 +22,8 @@
     <!-- Bootstrap Color Picker -->
     <link rel="stylesheet" href="/assets-adminlte/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
-    <link rel="stylesheet" href="/assets-adminlte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <link rel="stylesheet"
+          href="/assets-adminlte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <!-- Select2 -->
     <link rel="stylesheet" href="/assets-adminlte/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="/assets-adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -73,15 +74,7 @@
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) and breadcrumb-item-->
-
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-
-
-                    </div><!-- /.row -->
-                </div><!-- /.container-fluid -->
-            </div>
+            <?= $this->include('admin/partial/page-header-breadcrumb'); ?>
             <!-- /.content-header -->
 
             <!-- Main content -->

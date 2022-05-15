@@ -58,15 +58,15 @@
                         </div>
                     </div>
 
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select Duration"
-                                    style="width: 100%;">
-                                <option>30 Calendar Days</option>
-                                <option>365 Calendar Days</option>
-                            </select>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <button type="button" class="btn btn-default float-right" id="daterange-btn">
+                                <i class="far fa-calendar-alt"></i> Date range picker
+                                <i class="fas fa-caret-down"></i>
+                            </button>
                         </div>
                     </div>
+
                     <div class="col-md-2">
                         <div class="form-group">
                             <div class="form-group">
