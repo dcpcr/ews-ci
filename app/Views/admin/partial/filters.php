@@ -12,9 +12,10 @@
                     <div class="col-md-2">
                         <!-- /.form-group -->
                         <div class="form-group">
+                            <label>District</label>
                             <select class="select2bs4" multiple="multiple" data-placeholder="Select District"
                                     style="width: 100%;">
-                                <option>All</option>
+                                <option selected>All</option>
                                 <option>East</option>
                                 <option>West A</option>
                                 <option>West B</option>
@@ -26,28 +27,29 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-md-2">
-
                         <!-- /.form-group -->
                         <div class="form-group">
+                            <label>Zone</label>
                             <select class="select2bs4" multiple="multiple" data-placeholder="Select Zone"
                                     style="width: 100%;">
-                                <option>All</option>
-                                <option>Zone01</option>
-                                <option>Zone02</option>
-                                <option>Zone03</option>
-                                <option>Zone04</option>
-                                <option>Zone05</option>
-                                <option>Zone06</option>
-                                <option>Zone07</option>
+                                <option selected>All</option>
+                                <option>Zone 01</option>
+                                <option>Zone 02</option>
+                                <option>Zone 03</option>
+                                <option>Zone 04</option>
+                                <option>Zone 05</option>
+                                <option>Zone 06</option>
+                                <option>Zone 07</option>
                             </select>
                         </div>
                         <!-- /.form-group -->
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
+                            <label>School</label>
                             <select class="select2bs4" multiple="multiple" data-placeholder="Select School"
                                     style="width: 100%;">
-                                <option>All</option>
+                                <option selected>All</option>
                                 <option>1001022</option>
                                 <option>1001003</option>
                                 <option>1001054</option>
@@ -57,17 +59,39 @@
                             </select>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <div class="input-group">
-                            <button type="button" class="btn btn-default float-right" id="daterange-btn">
-                                <i class="far fa-calendar-alt"></i> Date range picker
-                                <i class="fas fa-caret-down"></i>
-                            </button>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Grade (Class)</label>
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select Grade (Class)"
+                                    style="width: 100%;">
+                                <option selected>All</option>
+                                <option>XII</option>
+                                <option>XI</option>
+                                <option>X</option>
+                                <option>IX</option>
+                                <option>VIII</option>
+                                <option>VII</option>
+                                <option>VI</option>
+                                <option>V</option>
+                                <option>IV</option>
+                                <option>III</option>
+                                <option>II</option>
+                                <option>I</option>
+                            </select>
                         </div>
                     </div>
-
                     <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <div class="input-group">
+                                <button type="button" class="btn btn-default float-right" id="daterange-btn">
+                                    Duration
+                                    <i class="fas fa-caret-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
                         <div class="form-group">
                             <div class="form-group">
                                 <div class="input-group">

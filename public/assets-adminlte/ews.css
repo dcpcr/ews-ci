@@ -2,3 +2,7 @@
     background-color: #D74343 !important;
     border: #D74343 !important;
 }
+
+.card {
+    box-shadow: none !important;
+}

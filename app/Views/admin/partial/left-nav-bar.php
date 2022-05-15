@@ -14,13 +14,13 @@
             </a>
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="#graph" class="nav-link">
+                    <a href="<?php echo site_url('dashboard/student#graph'); ?>" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Summary</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#list" class="nav-link">
+                    <a href="<?php echo site_url('dashboard/student#list'); ?>" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Details</p>
                     </a>
