@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class ZoneModel extends Model
+{
+    protected $DBGroup          = 'default';
+    protected $table            = 'zone';
+    protected $primaryKey       = 'id';
+    protected $useAutoIncrement = false;
+
+    protected $returnType       = 'array';
+    protected $allowedFields    = ['id', 'name'];
+
+    protected $useTimestamps    = true;
+    protected $createdField     = 'created_at';
+    protected $updatedField     = 'updated_at';
+    protected $dateFormat       = 'datetime';
+}

@@ -14,29 +14,17 @@ class SchoolMapping extends Migration
                 'type' => 'INT',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
-            ],
-            'school_name' => [
-                'type' => 'CHAR',
-                'constraint' => '200',
-                'NOT NULL' => true,
-
             ],
             'district_id' => [
                 'type' => 'INT',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
             ],
-
             'zone_id' => [
                 'type' => 'INT',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
             ],
-
-
         ]);
         $this->forge->addField(
             [
@@ -51,8 +39,6 @@ class SchoolMapping extends Migration
 
     public function down()
     {
-        //
-        $this->forge->dropTable('school_mapping
-        ');
+        $this->forge->dropTable('school_mapping');
     }
 }

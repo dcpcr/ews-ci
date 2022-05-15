@@ -10,34 +10,28 @@ class District extends Migration
     {
         //District INFORMATION TABLE
         $this->forge->addField([
-            'district_id' => [
+            'id' => [
                 'type' => 'INT',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
             ],
-            'district_name' => [
+            'name' => [
                 'type' => 'char',
                 'constraint' => '30',
                 'NOT NULL' => true,
-
-
             ],
-
-
         ]);
         $this->forge->addField(
             [
                 'created_at datetime default current_timestamp',
                 'updated_at datetime default current_timestamp on update current_timestamp',
             ]);
-        $this->forge->addPrimaryKey('district_id');
+        $this->forge->addPrimaryKey('id');
         $this->forge->createTable('district');
     }
 
     public function down()
     {
-        //
         $this->forge->dropTable('district');
     }
 }
