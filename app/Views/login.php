@@ -4,9 +4,24 @@
 <div class="container">
 	<div class="row">
 		<div class="col-sm-6 offset-sm-3">
+            <div class="card">
+                <div class="d-flex justify-content-center mb-1">
+
+                    <div class=" ">
+                        <img src="/assets-adminlte/dist/img/dcpcrlogo.png" alt="DCPCR Logo" width="100px" height="100px">
+
+                    </div>
+
+
+                </div>
+                <div class=" d-flex justify-content-center ">
+                    <h4 style="color:#d71515;  font-weight: bold;">Early Warning System</h4>
+
+                </div>
+            </div>
 
 			<div class="card">
-				<h2 class="card-header"><?=lang('Auth.loginTitle')?></h2>
+
 				<div class="card-body">
 
 					<?= view('App\Views\_message_block') ?>
