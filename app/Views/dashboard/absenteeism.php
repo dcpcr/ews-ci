@@ -1,5 +1,5 @@
 <?php
-$this->extend("layout/dashboard-layout");
+$this->extend("dashboard/layout/dashboard-layout");
 $this->section("graph-section");
 echo $this->include('dashboard/partial/absenteeism-graph');
 $this->endSection();
