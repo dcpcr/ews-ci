@@ -7,7 +7,7 @@ use Myth\Auth\Models\UserModel as AuthUserModel;
 class UserModel extends AuthUserModel
 {
     protected $validationRules = [
-        'username'      => 'required|alpha_numeric_punct|min_length[3]|max_length[30]|is_unique[users.username,id,{id}]',
+        'username'      => 'required|alpha_numeric_punct|min_length[2]|max_length[30]|is_unique[users.username,id,{id}]',
         'password_hash' => 'required',
     ];
 

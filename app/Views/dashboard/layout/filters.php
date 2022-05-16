@@ -1,20 +1,23 @@
-<div class="row">
-    <div class="col-lg-12">
+<div class='row'>
+    <div class='col-lg-12'>
         <!-- SELECT2 EXAMPLE -->
-        <div class="card card-default">
-            <div class="card-header">
-                <i class="fas fa-filter mr-2" style="float: left; color: #DC3545"></i>
-                <h3 class="card-title" style="color: #898989">Filters</h3>
+        <div class='card card-default'>
+            <div class='card-header'>
+                <i class='fas fa-filter mr-2' style='float: left; color: #DC3545'></i>
+                <h3 class='card-title' style='color: #898989'>Filters</h3>
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
+            <div class='card-body'>
+                <div class='row'>
+                    <?php
+                    if ($filter_permissions['viewAllReports']) {
+                        echo "
+                        <div class='col-md-2'>
                         <!-- /.form-group -->
-                        <div class="form-group">
+                        <div class='form-group'>
                             <label>District</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select District"
-                                    style="width: 100%;">
+                            <select class='select2bs4' multiple='multiple' data-placeholder='Select District'
+                                    style='width: 100%;'>
                                 <option selected>All</option>
                                 <option>East</option>
                                 <option>West A</option>
@@ -25,13 +28,15 @@
                         </div>
                         <!-- /.form-group -->
                     </div>
-                    <!-- /.col -->
-                    <div class="col-md-2">
+                    ";
+                    }
+                    if ($filter_permissions['viewAllReports'] || $filter_permissions['viewReportsDistricts']) {
+                        echo " <div class='col-md-2'>
                         <!-- /.form-group -->
-                        <div class="form-group">
+                        <div class='form-group'>
                             <label>Zone</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select Zone"
-                                    style="width: 100%;">
+                            <select class='select2bs4' multiple='multiple' data-placeholder='Select Zone'
+                                    style='width: 100%;'>
                                 <option selected>All</option>
                                 <option>Zone 01</option>
                                 <option>Zone 02</option>
@@ -43,12 +48,15 @@
                             </select>
                         </div>
                         <!-- /.form-group -->
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
+                    </div>";
+                    }
+                    if ($filter_permissions['viewAllReports'] || $filter_permissions['viewReportsDistricts'] ||
+                        $filter_permissions['viewReportsZone']) {
+                        echo "<div class='col-md-3'>
+                        <div class='form-group'>
                             <label>School</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select School"
-                                    style="width: 100%;">
+                            <select class='select2bs4' multiple='multiple' data-placeholder='Select School'
+                                    style='width: 100%;'>
                                 <option selected>All</option>
                                 <option>1001022</option>
                                 <option>1001003</option>
@@ -58,12 +66,15 @@
                                 <option>1001008</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
+                    </div>";
+                    }
+                    ?>
+
+                    <div class='col-md-2'>
+                        <div class='form-group'>
                             <label>Grade (Class)</label>
-                            <select class="select2bs4" multiple="multiple" data-placeholder="Select Grade (Class)"
-                                    style="width: 100%;">
+                            <select class='select2bs4' multiple='multiple' data-placeholder='Select Grade (Class)'
+                                    style='width: 100%;'>
                                 <option selected>All</option>
                                 <option>XII</option>
                                 <option>XI</option>
@@ -80,22 +91,22 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
+                    <div class='col-md-2'>
+                        <div class='form-group'>
                             <label>Duration</label>
-                            <div class="input-group">
-                                <button type="button" class="btn btn-default float-right" id="daterange-btn">
+                            <div class='input-group'>
+                                <button type='button' class='btn btn-default float-right' id='daterange-btn'>
                                     Duration
-                                    <i class="fas fa-caret-down"></i>
+                                    <i class='fas fa-caret-down'></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
+                    <div class='col-md-1'>
+                        <div class='form-group'>
                             <label>&nbsp;</label>
-                            <div class="input-group">
-                                <button type="button" class="btn btn-primary btn-block">View</button>
+                            <div class='input-group'>
+                                <button type='button' class='btn btn-primary btn-block'>View</button>
                             </div>
                             <!-- /.input group -->
                         </div>

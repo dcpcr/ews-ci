@@ -1,5 +1,8 @@
 <?php namespace App\Database\Seeds;
 
+use App\Models\DistrictModel;
+use App\Models\SchoolModel;
+use App\Models\ZoneModel;
 use Myth\Auth\Authorization\GroupModel;
 use Myth\Auth\Authorization\PermissionModel;
 use Myth\Auth\Entities\User;
@@ -104,7 +107,6 @@ class AuthSeeder extends \CodeIgniter\Database\Seeder
             $authorization->addPermissionToGroup('manageCases', $name);
         }
 
-        /*** USERS ***/
         $rows = [
             [
                 'username' => 'admin',
@@ -114,21 +116,6 @@ class AuthSeeder extends \CodeIgniter\Database\Seeder
             [
                 'username' => 'dcpcr',
                 'password' => 'password901',
-                'active' => 1,
-            ],
-            [
-                'username' => 'district1',
-                'password' => 'password456',
-                'active' => 1,
-            ],
-            [
-                'username' => 'zone1',
-                'password' => 'password789',
-                'active' => 1,
-            ],
-            [
-                'username' => 'school1',
-                'password' => 'password0AB',
                 'active' => 1,
             ],
             [
@@ -156,16 +143,52 @@ class AuthSeeder extends \CodeIgniter\Database\Seeder
         $authorization->removeUserFromGroup(2, 'level1');
         $authorization->addUserToGroup(2, 'level1');
 
-        $authorization->removeUserFromGroup(3, 'level3');
-        $authorization->addUserToGroup(3, 'level3');
+        $authorization->removeUserFromGroup(3, 'level8');
+        $authorization->addUserToGroup(3, 'level8');
 
-        $authorization->removeUserFromGroup(4, 'level4');
-        $authorization->addUserToGroup(4, 'level4');
+        /*** School USERS ***/
 
-        $authorization->removeUserFromGroup(5, 'level5');
-        $authorization->addUserToGroup(5, 'level5');
+        $school_model = new SchoolModel();
+        $schools = $school_model->findAll();
+        $this->createUsers($schools, $users);
+        $this->addUsersToGroup($schools, $users, $authorization, 'level5');
 
-        $authorization->removeUserFromGroup(6, 'level8');
-        $authorization->addUserToGroup(6, 'level8');
+        $zone_model = new ZoneModel();
+        $zones = $zone_model->findAll();
+        $this->createUsers($zones, $users);
+        $this->addUsersToGroup($zones, $users, $authorization, 'level4');
+
+        $district_model = new DistrictModel();
+        $districts = $district_model->findAll();
+        $this->createUsers($districts, $users);
+        $this->addUsersToGroup($districts, $users, $authorization, 'level3');
+
+    }
+
+    protected function createUsers(array $entities, UserModel $users): void
+    {
+        foreach ($entities as $entity) {
+            $row = [
+                'username' => $entity['id'],
+                'password' => $entity['id'] . '@new',
+                'active' => 1,
+            ];
+            $user = $users->where('username', $row['username'])->first();
+            if (empty($user)) {
+                // Use the User entity to handle correct password hashing
+                $users->insert(new User($row));
+            }
+        }
+    }
+
+    protected function addUsersToGroup(array $entities, UserModel $users, $authorization, string $group): void
+    {
+        foreach ($entities as $entity) {
+            $user = $users->where('username', $entity['id'])->first();
+            if (!empty($user)) {
+                $authorization->removeUserFromGroup($user->id, $group);
+                $authorization->addUserToGroup($user->id, $group);
+            }
+        }
     }
 }

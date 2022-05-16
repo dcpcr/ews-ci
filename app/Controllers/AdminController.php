@@ -26,7 +26,7 @@ class AdminController extends AuthController
         foreach ($this::$valid_permissions_for_dashboard as $permission) {
             $isPermitted = $this->authorize->doesUserHavePermission($userId, $permission);
             $result |= $isPermitted;
-            $this->filters[] = [$permission => $isPermitted];
+            $this->filters[$permission] = $isPermitted;
         }
         return $result;
     }
