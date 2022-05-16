@@ -9,71 +9,100 @@
             <!-- /.card-header -->
             <div class='card-body'>
                 <div class='row'>
-                    <?php
-                    if ($filter_permissions['viewAllReports']) {
-                        echo "
-                        <div class='col-md-2'>
+                    <div class='col-md-2'>
                         <!-- /.form-group -->
                         <div class='form-group'>
                             <label>District</label>
                             <select class='select2bs4' multiple='multiple' data-placeholder='Select District'
-                                    style='width: 100%;'>
-                                <option selected>All</option>
-                                <option>East</option>
-                                <option>West A</option>
-                                <option>West B</option>
-                                <option>North</option>
-                                <option>South</option>
+                                    style='width: 100%;'
+                                <?php if (!$filter_permissions['viewAllReports']) {
+                                    echo "disabled";
+                                } ?>
+                            >
+                                <?php
+                                if ($filter_permissions['viewAllReports']) {
+                                    foreach ($districts as $district) {
+                                        echo '<option value = ' . $district['id'] . '>' . $district['name'] . "</option>";
+                                    }
+                                    echo "<option selected>All</option>";
+                                } else if (!empty($user_type)) {
+                                    echo '<option value = "' . $user_district_id . '"selected>' . $user_district_name . "</option>";
+                                }
+                                ?>
                             </select>
                         </div>
                         <!-- /.form-group -->
                     </div>
-                    ";
-                    }
-                    if ($filter_permissions['viewAllReports'] || $filter_permissions['viewReportsDistricts']) {
-                        echo " <div class='col-md-2'>
+                    <div class='col-md-2'>
                         <!-- /.form-group -->
                         <div class='form-group'>
                             <label>Zone</label>
                             <select class='select2bs4' multiple='multiple' data-placeholder='Select Zone'
-                                    style='width: 100%;'>
-                                <option selected>All</option>
-                                <option>Zone 01</option>
-                                <option>Zone 02</option>
-                                <option>Zone 03</option>
-                                <option>Zone 04</option>
-                                <option>Zone 05</option>
-                                <option>Zone 06</option>
-                                <option>Zone 07</option>
+                                    style='width: 100%;'
+                                <?php if (!$filter_permissions['viewAllReports'] && !$filter_permissions['viewReportsDistricts']) {
+                                    echo "disabled";
+                                } ?>
+                            >
+                                <?php if ($filter_permissions['viewAllReports']) {
+                                    foreach ($zones as $zone) {
+                                        echo '<option value = ' . $zone['id'] . '>' . $zone['name'] . "</option>";
+                                    }
+                                    echo "<option selected>All</option>";
+                                } else if ($filter_permissions['viewReportsDistricts']) {
+                                    if (!empty($user_type) && $user_type == "district") {
+                                        foreach ($user_zones as $zone_id => $zone_name) {
+                                            echo '<option value = ' . $zone_id . '>' . $zone_name . "</option>";
+                                        }
+                                    } else {
+                                        //Something majorly wrong has happened!
+                                    }
+                                    echo "<option selected>All</option>";
+                                } else {
+                                    if (!empty($user_type)) {
+                                        echo '<option value = "' . $user_zone_id . '"selected>' . $user_zone_name . "</option>";
+                                    }
+                                }
+                                ?>
                             </select>
                         </div>
                         <!-- /.form-group -->
-                    </div>";
-                    }
-                    if ($filter_permissions['viewAllReports'] || $filter_permissions['viewReportsDistricts'] ||
-                        $filter_permissions['viewReportsZone']) {
-                        echo "<div class='col-md-3'>
+                    </div>
+                    <div class='col-md-4'>
                         <div class='form-group'>
                             <label>School</label>
                             <select class='select2bs4' multiple='multiple' data-placeholder='Select School'
-                                    style='width: 100%;'>
-                                <option selected>All</option>
-                                <option>1001022</option>
-                                <option>1001003</option>
-                                <option>1001054</option>
-                                <option>1001020</option>
-                                <option>1001005</option>
-                                <option>1001008</option>
+                                    style='width: 100%;'
+                                <?php if (!$filter_permissions['viewAllReports'] && !$filter_permissions['viewReportsDistricts'] && !$filter_permissions['viewReportsZone']) {
+                                    echo "disabled";
+                                } ?>
+                            >
+                                <?php if ($filter_permissions['viewAllReports']) {
+                                    foreach ($schools as $school) {
+                                        echo '<option value = ' . $school['id'] . '>' . $school['id'] . " - " . $school['name'] . "</option>";
+                                    }
+                                    echo "<option selected>All</option>";
+                                } else if ($filter_permissions['viewReportsDistricts'] || $filter_permissions['viewReportsZone']) {
+                                    if (!empty($user_type)) {
+                                        foreach ($user_schools as $school) {
+                                            echo '<option value = ' . $school['id'] . '>' . $school['id'] . " - " . $school['name'] . "</option>";
+                                        }
+                                    } else {
+                                        //Something majorly wrong has happened!
+                                    }
+                                    echo "<option selected>All</option>";
+                                } else {
+                                    if (!empty($user_type)) {
+                                        echo '<option value = "' . $user_school_id . '"selected>' . $user_school_id . " - " . $user_school_name . "</option>";
+                                    }
+                                }
+                                ?>
                             </select>
                         </div>
-                    </div>";
-                    }
-                    ?>
-
-                    <div class='col-md-2'>
+                    </div>
+                    <div class='col-md-1'>
                         <div class='form-group'>
-                            <label>Grade (Class)</label>
-                            <select class='select2bs4' multiple='multiple' data-placeholder='Select Grade (Class)'
+                            <label>Class</label>
+                            <select class='select2bs4' multiple='multiple' data-placeholder='Select Class'
                                     style='width: 100%;'>
                                 <option selected>All</option>
                                 <option>XII</option>

@@ -3,6 +3,10 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\DistrictModel;
+use App\Models\SchoolMappingModel;
+use App\Models\SchoolModel;
+use App\Models\ZoneModel;
 
 class AdminController extends AuthController
 {
@@ -95,12 +99,90 @@ class AdminController extends AuthController
     {
         return $this->prepareViewData('Home Visits', 'dashboard/homevisits');
     }
+
     private function prepareViewData($page_title, $view_name, $details = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."): string
     {
         $data['page_title'] = $page_title;
         $data['details'] = $details;
         $data['user_name'] = user()->username;
+
         $data['filter_permissions'] = $this->filters;
+        $school_mapping_model = new SchoolMappingModel();
+        $data['school_mappings'] = $school_mapping_model->findAll();
+        $school_model = new SchoolModel();
+        $data['schools'] = $school_model->findAll();
+        $district_model = new DistrictModel();
+        $data['districts'] = $district_model->findAll();
+        $zone_model = new ZoneModel();
+        $data['zones'] = $zone_model->findAll();
+
+        if ($this->authorize->inGroup('Level5', user()->id)) {
+            $data['user_type'] = 'school';
+            $school = $school_model->where('id', user()->username)->first();
+            $data['user_school_name'] = $school['name'];
+            $data['user_school_id'] = $school['id'];
+
+            $school_mapping = $school_mapping_model->where('school_id', $school['id'])->first();
+            $zone = $zone_model->where('id', $school_mapping['zone_id'])->first();
+            $data['user_zone_name'] = $zone['name'];
+            $data['user_zone_id'] = $zone['id'];
+
+            $district = $district_model->where('id', $school_mapping['district_id'])->first();
+            $data['user_district_name'] = $district['name'];
+            $data['user_district_id'] = $district['id'];
+        } else if ($this->authorize->inGroup('Level4', user()->id)) {
+            $data['user_type'] = 'zone';
+            $zone = $zone_model->where('id', user()->username)->first();
+            $data['user_zone_name'] = $zone['name'];
+            $data['user_zone_id'] = $zone['id'];
+
+            $school_mapping = $school_mapping_model->where('zone_id', $zone['id'])->first();
+
+            $district = $district_model->where('id', $school_mapping['district_id'])->first();
+            $data['user_district_name'] = $district['name'];
+            $data['user_district_id'] = $district['id'];
+
+
+            $school_mappings = $school_mapping_model->where('zone_id', $zone['id'])->findAll();
+
+            $user_schools = array();
+            foreach ($school_mappings as $school_mapping) {
+                $school = $school_model->where('id', $school_mapping['school_id'])->first();
+                $user_schools [] = [
+                    'id' => $school['id'],
+                    'name' => $school['name']
+                ];
+            }
+            $data['user_schools'] = $user_schools;
+
+        } else if ($this->authorize->inGroup('Level3', user()->id)) {
+            $data['user_type'] = 'district';
+            $district = $district_model->where('id', user()->username)->first();
+            $data['user_district_name'] = $district['name'];
+            $data['user_district_id'] = $district['id'];
+
+            $school_mappings = $school_mapping_model->where('district_id', $district['id'])->findAll();
+            $user_zones = array();
+            foreach ($school_mappings as $school_mapping) {
+                $zone = $zone_model->where('id', $school_mapping['zone_id'])->first();
+                $user_zones[$zone['id']] = $zone['name'];
+            }
+            $data['user_zones'] = $user_zones;
+
+            $user_schools = array();
+            foreach ($school_mappings as $school_mapping) {
+                $school = $school_model->where('id', $school_mapping['school_id'])->first();
+                $user_schools [] = [
+                    'id' => $school['id'],
+                    'name' => $school['name']
+                ];
+            }
+            $data['user_schools'] = $user_schools;
+
+        }
+
         return view($view_name, $data);
     }
+
+
 }
