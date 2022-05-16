@@ -15,9 +15,9 @@ class AdminController extends AuthController
             ['name' => 'manageCases', 'description' => 'Access Operator functionality']
         ];*/
 
-    private static array $valid_permissions_for_dashboard = ['viewAllReports', 'viewReportsDistricts', 'viewReportsZone', 'viewReportsSchool'];
+    protected static array $valid_permissions_for_dashboard = ['viewAllReports', 'viewReportsDistricts', 'viewReportsZone', 'viewReportsSchool'];
 
-    private array $filters;
+    protected array $filters;
 
     private function doesUserHavePermission(): bool
     {
@@ -46,13 +46,15 @@ class AdminController extends AuthController
                 case 'suomoto':
                     return $this->suomotoReport();
                     break;
-                case 'followup':
+                case 'call':
                     return $this->followupReport();
                     break;
                 case 'attendance':
                     return $this->attendanceReport();
                     break;
-
+                case 'homevisits':
+                    return $this->homeVisitsReport();
+                    break;
             }
         } else {
             //TODO: Show Forbidden Page
@@ -66,29 +68,33 @@ class AdminController extends AuthController
         This report shows the status of all the cases detected including total number of detected cases as per the absenteeism 
         criteria, the number of students at high risk, for which the commission has raised suo moto complaints and the cases 
         where the students have gone back to school";
-        return $this->prepareViewData('Case Status', 'admin/case', $pageText);
+        return $this->prepareViewData('Case Status', 'dashboard/case', $pageText);
     }
 
     private function absenteeismReport(): string
     {
-        return $this->prepareViewData('Absenteeism Report', 'admin/absenteeism');
+        return $this->prepareViewData('Reasons of Absenteeism', 'dashboard/absenteeism');
     }
 
     private function suomotoReport(): string
     {
-        return $this->prepareViewData('Suomoto Cases Report', 'admin/suo-moto-case');
+        return $this->prepareViewData('Suo-Moto (High Risk) Cases', 'dashboard/suomoto');
     }
 
     private function followupReport(): string
     {
-        return $this->prepareViewData('Follow Up Report', 'admin/follow-up');
+        return $this->prepareViewData('Call Disposition', 'dashboard/call');
     }
 
     private function attendanceReport(): string
     {
-        return $this->prepareViewData('Attendance Report', 'admin/attendance-report');
+        return $this->prepareViewData('Attendance Performance', 'dashboard/attendance');
     }
 
+    private function homeVisitsReport(): string
+    {
+        return $this->prepareViewData('Home Visits', 'dashboard/homevisits');
+    }
     private function prepareViewData($page_title, $view_name, $details = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."): string
     {
         $data['page_title'] = $page_title;

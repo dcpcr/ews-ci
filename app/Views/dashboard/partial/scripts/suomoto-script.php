@@ -1,4 +1,4 @@
-<?= $this->include('admin/partial/page-graph-table-script/data-table-script'); ?>
+<?= $this->include('dashboard/partial/scripts/data-table-script'); ?>
 <script>
     $(function () {
         //-------------
