@@ -138,8 +138,9 @@ class AdminController extends AuthController
             //TODO: send this back to the clinet.
         }
 
-        $this->response_data = $case_model->join('student', 'student.id = detected_case.student_id')->
-            join('school_mapping', 'student.school_id = school_mapping.school_id')->
+        $this->response_data = $case_model->select(['student.id as student_id','student.name as student_name','student.gender','student.class','student.section','detected_case.case_id','detected_case.status','school.id as school_id','school.name as school_name','detected_case.detection_criteria','detected_case.day'])->
+            join('student', 'student.id = detected_case.student_id')->
+            join('school', 'student.school_id = school.id')->
             whereIn('student.school_id', $this->schools)->
             where("day BETWEEN STR_TO_DATE('" . $this->duration['start'] . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $this->duration['end'] . "', '%m/%d/%Y');")->findAll();

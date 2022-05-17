@@ -1,11 +1,12 @@
 <?php
-$counter=0;
-$case_table='';
-    foreach ($data as $row){
+$counter = 0;
+$case_table = '';
+foreach ($data as $row) {
 
-    //prepare table data
-    $case_table.="<tr><td>".$row['case_id']."</td><td>".$row['school_id']."</td><td>".$row['student_id']."</td><td>".$row['class']."</td><td>".$row['detection_criteria']."</td><td>".$row['status']."</td></tr>";
-    }
+    //prepare table dat
+    $criteria = ($row['detection_criteria'] == '7 Consecutive Days Absent') ? "7 Consecutive Days" : "20/30 days";
+    $case_table .= "<tr><td>" . $row['case_id'] . "</td><td>".$row['day']."</td><td>" . $row['status'] . "</td><td>" . $row['student_id'] . ' - ' . $row['student_name'] . "</td><td>" . $row['school_id'] . ' - ' . $row['school_name'] . "</td><td>" . $row['class']." - ".$row['section']. "</td><td>" . $criteria . "</td></tr>";
+}
 ?>
 <div class="row">
     <div class="col-12">
@@ -19,15 +20,17 @@ $case_table='';
                     <thead>
                     <tr>
                         <th>Case_Id</th>
-                        <th>School_Id</th>
-                        <th>Student_Id</th>
+                        <th>Detection Date</th>
+                        <th>Status</th>
+                        <th>Student</th>
+                        <th>School</th>
                         <th>Class</th>
                         <th>Detection Criteria</th>
-                        <th>Status</th>
+
                     </tr>
                     </thead>
                     <tbody>
-                    <?=$case_table?>
+                    <?= $case_table ?>
                     </tbody>
                 </table>
             </div>
