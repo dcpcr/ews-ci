@@ -17,7 +17,6 @@
                                    data-height="100" data-fgColor="#efb155" data-readonly="true">';
                             ?>
 
-
                             <div class="knob-label">Male---------10(8%)</div>
                             <div class="knob-label">Female-------55(90%)</div>
                             <div class="knob-label">Transgender--5(2%)</div>

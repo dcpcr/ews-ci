@@ -56,10 +56,10 @@ class AdminController extends AuthController
         if ($this->doesUserHavePermission()) {
             //TODO: The filters will change based on the permission that the user has.
 
-            $this->districts = empty($this->request->getVar('district')) ? 'All' : $this->request->getVar('district');
-            $this->zones = empty($this->request->getVar('zone')) ? 'All' : $this->request->getVar('zone');;
-            $this->schools = empty($this->request->getVar('school')) ? 'All' : $this->request->getVar('school');
-            $this->classes = empty($this->request->getVar('class')) ? 'All' : $this->request->getVar('class');
+            $this->districts = empty($this->request->getVar('district')) ? ['All'] : $this->request->getVar('district');
+            $this->zones = empty($this->request->getVar('zone')) ? ['All'] : $this->request->getVar('zone');;
+            $this->schools = empty($this->request->getVar('school')) ? ['All'] : $this->request->getVar('school');
+            $this->classes = empty($this->request->getVar('class')) ? ['All'] : $this->request->getVar('class');
             $this->duration = $this->request->getVar('duration');
 
             switch ($report_type) {
@@ -100,10 +100,10 @@ class AdminController extends AuthController
         $school_model = new SchoolModel();
         $school_mapping_model = new SchoolMappingModel();
 
-        if ($this->schools == "All") {
+        if ($this->schools[0] == "All") {
             $this->schools = array();
-            if ($this->zones == "All") {
-                if ($this->districts == "All") {
+            if ($this->zones[0] == "All") {
+                if ($this->districts[0] == "All") {
                     $schools = $school_model->findAll();
                     foreach ($schools as $school) {
                         $this->schools[] = $school['id'];
@@ -132,16 +132,17 @@ class AdminController extends AuthController
             $this->duration['end'] = trim($this->duration[1]);
         } else {
             $begin = new DateTime();
-            $this->duration['end'] = $begin->format("d-m-Y");
+            $this->duration['end'] = $begin->format("m/d/Y");
             $begin = $begin->sub(new DateInterval('P30D'));
-            $this->duration['start'] = $begin->format("d-m-Y");
+            $this->duration['start'] = $begin->format("m/d/Y");
+            //TODO: send this back to the clinet.
         }
 
         $this->response_data = $case_model->join('student', 'student.id = detected_case.student_id')->
             join('school_mapping', 'student.school_id = school_mapping.school_id')->
             whereIn('student.school_id', $this->schools)->
-            where("day BETWEEN STR_TO_DATE('" . $this->duration['start'] . "' , '%d-%m-%Y') and STR_TO_DATE('" .
-                $this->duration['end'] . "', '%d-%m-%Y');")->findAll();
+            where("day BETWEEN STR_TO_DATE('" . $this->duration['start'] . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $this->duration['end'] . "', '%m/%d/%Y');")->findAll();
 
         return $this->prepareViewData('Case Status', 'dashboard/case', $pageText);
     }
