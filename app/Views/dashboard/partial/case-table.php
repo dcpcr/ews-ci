@@ -1,3 +1,12 @@
+<?php
+$counter=0;
+$case_table='';
+    foreach ($data as $row){
+
+    //prepare table data
+    $case_table.="<tr><td>".$row['case_id']."</td><td>".$row['school_id']."</td><td>".$row['student_id']."</td><td>".$row['class']."</td><td>".$row['detection_criteria']."</td><td>".$row['status']."</td></tr>";
+    }
+?>
 <div class="row">
     <div class="col-12">
         <!-- Custom Tabs -->
@@ -9,97 +18,16 @@
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                     <tr>
-                        <th>S.No</th>
-                        <th>Divion</th>
-                        <th>Category</th>
-                        <th>Count</th>
-                        <th>Percentage</th>
+                        <th>Case_Id</th>
+                        <th>School_Id</th>
+                        <th>Student_Id</th>
+                        <th>Class</th>
+                        <th>Detection Criteria</th>
+                        <th>Status</th>
                     </tr>
                     </thead>
                     <tbody>
-
-                    <tr>
-                        <td>1</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="project_progress">
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="7" aria-valuemin="0"
-                                     aria-valuemax="100" style="width: 7%">
-                                </div>
-                            </div>
-                            <small>
-                                7% Complete
-                            </small>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td></td>
-                        <td></td>
-                        <td>0</td>
-                        <td class="project_progress">
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="7" aria-valuemin="0"
-                                     aria-valuemax="100" style="width: 7%">
-                                </div>
-                            </div>
-                            <small>
-                                7% Complete
-                            </small>
-                        </td>
-
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td></td>
-                        <td></td>
-                        <td>0</td>
-                        <td class="project_progress">
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="7" aria-valuemin="0"
-                                     aria-valuemax="100" style="width: 7%">
-                                </div>
-                            </div>
-                            <small>
-                                7% Complete
-                            </small>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td></td>
-                        <td></td>
-                        <td>17</td>
-                        <td class="project_progress">
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="7" aria-valuemin="0"
-                                     aria-valuemax="100" style="width: 7%">
-                                </div>
-                            </div>
-                            <small>
-                                7% Complete
-                            </small>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td></td>
-                        <td></td>
-                        <td>0</td>
-                        <td class="project_progress">
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-blue" role="progressbar" aria-valuenow="57"
-                                     aria-valuemin="0"
-                                     aria-valuemax="100" style="width: 57%">
-                                </div>
-                            </div>
-                            <small>
-                                57% Complete
-                            </small>
-                        </td>
-                    </tr>
+                    <?=$case_table?>
                     </tbody>
                 </table>
             </div>

@@ -1,8 +1,24 @@
 <?= $this->include('dashboard/partial/scripts/data-table-script'); ?>
 <script>
+
     $(function () {
         /* jQueryKnob */
-
+        $("#case").knob({
+            'min':0,
+            'max':<?=count($data)?>
+        });
+        $("#bts").knob({
+            'min':0,
+            'max':100
+        });
+        $("#pending").knob({
+            'min':0,
+            'max':100
+        });
+        $("#suomoto").knob({
+            'min':0,
+            'max':100
+        });
         $('.knob').knob({
             /*change : function (value) {
              //console.log("change : " + value);
