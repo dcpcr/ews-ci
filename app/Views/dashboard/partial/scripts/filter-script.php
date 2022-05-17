@@ -17,8 +17,8 @@
                     ],
                     'Last 1 year': [moment().subtract(366, 'days'), moment().subtract(1, 'days')]
                 },
-                startDate: moment().subtract(29, 'days'),
-                endDate: moment()
+                //startDate: moment().subtract(30, 'days'),
+                //endDate: moment()
             },
             function (start, end) {
                 $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format(

@@ -3,10 +3,13 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\CaseModel;
 use App\Models\DistrictModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\ZoneModel;
+use DateTime;
+use DateInterval;
 
 class AdminController extends AuthController
 {
@@ -22,6 +25,19 @@ class AdminController extends AuthController
     protected static array $valid_permissions_for_dashboard = ['viewAllReports', 'viewReportsDistricts', 'viewReportsZone', 'viewReportsSchool'];
 
     protected array $filters;
+
+    protected $districts;
+
+    protected $zones;
+
+    protected $schools;
+
+    protected $classes;
+
+    protected $duration;
+
+    protected $response_data;
+
 
     private function doesUserHavePermission(): bool
     {
@@ -39,6 +55,12 @@ class AdminController extends AuthController
     {
         if ($this->doesUserHavePermission()) {
             //TODO: The filters will change based on the permission that the user has.
+
+            $this->districts = empty($this->request->getVar('district')) ? 'All' : $this->request->getVar('district');
+            $this->zones = empty($this->request->getVar('zone')) ? 'All' : $this->request->getVar('zone');;
+            $this->schools = empty($this->request->getVar('school')) ? 'All' : $this->request->getVar('school');
+            $this->classes = empty($this->request->getVar('class')) ? 'All' : $this->request->getVar('class');
+            $this->duration = $this->request->getVar('duration');
 
             switch ($report_type) {
                 case 'case':
@@ -72,6 +94,55 @@ class AdminController extends AuthController
         This report shows the status of all the cases detected including total number of detected cases as per the absenteeism 
         criteria, the number of students at high risk, for which the commission has raised suo moto complaints and the cases 
         where the students have gone back to school";
+
+        $case_model = new CaseModel();
+
+        $school_model = new SchoolModel();
+        $school_mapping_model = new SchoolMappingModel();
+
+        if ($this->schools == "All") {
+            $this->schools = array();
+            if ($this->zones == "All") {
+                if ($this->districts == "All") {
+                    $schools = $school_model->findAll();
+                    foreach ($schools as $school) {
+                        $this->schools[] = $school['id'];
+                    }
+                } else {
+                    foreach ($this->districts as $district) {
+                        $school_mappings = $school_mapping_model->where('district_id', $district)->findAll();
+                        foreach ($school_mappings as $school_mapping) {
+                            $this->schools[] = $school_mapping['school_id'];
+                        }
+                    }
+                }
+            } else {
+                foreach ($this->zones as $zone) {
+                    $school_mappings = $school_mapping_model->where('zone_id', $zone)->findAll();
+                    foreach ($school_mappings as $school_mapping) {
+                        $this->schools[] = $school_mapping['school_id'];
+                    }
+                }
+            }
+        }
+
+        if (!empty($this->duration)) {
+            $this->duration = explode(' - ', $this->duration);
+            $this->duration['start'] = trim($this->duration[0]);
+            $this->duration['end'] = trim($this->duration[1]);
+        } else {
+            $begin = new DateTime();
+            $this->duration['end'] = $begin->format("d-m-Y");
+            $begin = $begin->sub(new DateInterval('P30D'));
+            $this->duration['start'] = $begin->format("d-m-Y");
+        }
+
+        $this->response_data = $case_model->join('student', 'student.id = detected_case.student_id')->
+            join('school_mapping', 'student.school_id = school_mapping.school_id')->
+            whereIn('student.school_id', $this->schools)->
+            where("day BETWEEN STR_TO_DATE('" . $this->duration['start'] . "' , '%d-%m-%Y') and STR_TO_DATE('" .
+                $this->duration['end'] . "', '%d-%m-%Y');")->findAll();
+
         return $this->prepareViewData('Case Status', 'dashboard/case', $pageText);
     }
 
@@ -178,8 +249,15 @@ class AdminController extends AuthController
                 ];
             }
             $data['user_schools'] = $user_schools;
-
         }
+
+        $data['selected_districts'] = $this->request->getVar('district');
+        $data['selected_zones'] = $this->request->getVar('zone');
+        $data['selected_schools'] = $this->request->getVar('school');
+        $data['selected_classes'] = $this->request->getVar('class');
+        $data['selected_duration'] = $this->request->getVar('duration');
+
+        $data['data'] = $this->response_data;
 
         return view($view_name, $data);
     }

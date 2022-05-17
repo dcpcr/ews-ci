@@ -10,7 +10,7 @@ class DetectedCase extends Migration
     {
         //DETECTED CASE INFORMATION TABLE
         $this->forge->addField([
-            'case_id' => [
+            'id' => [
                 'type' => 'BIGINT',
                 'unsigned' => true,
                 'NOT NULL' => true,
@@ -41,8 +41,7 @@ class DetectedCase extends Migration
 
         $this->forge->addField(['`day` date default (curdate()) NOT NULL']);
 
-
-        $this->forge->addPrimaryKey('case_id');
+        $this->forge->addPrimaryKey('id');
         $this->forge->createTable('detected_case');
     }
 
