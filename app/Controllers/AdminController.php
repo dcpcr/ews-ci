@@ -25,20 +25,15 @@ class AdminController extends AuthController
         ];*/
 
     protected static array $valid_permissions_for_dashboard = ['viewAllReports', 'viewReportsDistricts', 'viewReportsZone', 'viewReportsSchool'];
-
     protected array $filters;
-
     protected $districts;
-
     protected $zones;
-
     protected $schools;
-
     protected $classes;
-
     protected $duration;
-
     protected $response_data;
+    protected $response_total_student;
+    protected $response_attendance;
 
 
     private function doesUserHavePermission(): bool
@@ -261,8 +256,11 @@ class AdminController extends AuthController
         $data['selected_duration'] = $this->request->getVar('duration');
 
         $data['data'] = $this->response_data;
-        $data['total_student']=$this->response_total_student;
-        $data['total_attendance']=$this->response_attendance;
+        if($this->response_total_student){
+            $data['total_student']=$this->response_total_student;
+            $data['total_attendance']=$this->response_attendance;
+        }
+
 
 
         return view($view_name, $data);
