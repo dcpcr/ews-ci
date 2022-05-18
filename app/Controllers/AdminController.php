@@ -3,10 +3,12 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\Attendance;
 use App\Models\CaseModel;
 use App\Models\DistrictModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
+use App\Models\Student;
 use App\Models\ZoneModel;
 use DateTime;
 use DateInterval;
@@ -126,17 +128,8 @@ class AdminController extends AuthController
             }
         }
 
-        if (!empty($this->duration)) {
-            $this->duration = explode(' - ', $this->duration);
-            $this->duration['start'] = trim($this->duration[0]);
-            $this->duration['end'] = trim($this->duration[1]);
-        } else {
-            $begin = new DateTime();
-            $this->duration['end'] = $begin->format("m/d/Y");
-            $begin = $begin->sub(new DateInterval('P30D'));
-            $this->duration['start'] = $begin->format("m/d/Y");
-            //TODO: send this back to the clinet.
-        }
+        $this->duration();
+
 
         $this->response_data = $case_model->select(['student.id as student_id','student.name as student_name','student.gender','student.class','student.section','detected_case.case_id','detected_case.status','school.id as school_id','school.name as school_name','detected_case.detection_criteria','detected_case.day'])->
             join('student', 'student.id = detected_case.student_id')->
@@ -165,7 +158,15 @@ class AdminController extends AuthController
 
     private function attendanceReport(): string
     {
+        $this->duration();
+        $total_student= new Student();
+        $this->response_total_student=$total_student->getSchoolTotalStudent();
+
+        $attendance = new Attendance();
+        $this->response_attendance=$attendance->getSchoolAttendance($this->duration['start'],$this->duration['end']);
+
         return $this->prepareViewData('Attendance Performance', 'dashboard/attendance');
+
     }
 
     private function homeVisitsReport(): string
@@ -260,8 +261,26 @@ class AdminController extends AuthController
         $data['selected_duration'] = $this->request->getVar('duration');
 
         $data['data'] = $this->response_data;
+        $data['total_student']=$this->response_total_student;
+        $data['total_attendance']=$this->response_attendance;
+
 
         return view($view_name, $data);
+    }
+
+    private function duration(): void
+    {
+        if (!empty($this->duration)) {
+            $this->duration = explode(' - ', $this->duration);
+            $this->duration['start'] = trim($this->duration[0]);
+            $this->duration['end'] = trim($this->duration[1]);
+        } else {
+            $begin = new DateTime();
+            $this->duration['end'] = $begin->format("m/d/Y");
+            $begin = $begin->sub(new DateInterval('P30D'));
+            $this->duration['start'] = $begin->format("m/d/Y");
+            //TODO: send this back to the clinet.
+        }
     }
 
 

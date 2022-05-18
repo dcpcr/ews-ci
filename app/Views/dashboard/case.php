@@ -9,3 +9,4 @@ $this->endSection();
 $this->section("page-specific-script-section");
 echo $this->include('dashboard/partial/scripts/case-script');
 $this->endSection();
+
