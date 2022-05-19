@@ -1,12 +1,12 @@
 <?php
 $case_table = '';
-foreach ($case as $row) {
-
+foreach ($response as $row) {
     //prepare table dat
     $criteria = ($row['detection_criteria'] == '7 Consecutive Days Absent') ? "7 Consecutive Days" : "20/30 days";
     $case_table .= "<tr><td>" . $row['case_id'] . "</td><td>".$row['day']."</td><td>" . $row['status'] . "</td><td>" . $row['student_id'] . ' - ' . $row['student_name'] . "</td><td>" . $row['school_id'] . ' - ' . $row['school_name'] . "</td><td>" . $row['class']." - ".$row['section']. "</td><td>" . $criteria . "</td></tr>";
 }
 ?>
+
 <div class="row">
     <div class="col-12">
         <!-- Custom Tabs -->

@@ -1,9 +1,12 @@
 <?php
 $counter = 0;
 $att_table = '';
-foreach ($total_student as $row) {
+$schoolWiseStudentCount = $response['schoolWiseStudentCount'];
+$markedAttendanceCount = $response['markedAttendanceCount'];
 
-    foreach ($total_attendance as $att) {
+foreach ($schoolWiseStudentCount as $row) {
+
+    foreach ($markedAttendanceCount as $att) {
         //prepare table data
         if ($row['school_id'] == $att['school_id']) {
             $att_table .= "<tr><td>" . ++$counter . "</td><td>" . $row['school_id'] . ' - ' . $att['school_name'] . "</td><td>" . $row['count_total'] . "</td><td>" . $att['count_att'] . "</td>";

@@ -1,7 +1,7 @@
 <?php
 $male_count=$female_count=$transgender_count=0;
-if(count($case)>0){
-    foreach ($case as $row){
+if(count($response)>0){
+    foreach ($response as $row){
 
         if($row['gender']=='Male'){
             $male_count++;
@@ -12,7 +12,6 @@ if(count($case)>0){
         if($row['gender']=="Transgender"){
             $transgender_count++;
         }
-
     }
 }
 
@@ -30,19 +29,19 @@ if(count($case)>0){
                         <div class="col-6 col-md-3 text-center">
                             <div class="knob-label"><strong>Total No. of Detected Cases</strong></div>
 
-                            <input disabled type="text" class="knob" id="case" value="<?=count($case)?>" data-skin="tron"
+                            <input disabled type="text" class="knob" id="case" value="<?=count($response)?>" data-skin="tron"
                                    data-thickness="0.2" data-width="100"
                                    data-height="100" data-fgColor="#efb155" data-readonly="true">'
 
 
-                            <div class="knob-label">Male-----------<?=$male_count?> (<?= (count($case)>0)? "".floor($male_count/count($case)*100)."":"0";?>%)</div>
-                            <div class="knob-label">Female--------<?=$female_count?>(<?= (count($case)>0)? "".floor($female_count/count($case)*100)."":"0";?>%)</div>
-                            <div class="knob-label">Transgender------<?=$transgender_count?> (<?= (count($case)>0)? "".floor($transgender_count/count($case)*100)."":"0";?>%)</div>
+                            <div class="knob-label">Male-----------<?=$male_count?> (<?= (count($response)>0)? "".floor($male_count/count($response)*100)."":"0";?>%)</div>
+                            <div class="knob-label">Female--------<?=$female_count?>(<?= (count($response)>0)? "".floor($female_count/count($response)*100)."":"0";?>%)</div>
+                            <div class="knob-label">Transgender------<?=$transgender_count?> (<?= (count($response)>0)? "".floor($transgender_count/count($response)*100)."":"0";?>%)</div>
 
                         </div>
                         <div class="col-6 col-md-3 text-center">
-                            <div class="knob-label"><strong>Suo Moto Cases</strong></div>
-                            <input disabled id="suomoto" type="text" class="knob" value="0" data-skin="tron"
+                            <div class="knob-label"><strong>High Risk Cases</strong></div>
+                            <input disabled id="highrisk" type="text" class="knob" value="0" data-skin="tron"
                                    data-thickness="0.2" data-width="100"
                                    data-height="100" data-fgColor="#cd4949" data-readonly="true">
 

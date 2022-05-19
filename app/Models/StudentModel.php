@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Student extends Model
+class StudentModel extends Model
 {
     protected $DBGroup          = 'default';
     protected $table            = 'student';
@@ -43,7 +43,7 @@ class Student extends Model
 
 
 
-    public function getSchoolTotalStudent()
+    public function getSchoolWiseStudentCount(): array
     {
 
         $builder=$this->select(['school_id','count(distinct id) as count_total'])->groupBy('school_id');

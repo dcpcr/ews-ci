@@ -5,7 +5,7 @@
                 <i class='fas fa-filter mr-2' style='float: left; color: #DC3545'></i>
                 <h3 class='card-title' style='color: #898989'>Filters</h3>
             </div>
-            <form action="" method="POST">
+            <form action="" method="POST" id="filter-form">
                 <div class='card-body'>
                     <div class='row'>
                         <div class='col-md-2'>
@@ -16,7 +16,7 @@
                                         data-placeholder='Select District'
                                         style='width: 100%;'
                                     <?php if (!$filter_permissions['viewAllReports']) {
-                                        //echo "disabled";
+                                        echo "disabled";
                                     } ?>
                                 >
                                     <?php
@@ -60,7 +60,7 @@
                                         data-placeholder='Select Zone'
                                         style='width: 100%;'
                                     <?php if (!$filter_permissions['viewAllReports'] && !$filter_permissions['viewReportsDistricts']) {
-                                        //echo "disabled";
+                                        echo "disabled";
                                     } ?>
                                 >
                                     <?php if ($filter_permissions['viewAllReports']) {
@@ -135,7 +135,7 @@
                                         data-placeholder='Select School'
                                         style='width: 100%;'
                                     <?php if (!$filter_permissions['viewAllReports'] && !$filter_permissions['viewReportsDistricts'] && !$filter_permissions['viewReportsZone']) {
-                                        //echo "disabled";
+                                        echo "disabled";
                                     } ?>
                                 >
                                     <?php if ($filter_permissions['viewAllReports']) {

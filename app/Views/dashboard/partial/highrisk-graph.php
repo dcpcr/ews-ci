@@ -5,7 +5,7 @@
         <!-- STACKED BAR CHART -->
         <div class="card " >
             <div class="card-header">
-                <h3 class="card-title">Types of Ticket for Suo Moto Cases </h3>
+                <h3 class="card-title">Types of Ticket for High Risk Cases </h3>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">

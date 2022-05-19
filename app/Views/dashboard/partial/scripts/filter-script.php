@@ -25,10 +25,39 @@
                     'MMMM D, YYYY'))
             }
         )
+
+        // returns distinct properties from an array of objects
+        function get_distinct(array, property) {
+            var arr = [];
+            $.each(array, function (index, value) {
+                if ($.inArray(value[property], arr) == -1) {
+                    arr.push(value[property]);
+                }
+            });
+            return arr;
+        }
+
+        $('#filter-form').submit(function(e) {
+            $(':disabled').each(function(e) {
+                $(this).removeAttr('disabled');
+            })
+        });
+
+        var schools =<?php echo json_encode($school_mappings);?>;
+        var districts = <?php echo json_encode($districts);?>;
+        var zones =<?php echo json_encode($zones);?>;
+
     })
 
     document.addEventListener('DOMContentLoaded', function () {
 
-    })
+    });
+
+    /*
+        $("#filter-form").submit (function (event) {
+            alert("Call ho raha hoon");
+            event.preventDefault();
+        });
+    */
 
 </script>

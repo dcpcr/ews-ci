@@ -5,7 +5,7 @@
         /* jQueryKnob */
         $("#case").knob({
             'min':0,
-            'max':<?=count($case)?>
+            'max':<?=count($response)?>
         });
         $("#bts").knob({
             'min':0,
@@ -15,7 +15,7 @@
             'min':0,
             'max':100
         });
-        $("#suomoto").knob({
+        $("#highrisk").knob({
             'min':0,
             'max':100
         });

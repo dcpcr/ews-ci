@@ -3,7 +3,7 @@ $this->extend("dashboard/layout/dashboard-layout");
 $this->section("graph-section");
 $this->endSection();
 $this->section("table-section-1");
-echo $this->include('dashboard/partial/attendance-mark-table');
+echo $this->include('dashboard/partial/attendance-marked-table');
 $this->endSection();
 $this->section("table-section");
 echo $this->include('dashboard/partial/attendance-notmarked-table');

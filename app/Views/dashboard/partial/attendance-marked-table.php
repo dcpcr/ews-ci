@@ -1,24 +1,14 @@
 <?php
 $counter = 0;
 $att_table = '';
-foreach($total_student as $aV){
-    $aTmp1[] = $aV['school_id'];
-}
+$schoolWiseStudentCount = $response['schoolWiseStudentCount'];
+$markedAttendanceCount = $response['markedAttendanceCount'];
 
-foreach($total_attendance as $aV){
-    $aTmp2[] = $aV['school_id'];
-}
-
-//$new_array = array_diff($aTmp1,$aTmp2);
-//$result = array_diff($total_student, $total_attendance);
-//var_dump($new_array);
-
-foreach ($total_student as $row) {
-
-    foreach ($total_attendance as $att) {
+foreach ($schoolWiseStudentCount as $school) {
+    foreach ($markedAttendanceCount as $schoolAttendance) {
         //prepare table data
-        if ($row['school_id'] == $att['school_id']) {
-            $att_table .= "<tr><td>" . ++$counter . "</td><td>" . $row['school_id'] . ' - ' . $att['school_name'] . "</td><td>" . $row['count_total'] . "</td><td>" . $att['count_att'] . "</td>";
+        if ($school['school_id'] == $schoolAttendance['school_id']) {
+            $att_table .= "<tr><td>" . ++$counter . "</td><td>" . $school['school_id'] . ' - ' . $schoolAttendance['school_name'] . "</td><td>" . $school['count_total'] . "</td><td>" . $schoolAttendance['count_att'] . "</td>";
 
         }
 

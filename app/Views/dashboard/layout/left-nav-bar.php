@@ -19,9 +19,9 @@
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/suomoto/'); ?>" class="nav-link ">
+                <a href="<?php echo site_url('dashboard/highrisk/'); ?>" class="nav-link ">
                     <p>
-                        Suo-Moto (High Risk) Cases
+                        High Risk Cases
                     </p>
                 </a>
             </li>
