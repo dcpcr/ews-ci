@@ -5,7 +5,7 @@
         /* jQueryKnob */
         $("#case").knob({
             'min':0,
-            'max':<?=count($data)?>
+            'max':<?=count($case)?>
         });
         $("#bts").knob({
             'min':0,

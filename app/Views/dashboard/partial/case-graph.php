@@ -1,7 +1,7 @@
 <?php
 $male_count=$female_count=$transgender_count=0;
-if(count($data)>0){
-    foreach ($data as $row){
+if(count($case)>0){
+    foreach ($case as $row){
 
         if($row['gender']=='Male'){
             $male_count++;
@@ -30,14 +30,14 @@ if(count($data)>0){
                         <div class="col-6 col-md-3 text-center">
                             <div class="knob-label"><strong>Total No. of Detected Cases</strong></div>
 
-                            <input disabled type="text" class="knob" id="case" value="<?=count($data)?>" data-skin="tron"
+                            <input disabled type="text" class="knob" id="case" value="<?=count($case)?>" data-skin="tron"
                                    data-thickness="0.2" data-width="100"
                                    data-height="100" data-fgColor="#efb155" data-readonly="true">'
 
 
-                            <div class="knob-label">Male-----------<?=$male_count?> (<?= (count($data)>0)? "".floor($male_count/count($data)*100)."":"0";?>%)</div>
-                            <div class="knob-label">Female--------<?=$female_count?>(<?= (count($data)>0)? "".floor($female_count/count($data)*100)."":"0";?>%)</div>
-                            <div class="knob-label">Transgender------<?=$transgender_count?> (<?= (count($data)>0)? "".floor($transgender_count/count($data)*100)."":"0";?>%)</div>
+                            <div class="knob-label">Male-----------<?=$male_count?> (<?= (count($case)>0)? "".floor($male_count/count($case)*100)."":"0";?>%)</div>
+                            <div class="knob-label">Female--------<?=$female_count?>(<?= (count($case)>0)? "".floor($female_count/count($case)*100)."":"0";?>%)</div>
+                            <div class="knob-label">Transgender------<?=$transgender_count?> (<?= (count($case)>0)? "".floor($transgender_count/count($case)*100)."":"0";?>%)</div>
 
                         </div>
                         <div class="col-6 col-md-3 text-center">

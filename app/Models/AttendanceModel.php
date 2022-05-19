@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Attendance extends Model
+class AttendanceModel extends Model
 {
     protected $DBGroup          = 'default';
     protected $table            = 'attendance';
@@ -40,13 +40,14 @@ class Attendance extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getSchoolAttendance($start_date,$end_date)
+    public function getSchoolAttendance($start_date,$end_date,$school_id)
     {
         $new_start = date("d/m/Y", strtotime($start_date));
         $new_end = date("d/m/Y", strtotime($end_date));
         $builder=$this->select(['count(*) as count_att','school_id','school.name as school_name'])->
         join('student', 'student.id = attendance.student_id')->
         join('school', 'school.id = student.school_id')->
+        whereIn('student.school_id',$school_id)->
         where("date BETWEEN '$new_start' and  '$new_end' and attendance_status!='' ")->groupBy('school_id');
         $query = $builder->get();
         return $query->getResultArray();

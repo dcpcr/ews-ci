@@ -63,7 +63,8 @@
             <div class="container-fluid">
                 <?= $this->include('dashboard/layout/filters'); ?>
                 <?= $this->renderSection("graph-section") ?>
-                <?= $this->renderSection("table-section") ?>
+                <?= $this->renderSection("table-section-1") ?>
+                <?= $this->renderSection("table-section-2") ?>
             </div>
         </div>
         <!-- Right Control Sidebar -->

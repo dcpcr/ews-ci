@@ -3,7 +3,7 @@ $this->extend("dashboard/layout/dashboard-layout");
 $this->section("graph-section");
 echo $this->include('dashboard/partial/case-graph');
 $this->endSection();
-$this->section("table-section");
+$this->section("table-section-1");
 echo $this->include('dashboard/partial/case-table');
 $this->endSection();
 $this->section("page-specific-script-section");

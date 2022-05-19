@@ -1,7 +1,6 @@
 <?php
-$counter = 0;
 $case_table = '';
-foreach ($data as $row) {
+foreach ($case as $row) {
 
     //prepare table dat
     $criteria = ($row['detection_criteria'] == '7 Consecutive Days Absent') ? "7 Consecutive Days" : "20/30 days";

@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\Attendance;
+use App\Models\AttendanceModel;
 use App\Models\CaseModel;
 use App\Models\DistrictModel;
 use App\Models\SchoolMappingModel;
@@ -91,39 +91,8 @@ class AdminController extends AuthController
         This report shows the status of all the cases detected including total number of detected cases as per the absenteeism 
         criteria, the number of students at high risk, for which the commission has raised suo moto complaints and the cases 
         where the students have gone back to school";
-
         $case_model = new CaseModel();
-
-        $school_model = new SchoolModel();
-        $school_mapping_model = new SchoolMappingModel();
-
-        if ($this->schools[0] == "All") {
-            $this->schools = array();
-            if ($this->zones[0] == "All") {
-                if ($this->districts[0] == "All") {
-                    $schools = $school_model->findAll();
-                    foreach ($schools as $school) {
-                        $this->schools[] = $school['id'];
-                    }
-                } else {
-                    foreach ($this->districts as $district) {
-                        $school_mappings = $school_mapping_model->where('district_id', $district)->findAll();
-                        foreach ($school_mappings as $school_mapping) {
-                            $this->schools[] = $school_mapping['school_id'];
-                        }
-                    }
-                }
-            } else {
-                foreach ($this->zones as $zone) {
-                    $school_mappings = $school_mapping_model->where('zone_id', $zone)->findAll();
-                    foreach ($school_mappings as $school_mapping) {
-                        $this->schools[] = $school_mapping['school_id'];
-                    }
-                }
-            }
-        }
-
-        $this->duration();
+        $this->filterData();
 
 
         $this->response_data = $case_model->select(['student.id as student_id','student.name as student_name','student.gender','student.class','student.section','detected_case.case_id','detected_case.status','school.id as school_id','school.name as school_name','detected_case.detection_criteria','detected_case.day'])->
@@ -153,12 +122,12 @@ class AdminController extends AuthController
 
     private function attendanceReport(): string
     {
-        $this->duration();
+        $this->filterData();
         $total_student= new Student();
         $this->response_total_student=$total_student->getSchoolTotalStudent();
 
-        $attendance = new Attendance();
-        $this->response_attendance=$attendance->getSchoolAttendance($this->duration['start'],$this->duration['end']);
+        $attendance = new AttendanceModel();
+        $this->response_attendance=$attendance->getSchoolAttendance($this->duration['start'],$this->duration['end'],$this->schools);
 
         return $this->prepareViewData('Attendance Performance', 'dashboard/attendance');
 
@@ -229,7 +198,6 @@ class AdminController extends AuthController
             $district = $district_model->where('id', user()->username)->first();
             $data['user_district_name'] = $district['name'];
             $data['user_district_id'] = $district['id'];
-
             $school_mappings = $school_mapping_model->where('district_id', $district['id'])->findAll();
             $user_zones = array();
             foreach ($school_mappings as $school_mapping) {
@@ -237,7 +205,6 @@ class AdminController extends AuthController
                 $user_zones[$zone['id']] = $zone['name'];
             }
             $data['user_zones'] = $user_zones;
-
             $user_schools = array();
             foreach ($school_mappings as $school_mapping) {
                 $school = $school_model->where('id', $school_mapping['school_id'])->first();
@@ -254,14 +221,9 @@ class AdminController extends AuthController
         $data['selected_schools'] = $this->request->getVar('school');
         $data['selected_classes'] = $this->request->getVar('class');
         $data['selected_duration'] = $this->request->getVar('duration');
-
-        $data['data'] = $this->response_data;
-        if($this->response_total_student){
-            $data['total_student']=$this->response_total_student;
-            $data['total_attendance']=$this->response_attendance;
-        }
-
-
+        $data['case'] = $this->response_data;
+        $data['total_student'] = $this->response_total_student;
+        $data['total_attendance'] = $this->response_attendance;
 
         return view($view_name, $data);
     }
@@ -279,6 +241,41 @@ class AdminController extends AuthController
             $this->duration['start'] = $begin->format("m/d/Y");
             //TODO: send this back to the clinet.
         }
+    }
+
+    private function filterData(): void
+    {
+
+
+        $school_model = new SchoolModel();
+        $school_mapping_model = new SchoolMappingModel();
+
+        if ($this->schools[0] == "All") {
+            $this->schools = array();
+            if ($this->zones[0] == "All") {
+                if ($this->districts[0] == "All") {
+                    $schools = $school_model->findAll();
+                    foreach ($schools as $school) {
+                        $this->schools[] = $school['id'];
+                    }
+                } else {
+                    foreach ($this->districts as $district) {
+                        $school_mappings = $school_mapping_model->where('district_id', $district)->findAll();
+                        foreach ($school_mappings as $school_mapping) {
+                            $this->schools[] = $school_mapping['school_id'];
+                        }
+                    }
+                }
+            } else {
+                foreach ($this->zones as $zone) {
+                    $school_mappings = $school_mapping_model->where('zone_id', $zone)->findAll();
+                    foreach ($school_mappings as $school_mapping) {
+                        $this->schools[] = $school_mapping['school_id'];
+                    }
+                }
+            }
+        }
+        $this->duration();
     }
 
 
