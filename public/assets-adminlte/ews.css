@@ -9,3 +9,8 @@
 .content-wrapper {
     background-color: #ffffff !important;
 }
+
+.nav-sidebar>.nav-item>.nav-link.active {
+    background-color: #D74343 !important;
+    border: #D74343 !important;
+}

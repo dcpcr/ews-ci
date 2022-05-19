@@ -107,8 +107,11 @@
     <!-- Sparkline -->
     <script src="/assets-adminlte/plugins/sparklines/sparkline.js"></script>
 
+    <script src="/assets-adminlte/ews.js"></script>
+
     <!-- add dependent script here-->
     <?= $this->renderSection("add-js-file-section") ?>
+
     <!-- Page specific script -->
     <?= $this->include('dashboard/partial/scripts/filter-script'); ?>
     <?= $this->renderSection("page-specific-script-section") ?>
