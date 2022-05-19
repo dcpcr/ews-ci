@@ -51,7 +51,9 @@
         <?= $this->include('dashboard/layout/top-nav-bar'); ?>
     </nav>
     <aside class="main-sidebar sidebar-light-primary elevation-1">
-        <?= $this->include('dashboard/layout/brand-logo-name'); ?>
+        <div class="navbar-light">
+            <?= $this->include('dashboard/layout/brand-logo-name'); ?>
+        </div>
         <?= $this->include('dashboard/layout/left-nav-bar'); ?>
     </aside>
 

@@ -83,14 +83,14 @@ class AdminController extends AuthController
 
     private function caseReport(): string
     {
-        $pageText = "Long absenteeism, i.e., uninformed absence of 7 consecutive days or for more than 66.67% days in a 
-        month (i.e., 20/30 days), is the earliest indicator that the student is facing a risk that the family is not able to overcome. 
-        This report shows the status of all the cases detected including total number of detected cases as per the absenteeism 
-        criteria, the number of students at high risk, for which the commission has raised suo moto complaints and the cases 
-        where the students have gone back to school";
-        $case_model = new CaseModel();
+        $pageText = "The Early Warning System detects long absenteeism, i.e., uninformed absence of 7 consecutive days 
+            or for more than 66.67% days in a month (i.e., 20/30 days), across students in Delhi Government schools. 
+            It is based  on the premise that low attendance is the earliest indicator of a student at risk, which their 
+            family is not able to overcome. The following report shows the status of such EWS cases detected in the selected 
+            duration and other key parameters such as the number of students at high risk, the number of students who have 
+            returned back to school, and students who couldn’t be contacted due to various reasons.";
         $this->initializeFilterData();
-
+        $case_model = new CaseModel();
         $this->response_data = $case_model->select(['student.id as student_id', 'student.name as student_name', 'student.gender', 'student.class', 'student.section', 'detected_case.id as case_id', 'detected_case.status', 'school.id as school_id', 'school.name as school_name', 'detected_case.detection_criteria', 'detected_case.day'])->
         join('student', 'student.id = detected_case.student_id')->
         join('school', 'student.school_id = school.id')->
@@ -103,21 +103,36 @@ class AdminController extends AuthController
 
     private function absenteeismReport(): string
     {
-        return $this->prepareViewData('Reasons of Absenteeism', 'dashboard/absenteeism');
+        $pageText = "The Early Warning System has laid out a process for ascertaining the various reasons that lead to 
+            long absenteeism among students. The following report shows the distribution of such reasons, including the 
+            frequency of cases detected across genders.";
+        $this->initializeFilterData();
+        return $this->prepareViewData('Reasons of Absenteeism', 'dashboard/absenteeism', $pageText);
     }
 
     private function highRiskReport(): string
     {
-        return $this->prepareViewData('High Risk Cases', 'dashboard/highrisk');
+        $pageText = "Once the reason for absenteeism is ascertained for a student under the Early Warning System, 
+            they may need assistance from the Government to address the problem that is preventing them from going to 
+            school. In such cases, DCPCR takes Suo Moto cognizance of such ‘high-risk’ cases. The following report shows 
+            the distribution of Suo Moto cases across the Commission’s divisions.";
+        $this->initializeFilterData();
+
+        return $this->prepareViewData('High Risk Cases', 'dashboard/highrisk', $pageText);
     }
 
     private function followupReport(): string
     {
+        $this->initializeFilterData();
+
         return $this->prepareViewData('Call Disposition', 'dashboard/call');
     }
 
     private function attendanceReport(): string
     {
+        $pageText = "The Early Warning System functions on the key input of school attendance. Hence, it is critical 
+            that the schools must mark attendance daily, and across classes. The following reports show the performance 
+            of schools vis-a-vis marking students’ attendance.";
         $this->initializeFilterData();
         $studentModel = new StudentModel();
         $schoolWiseStudentCount = $studentModel->getSchoolWiseStudentCount();
@@ -126,14 +141,16 @@ class AdminController extends AuthController
         $markedAttendanceCount = $attendanceModel->getMarkedSchoolAttendance($this->duration['start'], $this->duration['end'], $this->schools);
 
         $this->response_data = ['schoolWiseStudentCount' => $schoolWiseStudentCount, 'markedAttendanceCount' => $markedAttendanceCount];
-
-        return $this->prepareViewData('Attendance Report', 'dashboard/attendance');
-
+        return $this->prepareViewData('Attendance Report', 'dashboard/attendance', $pageText);
     }
 
     private function homeVisitsReport(): string
     {
-        return $this->prepareViewData('Home Visits', 'dashboard/homevisits');
+        $pageText = "If a student under the Early Warning System is untraceable, such cases are referred to respective 
+            School Mitra (parent volunteers) to gather details about the student concerned and assist them in seeking 
+            support. The following reports provide the status of these home visits.";
+        $this->initializeFilterData();
+        return $this->prepareViewData('Home Visits', 'dashboard/homevisits', $pageText);
     }
 
     private function prepareViewData($page_title, $view_name, $details = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."): string

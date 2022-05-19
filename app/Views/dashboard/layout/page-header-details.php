@@ -7,7 +7,7 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="row ml-1">
-                    <p>
+                    <p style="line-height: 1.75;">
                         <?= $details ?>
                     </p>
                 </div>

@@ -14,3 +14,16 @@
     background-color: #D74343 !important;
     border: #D74343 !important;
 }
+
+.filter-header {
+    border-bottom: 0px !important;
+    margin-bottom: -15px !important
+}
+
+.filter-body {
+    padding-left: 25px !important;
+}
+
+.p-3 {
+    font-size: 1.70rem !important;
+}

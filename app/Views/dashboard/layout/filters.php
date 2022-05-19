@@ -1,11 +1,11 @@
 <div class='row'>
     <div class='col-lg-12'>
         <div class='card card-default'>
-            <div class='card-header'>
+            <div class='card-header filter-header'>
                 <i class='fas fa-filter mr-2' style='float: left; color: #DC3545'></i>
                 <h3 class='card-title' style='color: #898989'>Filters</h3>
             </div>
-            <form action="" method="POST" id="filter-form">
+            <form action="" method="POST" id="filter-form" class="filter-body">
                 <div class='card-body'>
                     <div class='row'>
                         <div class='col-md-2'>
