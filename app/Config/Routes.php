@@ -35,9 +35,6 @@ $routes->get('operator', 'OperatorController::index', ['as' => 'operator']);
 $routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
 $routes->cli("cron/first", "CronController::someFunc");
 
-$routes->post('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
-
-
 // Myth:Auth routes file.
 $routes->group('', ['namespace' => 'Myth\Auth\Controllers'], static function ($routes) {
     // Login/out

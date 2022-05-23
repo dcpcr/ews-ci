@@ -7,7 +7,7 @@
     <title></title>
 
     <!-- Add our own ews styesheet -->
-    <link rel="stylesheet" href="/assets-adminlte/ews.css">
+    <link rel="stylesheet" href="/assets-adminlte/ews-css/common.css">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -109,15 +109,15 @@
     <!-- Sparkline -->
     <script src="/assets-adminlte/plugins/sparklines/sparkline.js"></script>
 
-    <script src="/assets-adminlte/ews.js"></script>
-
-    <!-- add dependent script here-->
-    <?= $this->renderSection("add-js-file-section") ?>
+    <script src="/assets-adminlte/ews-js/common.js"></script>
 
     <!-- Page specific script -->
     <?= $this->include('dashboard/partial/scripts/filter-script'); ?>
     <?= $this->renderSection("page-specific-script-section") ?>
     <!-- add Page specific script -->
+
+    <!-- add dependent script here-->
+    <?= $this->renderSection("add-js-file-section") ?>
 </body>
 
 </html>
