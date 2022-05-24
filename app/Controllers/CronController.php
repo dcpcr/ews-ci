@@ -2,15 +2,61 @@
 
 namespace App\Controllers;
 
+use App\Models\AttendanceModel;
+use App\Models\CaseModel;
+use App\Models\SchoolModel;
+use App\Models\StudentModel;
+
 class CronController extends BaseController
 {
-    public function someFunc()
+
+    protected function import_school_data()
+    {
+        $file_name = "schools.csv";
+        $school_model = new SchoolModel();
+        $school_model->updateSchools($file_name);
+    }
+
+    protected function import_student_data()
+    {
+        $file_name = "student.csv";
+        $student_model = new StudentModel();
+        $student_model->updateStudents($file_name);
+    }
+
+    protected function import_attendance_data($from_date, $to_date)
+    {
+        $file_name = "attendance.csv";
+        $attendance_model = new AttendanceModel();
+        $attendance_model->downloadAttendance($file_name, $from_date, $to_date);
+    }
+
+    protected function update_detected_cases($from_date, $to_date)
+    {
+        $case_model = new CaseModel();
+        $case_model->detectedCases($from_date, $to_date);
+    }
+
+    public function runDailyCron()
     {
         if ($this->request->isCLI()) {
-            echo "this is okay";
-            //TODO: Run your cron scripts
+
+            echo "this is okay"; //TODO: Do proper logging
+            $start_time = microtime(true); //Find a better mechanism of logging time of exeution
+            $this->import_school_data();
+            $this->import_student_data();
+            $begin = new \DateTime("2022-05-20");
+            $end = new \DateTime("2022-05-22");
+            $this->import_attendance_data($begin, $end);
+            $this->update_detected_cases($begin, $end);
+            // Calculate script execution time
+            $end_time = microtime(true);
+            $execution_time = ($end_time - $start_time);
+            log_message('info', "Execution time of script = " . $execution_time . " sec");
         } else {
-            echo "You dont have access";
+            log_message('info', "Access to this functionally without CLI is not allowed");
         }
     }
+
+
 }
