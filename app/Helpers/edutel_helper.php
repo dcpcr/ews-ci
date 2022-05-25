@@ -20,7 +20,7 @@ function fetch_schools_from_edutel(): array
 
 function fetch_student_data_for_school_from_edutel($school_id)
 {
-    $url = "https://www.edudel.nic.in/mis/EduWebService_Other/Smc_MITTRA.asmx/Student_Schoolwise_details_Json?schid=$school_id&password=Ukr@7520";
+    $url = "https://www.edudel.nic.in/mis/EduWebService_Other/Smc_MITTRA.asmx/Student_Schoolwise_details_Json?schid=$school_id";
     return fetch_api_response($url);
 }
 
@@ -39,8 +39,7 @@ function fetch_api_response($url)
         $decoded_json = json_decode($response, true);
         return $decoded_json['Cargo'];
     } else {
-        log_message("error", "The API call failed " . $url);
+        log_message("error", "The API call failed, url - " . $url);
         return null;
     }
-
 }

@@ -9,25 +9,28 @@ class CaseModel extends Model
     protected $DBGroup = 'default';
     protected $table = 'detected_case';
     protected $primaryKey = 'id';
-    protected $useAutoIncrement = false;
+    protected $useAutoIncrement = true;
     protected $returnType = 'array';
+
+    protected $allowedFields = ['student_id', 'detection_criteria', 'day'];
+
 
     public function detectedCases($from_date, $to_date)
     {
-
-        $open_cases = $this->distinct()->select('student_id')->where("status != 'Back To School'")->findAll();
+        $attendance_model = new AttendanceModel();
         for ($date = $from_date; $date <= $to_date; $date->modify('+1 day')) {
-            //$cases_sql = "INSERT INTO detected_case(student_id, detection_criteria, day) VALUES";
             $count = 0;
-            //$sql = "SELECT distinct(student_id) FROM attendance where date = '" . $date->format("d/m/Y") . "'";
-            $attendance_model = new AttendanceModel();
+            $data_array = array();
             $marked_students = $attendance_model->distinct()->select('student_id')
                 ->where("date ='" . $date->format("d/m/Y") . "'")->findAll();
             if (empty($marked_students)) {
                 log_message("info", "No students' attendance is marked for the day " . $date->format("d/m/Y"));
             }
-            foreach ($marked_students as $student_id) {
-                if (in_array($student_id, $open_cases)) {
+            $open_cases = $this->distinct()->select('student_id')->where("status != 'Back To School'")
+                ->orderBy("student_id")->findAll();
+            foreach ($marked_students as $student) {
+                $student_id = $student['student_id'];
+                if (!in_array("$student_id", array_column($open_cases, 'student_id'), true)) {
                     $student_attendance = $attendance_model->getStudentAttendanceForLast30DaysFrom($student_id, $date);
                     $continuous_absent_count = 0;
                     $absent_count = 0;
@@ -57,29 +60,24 @@ class CaseModel extends Model
                     }
                     if ($detected) {
                         $day = $date->format("Y/m/d");
-                        //$cases_sql .= "($student_id, '$detection_criteria', '$day'),";
                         $data = [
                             'student_id' => $student_id,
-                            'detection_criteria'    => "$detection_criteria",
-                            'day' => "day",
+                            'detection_criteria' => "$detection_criteria",
+                            'day' => "$day",
                         ];
-                        try {
-                            $this->insert($data);
-                        } catch (\ReflectionException $e) {
-                            //TODO: Log message
-                        }
+                        $data_array [] = $data;
                         $count++;
                     }
                 }
             }
-/*            if ($count > 0) {
-                $cases_sql[strlen($cases_sql) - 1] = ';';
-                if (!(mysqli_query($conn, $cases_sql))) {
-                    echo "\nQuery execute failed: error - " . mysqli_error($conn);
+            if (count($data_array) > 0) {
+                try {
+                    $this->insertBatch($data_array);
+                } catch (\ReflectionException $e) {
+                    //TODO: Log message
                 }
-            }*/
-            echo $date->format('d/m/Y') . "- $count\r\n";
-            //echo $cases_sql."\r\n";
+            }
+            log_message('info', $count . " new cases detected for date - " . $date->format("d/m/Y"));
         }
     }
 }

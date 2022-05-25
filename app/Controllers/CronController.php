@@ -37,16 +37,16 @@ class CronController extends BaseController
         $case_model->detectedCases($from_date, $to_date);
     }
 
-    public function runDailyCron()
+    public function runDaily()
     {
+        ini_set("memory_limit","512M");
         if ($this->request->isCLI()) {
-
-            echo "this is okay"; //TODO: Do proper logging
-            $start_time = microtime(true); //Find a better mechanism of logging time of exeution
+            log_message('info', "Cron request");
+            $start_time = microtime(true); //Find a better mechanism of logging time of execution
             $this->import_school_data();
             $this->import_student_data();
-            $begin = new \DateTime("2022-05-20");
-            $end = new \DateTime("2022-05-22");
+            $begin = new \DateTime();
+            $end = clone $begin;
             $this->import_attendance_data($begin, $end);
             $this->update_detected_cases($begin, $end);
             // Calculate script execution time
@@ -57,6 +57,4 @@ class CronController extends BaseController
             log_message('info', "Access to this functionally without CLI is not allowed");
         }
     }
-
-
 }
