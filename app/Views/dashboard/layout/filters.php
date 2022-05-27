@@ -267,7 +267,7 @@
                             <div class='form-group'>
                                 <label>&nbsp;</label>
                                 <div class='input-group'>
-                                    <input type='submit' class='btn btn-primary btn-block' value="View">
+                                    <input type='submit' class='btn btn-primary btn-block' value="Go">
                                 </div>
                             </div>
                         </div>

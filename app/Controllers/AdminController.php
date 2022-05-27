@@ -50,11 +50,11 @@ class AdminController extends AuthController
         if ($this->doesUserHavePermission()) {
             //TODO: The filters will change based on the permission that the user has.
 
-            $this->districts = empty($this->request->getVar('district')) ? ['All'] : $this->request->getVar('district');
-            $this->zones = empty($this->request->getVar('zone')) ? ['All'] : $this->request->getVar('zone');;
-            $this->schools = empty($this->request->getVar('school')) ? ['All'] : $this->request->getVar('school');
-            $this->classes = empty($this->request->getVar('class')) ? ['All'] : $this->request->getVar('class');
-            $this->duration = $this->request->getVar('duration');
+            $this->districts = empty($this->request->getGet('district')) ? ['All'] : $this->request->getGet('district');
+            $this->zones = empty($this->request->getGet('zone')) ? ['All'] : $this->request->getGet('zone');;
+            $this->schools = empty($this->request->getGet('school')) ? ['All'] : $this->request->getGet('school');
+            $this->classes = empty($this->request->getGet('class')) ? ['All'] : $this->request->getGet('class');
+            $this->duration = $this->request->getGet('duration');
 
             switch ($report_type) {
                 case 'case':
@@ -287,11 +287,11 @@ class AdminController extends AuthController
             $data['user_schools'] = $user_schools;
         }
 
-        $data['selected_districts'] = $this->request->getVar('district');
-        $data['selected_zones'] = $this->request->getVar('zone');
-        $data['selected_schools'] = $this->request->getVar('school');
-        $data['selected_classes'] = $this->request->getVar('class');
-        $data['selected_duration'] = $this->request->getVar('duration');
+        $data['selected_districts'] = $this->request->getGet('district');
+        $data['selected_zones'] = $this->request->getGet('zone');
+        $data['selected_schools'] = $this->request->getGet('school');
+        $data['selected_classes'] = $this->request->getGet('class');
+        $data['selected_duration'] = $this->request->getGet('duration');
         return $data;
     }
 
