@@ -11,12 +11,7 @@ class StudentModel extends Model
     protected $DBGroup = 'default';
     protected $table = 'student';
     protected $primaryKey = 'id';
-    protected $useAutoIncrement = true;
-    protected $insertID = 0;
     protected $returnType = 'array';
-    protected $useSoftDeletes = false;
-    protected $protectFields = true;
-    protected $allowedFields = [];
 
     // Validation
     protected $validationRules = [];
@@ -65,5 +60,4 @@ class StudentModel extends Model
             log_message("notice", "No students imported today!");
         }
     }
-
 }

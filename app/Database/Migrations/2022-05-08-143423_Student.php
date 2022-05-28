@@ -54,7 +54,9 @@ class Student extends Migration
                 'constraint' => '255',
             ],
             'mobile' => [
-                'type' => 'INT',
+                'type' => 'CHAR',
+                'constraint' => '20',
+                'NOT NULL' => true,
             ],
             'school_id' => [
                 'type' => 'INT',
