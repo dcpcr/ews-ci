@@ -21,33 +21,28 @@
                                 >
                                     <?php
                                     if ($filter_permissions['viewAllReports']) {
-                                        foreach ($districts as $district) {
-                                            $isSelected = false;
-                                            $addAll = false;
-                                            if (!empty($selected_districts)) {
-                                                foreach ($selected_districts as $selected_district) {
-                                                    if ($selected_district == $district['id']) {
-                                                        $isSelected = true;
-                                                    } else {
-                                                        if ($selected_district == "All") {
-                                                            $addAll = true;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            if ($isSelected) {
-                                                echo '<option selected value = ' . $district['id'] . '>' . $district['name'] . "</option>";
-                                            } else {
-                                                echo '<option value = ' . $district['id'] . '>' . $district['name'] . "</option>";
-                                            }
-                                        }
-                                        if (empty($selected_districts) || $addAll) {
+                                        if ($selected_districts == ['All']) {
                                             echo "<option selected>All</option>";
                                         } else {
                                             echo "<option>All</option>";
                                         }
+                                        foreach ($user_district as $id => $name) {
+                                            $isSelected = false;
+                                            if (!empty($selected_districts)) {
+                                                foreach ($selected_districts as $selected_district) {
+                                                    if ($selected_district == $id) {
+                                                        $isSelected = true;
+                                                    }
+                                                }
+                                            }
+                                            if ($isSelected) {
+                                                echo '<option selected value = ' . $id . '>' . $name . "</option>";
+                                            } else {
+                                                echo '<option value = ' . $id . '>' . $name . "</option>";
+                                            }
+                                        }
                                     } else if (!empty($user_type)) {
-                                        echo '<option value = "' . $user_district_id . '"selected>' . $user_district_name . "</option>";
+                                        echo '<option value = "' . array_keys($user_district)[0] . '"selected>' . $user_district[array_keys($user_district)[0]] . "</option>";
                                     }
                                     ?>
                                 </select>
@@ -64,64 +59,54 @@
                                     } ?>
                                 >
                                     <?php if ($filter_permissions['viewAllReports']) {
-                                        foreach ($zones as $zone) {
-                                            $isSelected = false;
-                                            $addAll = false;
-                                            if (!empty($selected_zones)) {
-                                                foreach ($selected_zones as $selected_zone) {
-                                                    if ($selected_zone == $zone['id']) {
-                                                        $isSelected = true;
-                                                    } else {
-                                                        if ($selected_zone == "All") {
-                                                            $addAll = true;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            if ($isSelected) {
-                                                echo '<option selected value = ' . $zone['id'] . '>' . $zone['name'] . "</option>";
-                                            } else {
-                                                echo '<option value = ' . $zone['id'] . '>' . $zone['name'] . "</option>";
-                                            }
-                                        }
-                                        if (empty($selected_zones) || $addAll ) {
+                                        if ($selected_zones == ['All']) {
                                             echo "<option selected>All</option>";
                                         } else {
                                             echo "<option>All</option>";
                                         }
+                                        foreach ($user_zone as $id => $name) {
+                                            $isSelected = false;
+                                            if (!empty($selected_zones)) {
+                                                foreach ($selected_zones as $selected_zone) {
+                                                    if ($selected_zone == $id) {
+                                                        $isSelected = true;
+                                                    }
+                                                }
+                                            }
+                                            if ($isSelected) {
+                                                echo '<option selected value = ' . $id . '>' . $name . "</option>";
+                                            } else {
+                                                echo '<option value = ' . $id . '>' . $name . "</option>";
+                                            }
+                                        }
                                     } else if ($filter_permissions['viewReportsDistricts']) {
                                         if (!empty($user_type) && $user_type == "district") {
-                                            foreach ($user_zones as $zone_id => $zone_name) {
+                                            if ($selected_zones == ['All']) {
+                                                echo "<option selected>All</option>";
+                                            } else {
+                                                echo "<option>All</option>";
+                                            }
+                                            foreach ($user_zone as $id => $name) {
                                                 $isSelected = false;
-                                                $addAll = false;
                                                 if (!empty($selected_zones)) {
                                                     foreach ($selected_zones as $selected_zone) {
-                                                        if ($selected_zone == $zone_id) {
+                                                        if ($selected_zone == $id) {
                                                             $isSelected = true;
-                                                        } else {
-                                                            if ($selected_zone == "All") {
-                                                                $addAll = true;
-                                                            }
                                                         }
                                                     }
                                                 }
                                                 if ($isSelected) {
-                                                    echo '<option selected value = ' . $zone_id . '>' . $zone_name . "</option>";
+                                                    echo '<option selected value = ' . $id . '>' . $name . "</option>";
                                                 } else {
-                                                    echo '<option value = ' . $zone_id . '>' . $zone_name . "</option>";
+                                                    echo '<option value = ' . $id . '>' . $name . "</option>";
                                                 }
                                             }
                                         } else {
                                             //Something majorly wrong has happened!
                                         }
-                                        if (empty($selected_zones) || $addAll) {
-                                            echo "<option selected>All</option>";
-                                        } else {
-                                            echo "<option>All</option>";
-                                        }
                                     } else {
                                         if (!empty($user_type)) {
-                                            echo '<option value = "' . $user_zone_id . '"selected>' . $user_zone_name . "</option>";
+                                            echo '<option value = "' . array_keys($user_zone)[0] . '"selected>' . $user_zone[array_keys($user_zone)[0]] . "</option>";
                                         }
                                     }
                                     ?>
@@ -139,65 +124,54 @@
                                     } ?>
                                 >
                                     <?php if ($filter_permissions['viewAllReports']) {
-                                        foreach ($schools as $school) {
-                                            $isSelected = false;
-                                            $addAll = false;
-                                            if (!empty($selected_schools)) {
-                                                foreach ($selected_schools as $selected_school) {
-                                                    if ($selected_school == $school['id']) {
-                                                        $isSelected = true;
-                                                    } else {
-                                                        if ($selected_school == "All") {
-                                                            $addAll = true;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            if ($isSelected) {
-                                                echo '<option selected value = ' . $school['id'] . '>' . $school['id'] . " - " . $school['name'] . "</option>";
-                                            } else {
-                                                echo '<option value = ' . $school['id'] . '>' . $school['id'] . " - " . $school['name'] . "</option>";
-                                            }
-                                        }
-                                        if (empty($selected_schools) || $addAll) {
+                                        if ($selected_schools == ['All']) {
                                             echo "<option selected>All</option>";
                                         } else {
                                             echo "<option>All</option>";
                                         }
-                                    } else if ($filter_permissions['viewReportsDistricts'] || $filter_permissions['viewReportsZone']) {
-                                        if (!empty($user_type)) {
-                                            foreach ($user_schools as $school) {
-                                                $isSelected = false;
-                                                $addAll = false;
-                                                if (!empty($selected_schools)) {
-                                                    foreach ($selected_schools as $selected_school) {
-                                                        if ($selected_school == $school['id']) {
-                                                            $isSelected = true;
-                                                        } else {
-                                                            if ($selected_school == "All") {
-                                                                $addAll = true;
-                                                            }
-                                                        }
+                                        foreach ($user_school as $id => $name) {
+                                            $isSelected = false;
+                                            if (!empty($selected_schools)) {
+                                                foreach ($selected_schools as $selected_school) {
+                                                    if ($selected_school == $id) {
+                                                        $isSelected = true;
                                                     }
                                                 }
-                                                if ($isSelected) {
-                                                    echo '<option selected value = ' . $school['id'] . '>' . $school['id'] . " - " . $school['name'] . "</option>";
-                                                } else {
-                                                    echo '<option value = ' . $school['id'] . '>' . $school['id'] . " - " . $school['name'] . "</option>";
-                                                }
                                             }
-                                            if (empty($selected_schools) || $addAll) {
+                                            if ($isSelected) {
+                                                echo '<option selected value = ' . $id . '>' . $id . " - " . $name . "</option>";
+                                            } else {
+                                                echo '<option value = ' . $id . '>' . $id . " - " . $name . "</option>";
+                                            }
+                                        }
+                                    } else if ($filter_permissions['viewReportsDistricts'] || $filter_permissions['viewReportsZone']) {
+                                        if (!empty($user_type)) {
+                                            if ($selected_schools == ['All']) {
                                                 echo "<option selected>All</option>";
                                             } else {
                                                 echo "<option>All</option>";
                                             }
-
+                                            foreach ($user_school as $id => $name) {
+                                                $isSelected = false;
+                                                if (!empty($selected_schools)) {
+                                                    foreach ($selected_schools as $selected_school) {
+                                                        if ($selected_school == $id) {
+                                                            $isSelected = true;
+                                                        }
+                                                    }
+                                                }
+                                                if ($isSelected) {
+                                                    echo '<option selected value = ' . $id . '>' . $id . " - " . $name . "</option>";
+                                                } else {
+                                                    echo '<option value = ' . $id . '>' . $id . " - " . $name . "</option>";
+                                                }
+                                            }
                                         } else {
                                             //Something majorly wrong has happened!
                                         }
                                     } else {
                                         if (!empty($user_type)) {
-                                            echo '<option value = "' . $user_school_id . '"selected>' . $user_school_id . " - " . $user_school_name . "</option>";
+                                            echo '<option value = "' . array_keys($user_school)[0] . '"selected>' . array_keys($user_school)[0] . " - " . $user_school[array_keys($user_school)[0]] . "</option>";
                                         }
                                     }
                                     ?>
@@ -213,17 +187,17 @@
 
                                     <?php
                                     $classes = ['XII', 'XI', 'X', 'IX', 'VIII', 'VII', 'VI', 'V', 'IV', 'III', 'II', 'I'];
+                                    if ($selected_classes == ['All']) {
+                                        echo "<option selected>All</option>";
+                                    } else {
+                                        echo "<option>All</option>";
+                                    }
                                     foreach ($classes as $class) {
                                         $isSelected = false;
-                                        $addAll = false;
                                         if (!empty($selected_classes)) {
                                             foreach ($selected_classes as $selected_class) {
                                                 if ($selected_class == $class) {
                                                     $isSelected = true;
-                                                } else {
-                                                    if ($selected_class == "All") {
-                                                        $addAll = true;
-                                                    }
                                                 }
                                             }
                                         }
@@ -232,11 +206,6 @@
                                         } else {
                                             echo "<option>$class</option>";
                                         }
-                                    }
-                                    if (empty($selected_classes) || $addAll) {
-                                        echo "<option selected>All</option>";
-                                    } else {
-                                        echo "<option>All</option>";
                                     }
                                     ?>
                                 </select>
