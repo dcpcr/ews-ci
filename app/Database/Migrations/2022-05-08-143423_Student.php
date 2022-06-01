@@ -64,6 +64,11 @@ class Student extends Migration
                 'NOT NULL' => true,
             ],
         ]);
+        $this->forge->addField(
+            [
+                'created_at timestamp not null default current_timestamp',
+                'updated_at timestamp not null default current_timestamp on update current_timestamp',
+            ]);
 
         $this->forge->addPrimaryKey('id');
         $this->forge->addKey('class');

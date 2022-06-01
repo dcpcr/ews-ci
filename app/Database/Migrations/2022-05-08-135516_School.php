@@ -89,6 +89,12 @@ class School extends Migration
             ],
 
         ]);
+        $this->forge->addField(
+            [
+                'created_at timestamp not null default current_timestamp',
+                'updated_at timestamp not null default current_timestamp on update current_timestamp',
+            ]);
+
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey('serial');
         $this->forge->createTable('school');
