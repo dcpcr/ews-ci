@@ -35,12 +35,12 @@ class AttendanceModel extends Model
         return $query->getResultArray();
     }
 
-    public function downloadAttendance(string $file_name, \DateTime $from_date, \DateTime $to_date)
+    public function downloadAttendance(string $file_name, \DateTimeInterface $from_date, \DateTimeInterface $to_date)
     {
         $school_ids = get_school_ids();
         $count = 0;
         $exists = false;
-        for ($date = $from_date; $date <= $to_date; $date->modify('+1 day')) {
+        for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
             $total_attendance_count = 0;
             foreach ($school_ids as $school_id) {
                 $id = $school_id['id'];

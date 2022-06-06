@@ -15,10 +15,10 @@ class CaseModel extends Model
     protected $allowedFields = ['student_id', 'detection_criteria', 'day'];
 
 
-    public function detectedCases($from_date, $to_date)
+    public function detectCases(\DateTimeInterface $from_date, \DateTimeInterface $to_date)
     {
         $attendance_model = new AttendanceModel();
-        for ($date = $from_date; $date <= $to_date; $date->modify('+1 day')) {
+        for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
             $count = 0;
             $data_array = array();
             $marked_students = $attendance_model->distinct()->select('student_id')

@@ -46,6 +46,7 @@ class StudentModel extends Model
             for ($i = 0; $i < count($data_array); $i++) {
                 $data_array[$i]['school_id'] = $id;
                 $data_array[$i]['CorAddress'] = trim(preg_replace('/\s+/', ' ', $data_array[$i]['CorAddress']));;
+                $data_array[$i]['CorAddress'] = rtrim($data_array[$i]['CorAddress'], "\ ");
                 $student_count++;
             }
             if ($count != 0)
