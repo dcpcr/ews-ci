@@ -17,6 +17,14 @@ $(function () {
         'min': 0,
         'max': 100
     });
+    $("#untraceable").knob({
+        'min': 0,
+        'max': 100
+    });
+    $("#fresh").knob({
+        'min': 0,
+        'max': 100
+    });
     $('.knob').knob({
         /*change : function (value) {
          //console.log("change : " + value);

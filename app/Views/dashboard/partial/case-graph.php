@@ -27,8 +27,6 @@ if(count($response)>0){
                 <div class="card-body">
                     <div class="row">
                         <div class="col-6 col-md-2 text-center">
-                        </div>
-                        <div class="col-6 col-md-2 text-center">
                             <div class="knob-label pb-3" ><strong>Detected Cases</strong>
                                 <span class="fa fa-info-circle" data-toggle="tooltip" data-placement="right"
                                       title="Students who have been absent for 7 consecutive days OR more than 66.67% days in a month (i.e. 20/30 days)"></span>
@@ -61,9 +59,9 @@ if(count($response)>0){
                             <div class="knob-label">Female-------0(0%)</div>
                             <div class="knob-label">Transgender--0(0%)</div>
                         </div>
-                        <div class="col-6 col-md-2 text-center">
+                        <div class="col-6 col-md-2 text-center ">
                             <div class="knob-label pb-3"><strong>Untraceable</strong></div>
-                            <input disabled type="text" id="Untraceable" class="knob" value="0" data-skin="tron"
+                            <input disabled type="text" id="untraceable" class="knob" value="0" data-skin="tron"
                                    data-thickness="0.2" data-width="100"
                                    data-height="100" data-fgColor="#6d726e" data-readonly="true">
 
@@ -71,7 +69,7 @@ if(count($response)>0){
                             <div class="knob-label">Female--------0(0%)</div>
                             <div class="knob-label">Transgender---0(0%)</div>
                         </div>
-                        <div class="col-6 col-md-2 text-center">
+                        <div class="col-6 col-md-2 text-center ">
                             <div class="knob-label pb-3"><strong>Yet to be contacted</strong></div>
                             <input disabled type="text" id="fresh" class="knob" value="0" data-skin="tron"
                                    data-thickness="0.2" data-width="100"
