@@ -3,22 +3,7 @@ $case_table = '';
 foreach ($response as $row) {
     //prepare table dat
     $criteria = ($row['detection_criteria'] == '7 Consecutive Days Absent') ? "7 Consecutive Days" : "20/30 days";
-    $case_table .= "<tr><td>" . $row['case_id'] .
-        "</td><td>" . $row['day'] .
-        "</td><td>" . $row['status'] .
-        "</td><td>" . $row['student_id'] . ' - ' . $row['student_name'] .
-        "</td><td>" . $row['school_id'] . ' - ' . $row['school_name'] .
-        "</td><td>" . $row['class'] . " - " . $row['section'] .
-        "</td><td>" . $row['gender'] .
-        "</td><td>" . $row['dob'] .
-        "</td><td>" . $row['father'] .
-        "</td><td>" . $row['mother'] .
-        "</td><td>" . $row['mobile'] .
-        "</td><td>" . $row['address'] .
-        "</td><td>" . $row['district'] .
-        "</td><td>" . $row['zone'] .
-        "</td><td>" . $criteria .
-        "</td></tr>";
+    $case_table .= "<tr><td>" . $row['case_id'] . "</td><td>".$row['day']."</td><td>" . $row['status'] . "</td><td>" . $row['student_id'] . ' - ' . $row['student_name'] . "</td><td>" . $row['school_id'] . ' - ' . $row['school_name'] . "</td><td>" . $row['class']." - ".$row['section']. "</td><td>" . $criteria . "</td></tr>";
 }
 ?>
 
@@ -30,7 +15,7 @@ foreach ($response as $row) {
                 <h4 class="p-3">Case Details</h4>
             </div>
             <div class="card-body">
-                <table id="casetable" class="table table-bordered table-striped">
+                <table id="example1" class="table table-bordered table-striped">
                     <thead>
                     <tr>
                         <th>Case_Id</th>
@@ -39,14 +24,6 @@ foreach ($response as $row) {
                         <th>Student</th>
                         <th>School</th>
                         <th>Class</th>
-                        <th>Gender</th>
-                        <th>DoB</th>
-                        <th>Father</th>
-                        <th>Mother</th>
-                        <th>Contact No.</th>
-                        <th>Address</th>
-                        <th>District</th>
-                        <th>Zone</th>
                         <th>Detection Criteria</th>
 
                     </tr>
