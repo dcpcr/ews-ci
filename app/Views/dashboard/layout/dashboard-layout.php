@@ -50,7 +50,7 @@
     <nav class="main-header navbar navbar-expand  navbar-light">
         <?= $this->include('dashboard/layout/top-nav-bar'); ?>
     </nav>
-    <aside class="main-sidebar sidebar-light-primary elevation-1">
+    <aside class="main-sidebar sidebar-light-primary elevation-0">
         <div class="navbar-light">
             <?= $this->include('dashboard/layout/brand-logo-name'); ?>
         </div>
