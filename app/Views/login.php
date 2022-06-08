@@ -1,21 +1,18 @@
 <?= $this->extend($config->viewLayout) ?>
 <?= $this->section('main') ?>
-
 <div class="container">
-
     <div class="row">
-        <div class="col-sm-4 offset-sm-3 d-flex justify-content-center mt-5">
+        <div class="col-sm-6 offset-sm-3 d-flex justify-content-center mb-0">
             <h2>A DCPCR Initiative</h2>
         </div>
-        <div class="col-sm-4 offset-sm-3 d-flex justify-content-center mb-4">
+        <div class="col-sm-6 offset-sm-3 d-flex justify-content-center mb-0">
             <p>in collaboration with DOE</p>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-4 offset-sm-3">
+        <div class="col-sm-6 offset-sm-3">
             <div>
-                <div class="d-flex justify-content-center mb-1">
-
+                <div class="d-flex justify-content-center mb-0">
                     <div class=" ">
                         <img src="/assets-adminlte/dist/img/dcpcrlogo.png" alt="DCPCR Logo" width="100%"
                              height="100%">
@@ -26,15 +23,11 @@
                 </div>
             </div>
 
-            <div>
-
-                <div class="card-body">
-
+            <div class="row d-flex justify-content-center">
+                <div class="col-6">
                     <?= view('App\Views\_message_block') ?>
-
                     <form action="<?= route_to('login') ?>" method="post">
                         <?= csrf_field() ?>
-
                         <?php if ($config->validFields === ['email']): ?>
                             <div class="form-group">
                                 <label for="login"><?= lang('Auth.email') ?></label>
@@ -79,12 +72,10 @@
                         <br>
                         <div class="d-flex justify-content-center">
                             <button type="submit"
-                                    class="btn btn-primary btn-md"><?= lang('Auth.loginAction') ?></button></div>
-
+                                    class="btn btn-primary btn-md"><?= lang('Auth.loginAction') ?></button>
+                        </div>
                     </form>
-
                     <hr>
-
                     <?php if ($config->allowRegistration) : ?>
                         <p><a href="<?= route_to('register') ?>"><?= lang('Auth.needAnAccount') ?></a></p>
                     <?php endif; ?>
