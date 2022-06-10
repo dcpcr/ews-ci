@@ -1,7 +1,7 @@
 <?php
 $case_table = '';
 foreach ($response as $row) {
-    //prepare table dat
+    //prepare table data
     $criteria = ($row['detection_criteria'] == '7 Consecutive Days Absent') ? "7 Consecutive Days" : "20/30 days";
     $case_table .= "<tr><td>" . $row['case_id'] .
         "</td><td>" . $row['day'] .

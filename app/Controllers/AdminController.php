@@ -10,7 +10,6 @@ use App\Models\SchoolModel;
 use App\Models\StudentModel;
 use App\Models\ZoneModel;
 use DateTime;
-use DateInterval;
 
 class AdminController extends AuthController
 {
@@ -30,7 +29,8 @@ class AdminController extends AuthController
     protected array $schools;
     protected array $classes;
     protected array $duration;
-    protected array $response_data;
+    protected array $view_data;
+    protected string $view_name;
 
     protected SchoolMappingModel $school_mapping_model;
     protected SchoolModel $school_model;
@@ -62,129 +62,106 @@ class AdminController extends AuthController
     public function index($report_type)
     {
         if ($this->doesUserHavePermission()) {
-            //TODO: The filters will change based on the permission that the user has.
-
+            $this->initializeFilterData();
             switch ($report_type) {
                 case 'case':
-                    return $this->caseReport();
+                    $this->prepareCaseData();
+                    break;
                 case 'absenteeism':
-                    return $this->absenteeismReport();
+                    $this->prepareAbsenteeismData();
+                    break;
                 case 'highrisk':
-                    return $this->highRiskReport();
+                    $this->prepareHighRiskData();
+                    break;
                 case 'call':
-                    return $this->followupReport();
+                    $this->prepareFollowupData();
+                    break;
                 case 'attendance':
-                    return $this->attendanceReport();
+                    $this->prepareAttendanceData();
+                    break;
                 case 'homevisits':
-                    return $this->homeVisitsReport();
+                    $this->homeVisitsReport();
+                    break;
             }
+            $this->view_data['user_name'] = user()->username;
+            return view($this->view_name, $this->view_data);
         } else {
             //TODO: Show Forbidden Page
             log_message("notice", "The user - " . user()->username . " - does not have the permission to view this page.");
         }
     }
 
-    private function caseReport(): string
+    private function prepareCaseData(): void
     {
-        $data = $this->initializeFilterData();
-
-        $pageText = "The Early Warning System detects long absenteeism, i.e., uninformed absence of 7 consecutive days 
+        $this->view_data['details'] = "The Early Warning System detects long absenteeism, i.e., uninformed absence of 7 consecutive days 
             or for more than 66.67% days in a month (i.e., 20/30 days), across students in Delhi Government schools. 
             It is based  on the premise that low attendance is the earliest indicator of a student at risk, which their 
             family is not able to overcome. The following report shows the status of such EWS cases detected in the selected 
             duration and other key parameters such as the number of students at high risk, the number of students who have 
             returned back to school, and students who couldn’t be contacted due to various reasons.";
-        $case_model = new CaseModel();
-        $school_ids = array_keys($this->schools);
+        $this->view_data['page_title'] = 'Case Status';
 
-        $this->response_data = $case_model->select([
-            'detected_case.id as case_id',
-            'detected_case.detection_criteria',
-            'detected_case.day',
-            'detected_case.status',
-            'student.id as student_id',
-            'student.name as student_name',
-            'student.gender',
-            'student.class',
-            'student.section',
-            'student.section',
-            'student.dob',
-            'student.mother',
-            'student.father',
-            'student.mobile',
-            'student.address',
-            'school.id as school_id',
-            'school.name as school_name',
-            'school.district',
-            'school.zone'
-        ])
-            ->join('student', 'student.id = detected_case.student_id')
-            ->join('school', 'student.school_id = school.id')
-            ->whereIn('student.school_id', $school_ids)
-            ->whereIn('student.class', $this->classes)
-            ->where("day BETWEEN STR_TO_DATE('" . $this->duration['start'] . "' , '%m/%d/%Y') and STR_TO_DATE('" .
-                $this->duration['end'] . "', '%m/%d/%Y');")->findAll();
-        return $this->prepareViewData('Case Status', 'dashboard/case', $data, $pageText);
+        $school_ids = array_keys($this->schools);
+        $case_model = new CaseModel();
+        $this->view_data['response'] = $case_model
+            ->getDetectedCases($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_name = 'dashboard/case';
     }
 
-    private function absenteeismReport(): string
+    private function prepareAbsenteeismData(): void
     {
-        $data = $this->initializeFilterData();
-        $pageText = "The Early Warning System has laid out a process for ascertaining the various reasons that lead to 
+        $this->view_data['details'] = "The Early Warning System has laid out a process for ascertaining the various reasons that lead to 
             long absenteeism among students. The following report shows the distribution of such reasons, including the 
             frequency of cases detected across genders.";
-        return $this->prepareViewData('Reasons of Absenteeism', 'dashboard/absenteeism', $data, $pageText);
+        $this->view_data['page_title'] = 'Reasons of Absenteeism';
+        $this->view_data['response'] = [];
+        $this->view_name = 'dashboard/absenteeism';
     }
 
-    private function highRiskReport(): string
+    private function prepareHighRiskData(): void
     {
-        $data = $this->initializeFilterData();
-        $pageText = "Once the reason for absenteeism is ascertained for a student under the Early Warning System, 
+        $this->view_data['details'] = "Once the reason for absenteeism is ascertained for a student under the Early Warning System, 
             they may need assistance from the Government to address the problem that is preventing them from going to 
             school. In such cases, DCPCR takes Suo Moto cognizance of such ‘high-risk’ cases. The following report shows 
             the distribution of Suo Moto cases across the Commission’s divisions.";
-        return $this->prepareViewData('High Risk Cases', 'dashboard/highrisk', $data, $pageText);
+        $this->view_data['page_title'] = 'High Risk Cases';
+        $this->view_data['response'] = [];
+        $this->view_name = 'dashboard/highrisk';
     }
 
-    private function followupReport(): string
+    private function prepareFollowupData(): void
     {
-        $data = $this->initializeFilterData();
-        return $this->prepareViewData('Call Disposition', 'dashboard/call', $data);
+        $this->view_data['details'] = "This is Dummy text";
+        $this->view_data['page_title'] = 'Call Disposition';
+        $this->view_data['response'] = [];
+        $this->view_name = 'dashboard/call';
     }
 
-    private function attendanceReport(): string
+    private function prepareAttendanceData(): void
     {
-        $data = $this->initializeFilterData();
-        $pageText = "The Early Warning System functions on the key input of school attendance. Hence, it is critical 
+        $this->view_data['details'] = "The Early Warning System functions on the key input of school attendance. Hence, it is critical 
             that the schools must mark attendance daily, and across classes. The following reports show the performance 
             of schools vis-a-vis marking students’ attendance.";
-        $studentModel = new StudentModel();
-        $schoolWiseStudentCount = $studentModel->getSchoolWiseStudentCount();
+        $this->view_data['page_title'] = 'Attendance Report';
 
-        $attendanceModel = new AttendanceModel();
-        $markedAttendanceCount = $attendanceModel->getMarkedSchoolAttendance($this->duration['start'], $this->duration['end'], $this->schools);
+        $school_ids = array_keys($this->schools);
 
-        $this->response_data = ['schoolWiseStudentCount' => $schoolWiseStudentCount, 'markedAttendanceCount' => $markedAttendanceCount];
-        return $this->prepareViewData('Attendance Report', 'dashboard/attendance', $data, $pageText);
+        $school_wise_student_count = $this->school_model
+            ->getSchoolWiseStudentCount($school_ids, $this->classes);
+        $marked_attendance_count = $this->school_model
+            ->getMarkedSchoolAttendance($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_data['response'] = ['schoolWiseStudentCount' => $school_wise_student_count, 'markedAttendanceCount' => $marked_attendance_count];
+        $this->view_name = 'dashboard/attendance';
     }
 
-    private function homeVisitsReport(): string
+    private function homeVisitsReport(): void
     {
-        $data = $this->initializeFilterData();
-        $pageText = "If a student under the Early Warning System is untraceable, such cases are referred to respective 
+        $this->view_data['details'] = "If a student under the Early Warning System is untraceable, such cases are referred to respective 
             School Mitra (parent volunteers) to gather details about the student concerned and assist them in seeking 
             support. The following reports provide the status of these home visits.";
-        return $this->prepareViewData('Home Visits', 'dashboard/homevisits', $data, $pageText);
-    }
-
-    private function prepareViewData($page_title, $view_name, $data, $details = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."): string
-    {
-        $data['page_title'] = $page_title;
-        $data['details'] = $details;
-        $data['user_name'] = user()->username;
-        $data['response'] = $this->response_data;
-
-        return view($view_name, $data);
+        $this->view_data['page_title'] = 'Home Visits';
+        $this->view_data['response'] = [];
+        $this->view_name = 'dashboard/homevisits';
     }
 
     private function initializeClasses(): array
@@ -237,7 +214,7 @@ class AdminController extends AuthController
         return $this->getSelectedParam($this->schools);
     }
 
-    protected function initializeFilterData(): array
+    protected function initializeFilterData(): void
     {
         $user_jurisdiction_data = $this->getJurisdictionDataForLoggedUser();
 
@@ -252,7 +229,7 @@ class AdminController extends AuthController
         $user_jurisdiction_data['selected_classes'] = empty($class_get) ? ['All'] : $class_get;
         $user_jurisdiction_data['selected_duration'] = $this->getSelectedDuration();
 
-        return $user_jurisdiction_data;
+        $this->view_data = $user_jurisdiction_data;
 
     }
 

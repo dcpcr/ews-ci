@@ -36,5 +36,55 @@ class SchoolModel extends Model
             log_message("notice", "No schools could be scraped today!!");
         }
     }
+    public function getSchoolWiseStudentCount($school_ids, $classes): array
+    {
+        $sub_query = $this->select([
+            'count(distinct(student.id)) as count_total',
+            'school.id as school_id'
+        ])
+            ->join('student', 'school.id = student.school_id')
+            ->whereIn('school.id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->groupBy('school.id')
+            ->getCompiledSelect();
+
+        $builder = $this->select([
+            'count_total',
+            'school.id as school_id',
+        ])
+            ->join('(' . $sub_query . ') `s1`', 'school.id = s1.school_id', 'left')
+            ->whereIn('school.id', $school_ids)
+            ->orderBy('school.id');
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+
+    public function getMarkedSchoolAttendance($school_ids, $classes, $start, $end): array
+    {
+        $sub_query = $this->select([
+            'count(distinct(student.id)) as count_att',
+            'school.id as school_id'
+        ])
+            ->join('student', 'school.id = student.school_id' )
+            ->join('attendance', 'student.id = attendance.student_id')
+            ->whereIn('school.id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("STR_TO_DATE(attendance.date,'%d/%m/%Y') BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->groupBy('school.id')
+            ->getCompiledSelect();
+
+        $builder = $this->select([
+            'count_att',
+            'school.id as school_id',
+            'school.name as school_name'
+        ])
+            ->join('(' . $sub_query . ') `s1`', 'school.id = s1.school_id', 'left')
+            ->whereIn('school.id', $school_ids)
+            ->orderBy('school.id');
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+
 
 }

@@ -27,13 +27,6 @@ class StudentModel extends Model
         helper('edutel');
     }
 
-    public function getSchoolWiseStudentCount(): array
-    {
-        $builder = $this->select(['school_id', 'count(distinct id) as count_total'])->groupBy('school_id');
-        $query = $builder->get();
-        return $query->getResultArray();
-    }
-
     public function updateStudents(string $file_name)
     {
         $school_ids = get_school_ids();

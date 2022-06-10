@@ -1,5 +1,6 @@
 $(function () {
     $("#casetable").DataTable({
+        "pageLength": 50,
         "columnDefs": [
             { "visible": false, "targets": 7 },
             { "visible": false, "targets": 8 },
@@ -12,16 +13,16 @@ $(function () {
         "responsive": true,
         "lengthChange": false,
         "autoWidth": false,
+        "ordering": true,
         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
     }).buttons().container().appendTo('#casetable_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
+
+    $("#attendancetable").DataTable({
+        "pageLength": 100,
         "responsive": true,
-    });
+        "lengthChange": false,
+        "autoWidth": false,
+        "ordering": true,
+    }).buttons().container().appendTo('#casetable_wrapper .col-md-6:eq(0)');
 });
 

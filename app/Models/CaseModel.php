@@ -80,4 +80,37 @@ class CaseModel extends Model
             log_message('info', $count . " new cases detected for date - " . $date->format("d/m/Y"));
         }
     }
+
+    public function getDetectedCases(array $school_ids, $classes, $start, $end): array
+    {
+        return $this->select([
+            'detected_case.id as case_id',
+            'detected_case.detection_criteria',
+            'detected_case.day',
+            'detected_case.status',
+            'student.id as student_id',
+            'student.name as student_name',
+            'student.gender',
+            'student.class',
+            'student.section',
+            'student.section',
+            'student.dob',
+            'student.mother',
+            'student.father',
+            'student.mobile',
+            'student.address',
+            'school.id as school_id',
+            'school.name as school_name',
+            'school.district',
+            'school.zone'
+        ])
+            ->join('student', 'student.id = detected_case.student_id')
+            ->join('school', 'student.school_id = school.id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->findAll();
+    }
+
 }

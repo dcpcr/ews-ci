@@ -4,16 +4,19 @@ $att_table = '';
 $schoolWiseStudentCount = $response['schoolWiseStudentCount'];
 $markedAttendanceCount = $response['markedAttendanceCount'];
 
+$school_data = [];
+foreach ($markedAttendanceCount as $school) {
+    $school_data [$school['school_id']] ['school_name'] = $school['school_name'];
+    $school_data [$school['school_id']] ['attendance_count'] = is_null($school['count_att']) ? 0 : $school['count_att'];
+}
 foreach ($schoolWiseStudentCount as $school) {
-    foreach ($markedAttendanceCount as $schoolAttendance) {
-        //prepare table data
-        if ($school['school_id'] == $schoolAttendance['school_id']) {
-            $att_table .= "<tr><td>" . ++$counter . "</td><td>" . $school['school_id'] . ' - ' . $schoolAttendance['school_name'] . "</td><td>" . $school['count_total'] . "</td><td>" . $schoolAttendance['count_att'] . "</td>";
+    $school_data [$school['school_id']] ['student_count'] = is_null($school['count_total']) ? 0 : $school['count_total'];
+}
 
-        }
-
-
-    }
+foreach ($school_data as $school_id => $school) {
+    //prepare table data
+    $att_table .= "<tr><td>" . ++$counter . "</td><td>" . $school_id . ' - ' . $school['school_name'] . "</td><td>"
+        . $school['student_count'] . "</td><td>" . $school['attendance_count'] . "</td>";
 }
 ?>
 <div class="row">
@@ -24,12 +27,12 @@ foreach ($schoolWiseStudentCount as $school) {
                 <h4 class="p-3">Marked Attendance School List</h4>
             </div>
             <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
+                <table id="attendancetable" class="table table-bordered table-striped">
                     <thead>
                     <tr>
                         <th>S.No.</th>
                         <th>School</th>
-                        <th>Total Student</th>
+                        <th>Total Students</th>
                         <th>Attendance Marked</th>
 
                     </tr>
