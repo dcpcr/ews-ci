@@ -1,6 +1,6 @@
 $(function () {
     $("#casetable").DataTable({
-        "pageLength": 50,
+        "pageLength": 40,
         data: casedata,
         columns: [
             {data: 'case_id', title: 'Case_Id'},
@@ -27,7 +27,8 @@ $(function () {
             {"visible": false, "targets": 10},
             {"visible": false, "targets": 11},
             {"visible": false, "targets": 12},
-            {"visible": false, "targets": 13}
+            {"visible": false, "targets": 13},
+            {"visible": false, "targets": 15}
         ],
         "responsive": true,
         "lengthChange": false,
@@ -36,12 +37,26 @@ $(function () {
         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
     }).buttons().container().appendTo('#casetable_wrapper .col-md-6:eq(0)');
 
+});
+
+
+$(function () {
     $("#attendancetable").DataTable({
-        "pageLength": 100,
+        "pageLength": 40,
+        data: attendancedata,
+        columns: [
+            {data: "Serial_no", title: 'School Id'},
+            {data: 'School', title: 'School Name'},
+            {data: 'Total_Students', title: 'Total Students'},
+            {data: 'Attendance_Marked', title: 'Attendance Marked'}
+        ],
         "responsive": true,
         "lengthChange": false,
         "autoWidth": false,
         "ordering": true,
-    }).buttons().container().appendTo('#casetable_wrapper .col-md-6:eq(0)');
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#attendancetable_wrapper .col-md-6:eq(0)');
+
 });
+
 
