@@ -7,6 +7,7 @@
             <div class="card-body">
                 <table id="casetable" class="table table-bordered table-striped">
                     <thead>
+                    <tr></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
