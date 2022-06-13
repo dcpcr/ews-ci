@@ -43,8 +43,8 @@ $(function () {
         "pageLength": 40,
         data: attendancedata,
         columns: [
-            {data: "Serial_no", title: 'School Id'},
-            {data: 'School', title: 'School Name'},
+            {data: "Serial_no", title: 'S.No'},
+            {data: 'School', title: 'School'},
             {data: 'Total_Students', title: 'Total Students'},
             {data: 'Attendance_Marked', title: 'Attendance Marked'}
         ],
