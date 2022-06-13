@@ -28,7 +28,7 @@ $(function () {
             {"visible": false, "targets": 11},
             {"visible": false, "targets": 12},
             {"visible": false, "targets": 13},
-            {"visible": false, "targets": 14}
+            {"visible": false, "targets": 15}
         ],
         "responsive": true,
         "lengthChange": false,
