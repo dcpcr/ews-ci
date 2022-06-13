@@ -38,8 +38,6 @@ $(function () {
     }).buttons().container().appendTo('#casetable_wrapper .col-md-6:eq(0)');
 
 });
-
-
 $(function () {
     $("#attendancetable").DataTable({
         "pageLength": 40,
