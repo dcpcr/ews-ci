@@ -10,5 +10,17 @@
     </li>
 </ul>
 <!-- Left navbar links end -->
+<ul class="navbar-nav ml-auto">
+    <li class="nav-item">
+        <a class="nav-link red" href="<?php echo site_url('logout'); ?>" role="button">
+            <i class="fas fa-sign-out-alt"></i>Logout
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+            <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+    </li>
+</ul>
 
 
