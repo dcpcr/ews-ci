@@ -23,7 +23,7 @@ function fetch_schools_from_edutel(bool $retry = true)
         if ($retry) {
             log_message("notice", "Retrying the School scraping Call - " . $url);
             sleep(1);
-            return fetch_schools_from_edutel($url, false);
+            return fetch_schools_from_edutel(false);
         } else {
             return null;
         }
