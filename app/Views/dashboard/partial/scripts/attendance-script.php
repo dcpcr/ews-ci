@@ -12,6 +12,8 @@ foreach ($markedAttendanceCount as $school) {
 }
 foreach ($schoolWiseStudentCount as $school) {
     $school_data [$school['school_id']] ['student_count'] = is_null($school['count_total']) ? 0 : $school['count_total'];
+    $school_data [$school['school_id']] ['zone_name'] = $school['zone_name'];
+    $school_data [$school['school_id']] ['district_name'] = $school['district_name'];
 }
 $table_data = [];
 $count = 1;
@@ -21,6 +23,8 @@ foreach ($school_data as $school_id => $school) {
         "Serial_no" => $count++,
         "School" => $school_id . " - " . $school['school_name'],
         "Total_Students" => $school['student_count'],
+        "District" => $school['district_name'],
+        "Zone" => $school['zone_name'],
         "Attendance_Marked" => $school['attendance_count']
     ];
 }

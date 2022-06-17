@@ -50,9 +50,12 @@ class SchoolModel extends Model
 
         $builder = $this->select([
             'count_total',
-            'school.id as school_id',
+            'school.id as school_id','district.name as district_name','zone.name as zone_name'
         ])
             ->join('(' . $sub_query . ') `s1`', 'school.id = s1.school_id', 'left')
+            ->join('school_mapping', 'school_mapping.school_id = school.id')
+            ->join('district', 'district.id = school_mapping.district_id')
+            ->join('zone', 'zone.id = school_mapping.zone_id')
             ->whereIn('school.id', $school_ids)
             ->orderBy('school.id');
         $query = $builder->get();

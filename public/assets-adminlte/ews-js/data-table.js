@@ -47,6 +47,8 @@ $(function () {
         columns: [
             {data: "Serial_no", title: 'S.No'},
             {data: 'School', title: 'School'},
+            {data: 'District', title: 'District'},
+            {data: 'Zone', title: 'Zone'},
             {data: 'Total_Students', title: 'Total Students'},
             {data: 'Attendance_Marked', title: 'Attendance Marked'}
         ],
