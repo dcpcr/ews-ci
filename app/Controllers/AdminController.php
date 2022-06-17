@@ -2,12 +2,10 @@
 
 namespace App\Controllers;
 
-use App\Models\AttendanceModel;
 use App\Models\CaseModel;
 use App\Models\DistrictModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
-use App\Models\StudentModel;
 use App\Models\ZoneModel;
 use DateTime;
 

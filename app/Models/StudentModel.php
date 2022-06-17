@@ -36,16 +36,20 @@ class StudentModel extends Model
         foreach ($school_ids as $school_id) {
             $id = $school_id['id'];
             $data_array = fetch_student_data_for_school_from_edutel($id);
-            for ($i = 0; $i < count($data_array); $i++) {
-                $data_array[$i]['school_id'] = $id;
-                $data_array[$i]['CorAddress'] = trim(preg_replace('/\s+/', ' ', $data_array[$i]['CorAddress']));;
-                $data_array[$i]['CorAddress'] = rtrim($data_array[$i]['CorAddress'], "\ ");
-                $student_count++;
+            if ($data_array) {
+                for ($i = 0; $i < count($data_array); $i++) {
+                    $data_array[$i]['school_id'] = $id;
+                    $data_array[$i]['CorAddress'] = trim(preg_replace('/\s+/', ' ', $data_array[$i]['CorAddress']));;
+                    $data_array[$i]['CorAddress'] = rtrim($data_array[$i]['CorAddress'], "\ ");
+                    $student_count++;
+                }
+                if ($count != 0)
+                    $exists = true;
+                dump_array_in_file($data_array, $file_name, $exists);
+                $count++;
+            } else {
+                log_message("notice", "Unable to fetch students for school - " . $id);
             }
-            if ($count != 0)
-                $exists = true;
-            dump_array_in_file($data_array, $file_name, $exists);
-            $count++;
         }
         if ($student_count > 0) {
             import_data_into_db($file_name, $this->table);
