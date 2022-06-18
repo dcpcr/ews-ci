@@ -112,5 +112,42 @@ class CaseModel extends Model
                 $end . "', '%m/%d/%Y')")
             ->findAll();
     }
+    public function getApiCaseData($from_date,$to_date,$offset,$no_of_records_per_page)
+    {
 
+        return $this->select([
+            'detected_case.id as case_id',
+            'detected_case.detection_criteria',
+            'detected_case.day',
+            'detected_case.status',
+            'student.id as student_id',
+            'student.name as student_name',
+            'student.gender',
+            'student.class',
+            'student.section',
+            'student.section',
+            'student.dob',
+            'student.mother',
+            'student.father',
+            'student.mobile',
+            'student.address',
+            'school.id as school_id',
+            'school.name as school_name',
+            'school.district',
+            'school.zone'
+        ])
+            ->join('student', 'student.id = detected_case.student_id')
+            ->join('school', 'student.school_id = school.id')
+            ->where("day > '".$from_date."' and day <'".$to_date."'")
+            //->limit(1000, 0);
+            ->findAll();
+
+
+    }
+    public function getTotalNumberofCaseData($from_date,$to_date)
+    {
+        return $this->select(['count(*) as count'])
+            ->where("day > '".$from_date."' and day <'".$to_date."'")
+            ->countAll();
+    }
 }
