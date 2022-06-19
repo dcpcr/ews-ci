@@ -15,7 +15,6 @@ class ApiController extends ResourceController
     {
         //TODO: Add Authentication for API request
         // date fromat yyyy-mm-dd
-        //
         // test url for case api request => http://localhost:8080/APIcontroller/apiDetectedCase/?fromdate=2022-01-01&todate=2022-05-25&limit=1&pageno=1
         // test url for mitra api request => http://localhost:8080/APIcontroller/apiMitraDetails/?student_id=20150371728
         //header('Content-Type:application/json');
@@ -50,9 +49,7 @@ class ApiController extends ResourceController
 
     public function apiMitraDetails()
     {
-
         if(isset($_GET['student_id'])){
-
             $student_id=$_GET['student_id'];
             is_numeric($student_id)? :die(json_encode(["message" => "Invalid Student Id"]));
             $mitra_model = new MitraModel();
@@ -61,9 +58,5 @@ class ApiController extends ResourceController
             $status = $this->respondCreated()->getStatusCode();
             echo json_encode(["http status code" => "$status","result" => "$result","data" => $mitra_details]);
         }
-
     }
-
-
-
 }
