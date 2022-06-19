@@ -114,7 +114,6 @@ class CaseModel extends Model
     }
     public function getApiCaseData($from_date,$to_date,$offset,$no_of_records_per_page)
     {
-
         return $this->select([
             'detected_case.id as case_id',
             'detected_case.detection_criteria',
@@ -139,10 +138,8 @@ class CaseModel extends Model
             ->join('student', 'student.id = detected_case.student_id')
             ->join('school', 'student.school_id = school.id')
             ->where("day > '".$from_date."' and day <'".$to_date."'")
-            //->limit(1000, 0);
-            ->findAll();
-
-
+            ->limit($no_of_records_per_page,$offset)
+            ->find();
     }
     public function getTotalNumberofCaseData($from_date,$to_date)
     {
