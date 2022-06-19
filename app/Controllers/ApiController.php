@@ -38,7 +38,8 @@ class ApiController extends ResourceController
             $offset = ($pageno - 1) * $no_of_records_per_page;
             $data=$case_model->getApiCaseData($_GET['fromdate'],$_GET['todate'],$offset,$no_of_records_per_page);
             sizeof($data)==0? $result="Data Not Found": $result="Data Found";
-            echo json_encode(["status" => "true", "pageno" => "$pageno", "total_pages" => "$total_pages", "total_rows" => "$total_rows", "limit" => "$no_of_records_per_page", "result" => "$result", "dutation" => "$duration", "data" => $data]);
+            $status=$this->respondCreated()->getStatusCode();
+            echo json_encode(["http status code" => "$status", "pageno" => "$pageno", "total_pages" => "$total_pages", "total_rows" => "$total_rows", "limit" => "$no_of_records_per_page", "result" => "$result", "dutation" => "$duration", "data" => $data]);
         }
 
     }
