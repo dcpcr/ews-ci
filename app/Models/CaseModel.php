@@ -113,4 +113,43 @@ class CaseModel extends Model
             ->findAll();
     }
 
+    public function getDetectedCaseForAPI($from_date, $to_date, $offset, $no_of_records_per_page)
+    {
+        return $this->select([
+            'detected_case.id as case_id',
+            'detected_case.detection_criteria',
+            'detected_case.day as date',
+            'detected_case.status',
+            'student.id as student_id',
+            'student.name as student_name',
+            'student.gender',
+            'student.class',
+            'student.section',
+            'student.section',
+            'student.dob',
+            'student.mother',
+            'student.father',
+            'student.mobile',
+            'student.address',
+            'school.id as school_id',
+            'school.name as school_name',
+            'school.district',
+            'school.zone'
+        ])
+            ->join('student', 'student.id = detected_case.student_id')
+            ->join('school', 'student.school_id = school.id')
+            ->where("day > '" . $from_date . "' and day <'" . $to_date . "'")
+            ->limit($no_of_records_per_page, $offset)
+            ->find();
+    }
+
+    public function getTotalNumberOfCaseData($from_date, $to_date)
+    {
+        return $this->select(['id'])
+            ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
+            ->countAllResults();
+        /*return $this->select(['count(*) as count'])
+            ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
+            ->countAll();
+   */ }
 }
