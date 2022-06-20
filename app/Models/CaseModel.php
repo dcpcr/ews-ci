@@ -112,12 +112,13 @@ class CaseModel extends Model
                 $end . "', '%m/%d/%Y')")
             ->findAll();
     }
-    public function getApiCaseData($from_date,$to_date,$offset,$no_of_records_per_page)
+
+    public function getDetectedCaseForAPI($from_date, $to_date, $offset, $no_of_records_per_page)
     {
         return $this->select([
             'detected_case.id as case_id',
             'detected_case.detection_criteria',
-            'detected_case.day',
+            'detected_case.day as date',
             'detected_case.status',
             'student.id as student_id',
             'student.name as student_name',
@@ -137,14 +138,18 @@ class CaseModel extends Model
         ])
             ->join('student', 'student.id = detected_case.student_id')
             ->join('school', 'student.school_id = school.id')
-            ->where("day > '".$from_date."' and day <'".$to_date."'")
-            ->limit($no_of_records_per_page,$offset)
+            ->where("day > '" . $from_date . "' and day <'" . $to_date . "'")
+            ->limit($no_of_records_per_page, $offset)
             ->find();
     }
-    public function getTotalNumberofCaseData($from_date,$to_date)
+
+    public function getTotalNumberOfCaseData($from_date, $to_date)
     {
-        return $this->select(['count(*) as count'])
-            ->where("day > '".$from_date."' and day <'".$to_date."'")
+        return $this->select(['id'])
+            ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
+            ->countAllResults();
+        /*return $this->select(['count(*) as count'])
+            ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
             ->countAll();
-    }
+   */ }
 }

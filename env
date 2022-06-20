@@ -44,15 +44,6 @@ database.default.password =
 database.default.DBDriver = MySQLi
 # database.default.DBPrefix =
 
-# CUSTOM connection group - for Parent Samvaad Database
-database.parentsamvaad.hostname = localhost
-database.parentsamvaad.database = ps
-database.parentsamvaad.username = root
-database.parentsamvaad.password =
-database.parentsamvaad.DBDriver = MySQLi
-# database.parentsamvaad.DBPrefix =
-
-
 # database.tests.hostname = localhost
 # database.tests.database = ci4
 # database.tests.username = root

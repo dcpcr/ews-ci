@@ -24,7 +24,8 @@ class Validation
         FormatRules::class,
         FileRules::class,
         CreditCardRules::class,
-        \Myth\Auth\Authentication\Passwords\ValidationRules::class
+        \Myth\Auth\Authentication\Passwords\ValidationRules::class,
+        \App\Validation\ApiUserRules::class,
     ];
 
     /**
@@ -34,7 +35,7 @@ class Validation
      * @var array<string, string>
      */
     public $templates = [
-        'list'   => 'CodeIgniter\Validation\Views\list',
+        'list' => 'CodeIgniter\Validation\Views\list',
         'single' => 'CodeIgniter\Validation\Views\single',
     ];
 

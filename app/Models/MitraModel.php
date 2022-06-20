@@ -12,14 +12,14 @@ class MitraModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
 
-    function getMitraDetailsFromParentSamvaad($student_id)
+    function getMitraDetailsForStudent($student_id)
     {
         return $this->select(['mobile as mitra_mobile',
             'designation',
             'name as mitra_name',
             'i_id as intercom_id',
             'address as mitra_address',
-            ])
+        ])
             ->join('smc_member', 'intercom_id.m_mobile = smc_member.mobile')
             ->find("$student_id");
     }
