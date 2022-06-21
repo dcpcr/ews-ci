@@ -95,7 +95,7 @@ class ApiController extends ResourceController
 
     // date format yyyy-mm-dd
     // test url for case api request => /api/case/?fromdate=2022-01-01&todate=2022-05-25&limit=1&pageno=1
-    public function getCases()
+    public function getCases(): \CodeIgniter\HTTP\Response
     {
 
         $rules = [
@@ -145,7 +145,7 @@ class ApiController extends ResourceController
     }
 
     // test url for mitra api request => /api/mitra/?student_id=20150371728
-    public function getMitra()
+    public function getMitra(): \CodeIgniter\HTTP\Response
     {
         $rules = [
             'student_id' => 'trim|required|numeric|greater_than[0]|exact_length[11]',
