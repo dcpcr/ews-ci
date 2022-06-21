@@ -27,7 +27,6 @@ add('rsync', [
         '.DS_Store',
         '.env',
         '.gitignore',
-        'spark',
         '*.md',
     ],
 ]);
@@ -71,6 +70,16 @@ after('deploy:failed', 'deploy:unlock');
 
 after('deploy:success', 'crontab:sync');
 
+after('deploy:success', 'db-changes');
+
 add('crontab:jobs', [
     '0 23 * * * cd {{current_path}}/public && {{bin/php}} index.php cron run >> /dev/null 2>&1',
 ]);
+
+task('db-changes', function () {
+    run ('cd {{current_path}} && php spark migrate');
+});
+
+task('logs', function () {
+    run('cat /usr/share/nginx/ews/current/writable/logs/log-2022-06-*.log');
+});
