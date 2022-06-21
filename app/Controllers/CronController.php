@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\AttendanceModel;
 use App\Models\CaseModel;
+use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
 
@@ -15,6 +16,8 @@ class CronController extends BaseController
         $file_name = "schools.csv";
         $school_model = new SchoolModel();
         $school_model->updateSchools($file_name);
+        $school_mapping_model = new SchoolMappingModel();
+        $school_mapping_model->updateMappings();
     }
 
     protected function import_student_data()

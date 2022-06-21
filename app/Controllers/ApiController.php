@@ -63,6 +63,8 @@ class ApiController extends ResourceController
             $model = new ApiUserModel();
             $user = $model->findUser($username);
             unset($user['password']);
+            unset($user['updated_at']);
+            unset($user['created_at']);
             helper('jwt');
             return $this
                 ->getResponse(
