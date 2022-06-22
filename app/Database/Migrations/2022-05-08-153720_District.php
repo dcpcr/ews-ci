@@ -6,6 +6,7 @@ use CodeIgniter\Database\Migration;
 
 class District extends Migration
 {
+    protected $DBGroup = 'master';
     public function up()
     {
         //District INFORMATION TABLE

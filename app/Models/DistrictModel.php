@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class DistrictModel extends Model
 {
-    protected $DBGroup          = 'default';
+    protected $DBGroup          = 'master';
     protected $table            = 'district';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = false;

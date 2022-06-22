@@ -28,6 +28,7 @@ add('rsync', [
         '.env',
         '.gitignore',
         '*.md',
+        'deploy.php',
     ],
 ]);
 

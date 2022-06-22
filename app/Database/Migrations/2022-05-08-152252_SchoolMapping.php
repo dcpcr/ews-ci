@@ -6,6 +6,7 @@ use CodeIgniter\Database\Migration;
 
 class SchoolMapping extends Migration
 {
+    protected $DBGroup = 'master';
     public function up()
     {
         //SCHOOL MAPPING TABLE WITH ZONE & DISTRICT

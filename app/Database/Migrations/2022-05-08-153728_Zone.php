@@ -6,6 +6,7 @@ use CodeIgniter\Database\Migration;
 
 class Zone extends Migration
 {
+    protected $DBGroup = 'master';
     public function up()
     {
         //ZONE INFORMATION TABLE

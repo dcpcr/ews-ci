@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class SchoolMappingModel extends Model
 {
-    protected $DBGroup = 'default';
+    protected $DBGroup = 'master';
     protected $table = 'school_mapping';
     protected $primaryKey = 'school_id';
     protected $useAutoIncrement = false;

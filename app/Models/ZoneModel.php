@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class ZoneModel extends Model
 {
-    protected $DBGroup          = 'default';
+    protected $DBGroup          = 'master';
     protected $table            = 'zone';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = false;

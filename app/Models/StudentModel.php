@@ -8,7 +8,7 @@ use CodeIgniter\Validation\ValidationInterface;
 
 class StudentModel extends Model
 {
-    protected $DBGroup = 'default';
+    protected $DBGroup = 'master';
     protected $table = 'student';
     protected $primaryKey = 'id';
     protected $returnType = 'array';

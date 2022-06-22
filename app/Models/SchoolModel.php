@@ -8,7 +8,7 @@ use CodeIgniter\Validation\ValidationInterface;
 
 class SchoolModel extends Model
 {
-    protected $DBGroup = 'default';
+    protected $DBGroup = 'master';
     protected $table = 'school';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = false;
@@ -69,10 +69,10 @@ class SchoolModel extends Model
             'school.id as school_id'
         ])
             ->join('student', 'school.id = student.school_id' )
-            ->join('attendance', 'student.id = attendance.student_id')
+            ->join('ews.attendance as attendance', 'student.id = attendance.student_id')
             ->whereIn('school.id', $school_ids)
             ->whereIn('student.class', $classes)
-            ->where("STR_TO_DATE(attendance.date,'%d/%m/%Y') BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+            ->where("STR_TO_DATE(ews.attendance.date,'%d/%m/%Y') BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $end . "', '%m/%d/%Y')")
             ->groupBy('school.id')
             ->getCompiledSelect();

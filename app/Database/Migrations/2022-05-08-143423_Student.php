@@ -6,6 +6,7 @@ use CodeIgniter\Database\Migration;
 
 class Student extends Migration
 {
+    protected $DBGroup = 'master';
     public function up()
     {
         //STUDENT TABLE

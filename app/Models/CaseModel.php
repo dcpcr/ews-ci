@@ -104,8 +104,8 @@ class CaseModel extends Model
             'school.district',
             'school.zone'
         ])
-            ->join('student', 'student.id = detected_case.student_id')
-            ->join('school', 'student.school_id = school.id')
+            ->join('master.student as student', 'student.id = detected_case.student_id')
+            ->join('master.school as school', 'student.school_id = school.id')
             ->whereIn('student.school_id', $school_ids)
             ->whereIn('student.class', $classes)
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
@@ -136,8 +136,8 @@ class CaseModel extends Model
             'school.district',
             'school.zone'
         ])
-            ->join('student', 'student.id = detected_case.student_id')
-            ->join('school', 'student.school_id = school.id')
+            ->join('master.student as student', 'student.id = detected_case.student_id')
+            ->join('master.school as school', 'student.school_id = school.id')
             ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
             ->limit($no_of_records_per_page, $offset)
             ->find();
