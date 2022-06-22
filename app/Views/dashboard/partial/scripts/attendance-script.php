@@ -32,3 +32,4 @@ foreach ($school_data as $school_id => $school) {
 <script>
     const attendancedata = <?=$data=json_encode($table_data)?>;
 </script>
+<script src='/assets-adminlte/ews-js/attendance.js'></script>

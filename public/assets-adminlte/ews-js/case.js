@@ -1,82 +1,60 @@
 $(function () {
     /* jQueryKnob */
-    $("#total").knob({
-        'min': 0,
-        'max': max,
-    })
-    ;
-    $("#bts").knob({
-        'min': 0,
-        'max': 100
-    });
-    $("#pending").knob({
-        'min': 0,
-        'max': 100
-    });
-    $("#highrisk").knob({
-        'min': 0,
-        'max': 100
-    });
-    $("#untraceable").knob({
-        'min': 0,
-        'max': 100
-    });
-    $("#fresh").knob({
-        'min': 0,
-        'max': 100
-    });
-    $('.knob').knob({
-        draw: function () {
-            // "tron" case
-            if (this.$.data('skin') == 'tron') {
-
-                var a = this.angle(this.cv) // Angle
-                    ,
-                    sa = this.startAngle // Previous start angle
-                    ,
-                    sat = this.startAngle // Start angle
-                    ,
-                    ea // Previous end angle
-                    ,
-                    eat = sat + a // End angle
-                    ,
-                    r = true
-
-                this.g.lineWidth = this.lineWidth
-
-                this.o.cursor &&
-                (sat = eat - 0.3) &&
-                (eat = eat + 0.3)
-
-                if (this.o.displayPrevious) {
-                    ea = this.startAngle + this.angle(this.value)
-                    this.o.cursor &&
-                    (sa = ea - 0.3) &&
-                    (ea = ea + 0.3)
-                    this.g.beginPath()
-                    this.g.strokeStyle = this.previousColor
-                    this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea,
-                        false)
-                    this.g.stroke()
+    $(".knob").each(
+        function () {
+            $(this).knob({
+                min: 0,
+                max: max,
+                readOnly: true,
+                format: function (v) {
+                    return (v.toLocaleString('en-US'));
                 }
-
-                this.g.beginPath()
-                this.g.strokeStyle = r ? this.o.fgColor : this.fgColor
-                this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sat, eat,
-                    false)
-                this.g.stroke()
-
-                this.g.lineWidth = 2
-                this.g.beginPath()
-                this.g.strokeStyle = this.o.fgColor
-                this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this
-                    .lineWidth * 2 / 3, 0, 2 * Math.PI, false)
-                this.g.stroke()
-
-                return false
-            }
+            });
         }
-    })
-    /* END JQUERY KNOB */
+    );
 
+    $("span.number").each(function () {
+        var v = Number($(this).text()).toLocaleString('en-US');
+        $(this).text(v);
+    });
+    /* END JQUERY KNOB */
+    $("#casetable").DataTable({
+        "pageLength": 40,
+        data: casedata,
+        columns: [
+            {data: 'case_id', title: 'Case_Id'},
+            {data: 'day', title: 'Day'},
+            {data: 'status', title: 'Status'},
+            {data: 'student_id', title: 'Student Id'},
+            {data: 'student_name', title: 'Student Name'},
+            {data: 'school_id', title: 'School Id'},
+            {data: 'school_name', title: 'School Name'},
+            {data: 'class', title: 'Class'},
+            {data: 'gender', title: 'Gender'},
+            {data: 'dob', title: 'DoB'},
+            {data: 'father', title: 'Father  Name'},
+            {data: 'mother', title: 'Mother Name'},
+            {data: 'mobile', title: 'mobile'},
+            {data: 'address', title: 'Address'},
+            {data: 'district', title: 'District'},
+            {data: 'zone', title: 'Zone'},
+            {data: 'detection_criteria', title: 'Detection Criteria'}
+        ],
+        "columnDefs": [
+            {"visible": false, "targets": 7},
+            {"visible": false, "targets": 8},
+            {"visible": false, "targets": 9},
+            {"visible": false, "targets": 10},
+            {"visible": false, "targets": 11},
+            {"visible": false, "targets": 12},
+            {"visible": false, "targets": 13},
+            {"visible": false, "targets": 14},
+            {"visible": false, "targets": 15}
+        ],
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        "ordering": true,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#casetable_wrapper .col-md-6:eq(0)');
 })

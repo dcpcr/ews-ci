@@ -16,7 +16,7 @@
 }
 
 .filter-header {
-    border-bottom: 0px !important;
+    border-bottom: 0 !important;
     margin-bottom: -15px !important
 }
 
@@ -28,4 +28,7 @@
     font-size: 1.70rem !important;
 }
 
+.knob-label-bottom {
+    font: 13px Arial;
+}
 
