@@ -6,6 +6,7 @@ require 'recipe/codeigniter.php';
 require 'contrib/rsync.php';
 require 'contrib/crontab.php';
 
+set('keep_releases', 5);
 set('copy_dirs', ['app', 'public', 'system']);
 set('application', 'ews');
 set('rsync_src', __DIR__);
@@ -58,6 +59,7 @@ task('deploy', [
     'deploy:writable',
     'deploy:symlink',
     'deploy:unlock',
+    'deploy:cleanup',
     'restart-nginx-fpm',
     'deploy:success'
 ]);
