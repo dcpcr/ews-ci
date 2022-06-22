@@ -1,5 +1,11 @@
 <?php
 
+function get_database_name_from_db_group($db_group): string
+{
+    $database = new \Config\Database();
+    return $database->{$db_group}['database'];
+}
+
 function get_array_from_dom_table($table, $has_header): array
 {
     $rows = $table->getElementsByTagName("tr");

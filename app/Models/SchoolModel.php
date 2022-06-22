@@ -64,15 +64,17 @@ class SchoolModel extends Model
 
     public function getMarkedSchoolAttendance($school_ids, $classes, $start, $end): array
     {
+        helper('general');
+        $ews_db= get_database_name_from_db_group('default');
         $sub_query = $this->select([
             'count(distinct(student.id)) as count_att',
             'school.id as school_id'
         ])
             ->join('student', 'school.id = student.school_id' )
-            ->join('ews.attendance as attendance', 'student.id = attendance.student_id')
+            ->join($ews_db.'.attendance as attendance', 'student.id = attendance.student_id')
             ->whereIn('school.id', $school_ids)
             ->whereIn('student.class', $classes)
-            ->where("STR_TO_DATE(ews.attendance.date,'%d/%m/%Y') BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+            ->where("STR_TO_DATE(attendance.date,'%d/%m/%Y') BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $end . "', '%m/%d/%Y')")
             ->groupBy('school.id')
             ->getCompiledSelect();
