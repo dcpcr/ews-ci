@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\DistrictModel;
 use App\Models\SchoolMappingModel;
@@ -131,7 +132,10 @@ class AdminController extends AuthController
     {
         $this->view_data['details'] = "This is Dummy text";
         $this->view_data['page_title'] = 'Call Disposition';
-        $this->view_data['response'] = [];
+        $school_ids = array_keys($this->schools);
+        $case_model = new CallDispositionModel();
+        $this->view_data['response'] = $case_model
+            ->getCallDisposition($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $this->view_name = 'dashboard/call';
     }
 
