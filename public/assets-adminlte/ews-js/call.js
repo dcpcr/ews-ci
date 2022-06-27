@@ -3,18 +3,18 @@ $(function () {
     //- STACKED BAR CHART -
     //---------------------
     var stackchartdata = {
-        labels: ['Successful Contact', 'Reattempt Required', 'Untracable', 'Yet to Contact', 'Refusals'],
+        labels: lablevalue,
         datasets: [
             {
                 label: 'Call Disposition',
-                backgroundColor: 'rgba(210, 214, 222, 1)',
+                backgroundColor: 'rgba(100, 214, 222, 1)',
                 borderColor: 'rgba(210, 214, 222, 1)',
                 pointRadius: false,
                 pointColor: 'rgba(210, 214, 222, 1)',
                 pointStrokeColor: '#c1c7d1',
                 pointHighlightFill: '#fff',
                 pointHighlightStroke: 'rgba(220,220,220,1)',
-                data: [65, 59, 80, 81, 56]
+                data: labledata
             },
         ]
     }
