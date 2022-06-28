@@ -3,7 +3,7 @@ $(function () {
     //- STACKED BAR CHART -
     //---------------------
     var stackchartdata = {
-        labels: ['Sickness', 'Incarceration', 'Moved to Different Place', 'Child Marraige', 'Child Labour', 'Sexual offences/ Inappropriate Bihaviour', 'Juvenile Injustice', 'Other'],
+        labels: reasonslable,
         datasets: [
             {
                 label: 'Male',
@@ -14,7 +14,7 @@ $(function () {
                 pointStrokeColor: 'rgba(60,141,188,1)',
                 pointHighlightFill: '#fff',
                 pointHighlightStroke: 'rgba(60,141,188,1)',
-                data: [28, 48, 40, 19, 86, 27, 90, 20]
+                data: dataMale,
             },
             {
                 label: 'Female',
@@ -25,7 +25,7 @@ $(function () {
                 pointStrokeColor: 'rgba(60,141,188,1)',
                 pointHighlightFill: '#fff',
                 pointHighlightStroke: 'rgba(60,141,188,1)',
-                data: [28, 48, 40, 19, 86, 27, 90, 25]
+                data: dataFemale
             },
             {
                 label: 'Transgender',
@@ -36,7 +36,7 @@ $(function () {
                 pointStrokeColor: '#9fa8bd',
                 pointHighlightFill: '#c6cbd7',
                 pointHighlightStroke: 'rgba(220,220,220,1)',
-                data: [65, 59, 80, 81, 56, 55, 40, 30]
+                data: dataTransgender
             },
         ]
     }

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
+use App\Models\CaseReasonModel;
 use App\Models\DistrictModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
@@ -113,7 +114,12 @@ class AdminController extends AuthController
             long absenteeism among students. The following report shows the distribution of such reasons, including the 
             frequency of cases detected across genders.";
         $this->view_data['page_title'] = 'Reasons of Absenteeism';
-        $this->view_data['response'] = [];
+        $school_ids = array_keys($this->schools);
+        $case_reason_model = new CaseReasonModel();
+        $maleCount= $case_reason_model->getReasonsMaleCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $femaleCount= $case_reason_model->getReasonsFemaleCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $transgenderCount= $case_reason_model->getReasonsTransgenderCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_data['response'] = ['reasonMaleCount' => $maleCount, 'reasonFemaleCount' => $femaleCount ,'reasonTransgenderCount' => $transgenderCount];
         $this->view_name = 'dashboard/absenteeism';
     }
 
