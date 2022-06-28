@@ -10,7 +10,7 @@ class Reason extends Migration
     {
         //
         $this->forge->addField([
-            'reason_id' => [
+            'id' => [
                 'type' => 'int',
                 'unsigned' => true,
                 'NOT NULL' => true,
@@ -36,7 +36,7 @@ class Reason extends Migration
         ]);
 
 
-        $this->forge->addPrimaryKey('reason_id');
+        $this->forge->addPrimaryKey('id');
         $this->forge->createTable('reason');
     }
 
