@@ -270,10 +270,9 @@ class AdminController extends AuthController
         $this->zones = (empty($zone_get) || ($zone_get == ['All'])) ? $data['user_zone']
             : array_intersect_key($data['user_zone'], array_flip($zone_get));
         $school_get = $this->request->getGet('school');
-        $this->schools = (empty($school_get) || ($school_get == ['All'])) ? $data['user_school'] :
-            array_intersect_key($data['user_school'], array_flip($school_get));
+        $this->setSchools($school_get, $data['user_school'], $this->districts, $this->zones);
 
-        $data['selected_districts'] = (empty($duration_get) || ($duration_get == ['All'])) ? ['All'] : $this->getSelectedDistricts();
+        $data['selected_districts'] = (empty($district_get) || ($district_get == ['All'])) ? ['All'] : $this->getSelectedDistricts();
         $data['selected_zones'] = (empty($zone_get) || ($zone_get == ['All'])) ? ['All'] : $this->getSelectedZones();
         $data['selected_schools'] = (empty($school_get) || ($school_get == ['All'])) ? ['All'] : $this->getSelectedSchools();
 
@@ -301,8 +300,7 @@ class AdminController extends AuthController
         $this->zones = (empty($zone_get) || ($zone_get == ['All'])) ? $data['user_zone']
             : array_intersect_key($data['user_zone'], array_flip($zone_get));
         $school_get = $this->request->getGet('school');
-        $this->schools = (empty($school_get) || ($school_get == ['All'])) ? $data['user_school'] :
-            array_intersect_key($data['user_school'], array_flip($school_get));
+        $this->setSchools($school_get, $data['user_school'], $this->districts, $this->zones);
 
         $data['selected_districts'] = $this->getSelectedDistricts();
         $data['selected_zones'] = (empty($zone_get) || ($zone_get == ['All'])) ? ['All'] : $this->getSelectedZones();
@@ -329,8 +327,7 @@ class AdminController extends AuthController
         $this->districts = $data['user_district'];
         $this->zones = $data['user_zone'];
         $school_get = $this->request->getGet('school');
-        $this->schools = (empty($school_get) || ($school_get == ['All'])) ? $data['user_school'] :
-            array_intersect_key($data['user_school'], array_flip($school_get));
+        $this->setSchools($school_get, $data['user_school'], $this->districts, $this->zones);
 
         $data['selected_districts'] = $this->getSelectedDistricts();
         $data['selected_zones'] = $this->getSelectedZones();
@@ -360,6 +357,22 @@ class AdminController extends AuthController
         $data['selected_schools'] = $this->getSelectedSchools();
 
         return $data;
+    }
+
+    protected function setSchools($selected_schools, $user_school, $districts, $zones)
+    {
+        $schools = (empty($selected_schools) || ($selected_schools == ['All'])) ? $user_school :
+            array_intersect_key($user_school, array_flip($selected_schools));
+
+        $school_mappings = $this->school_mapping_model
+            ->whereIn('district_id', array_keys($districts))
+            ->whereIn('zone_id', array_keys($zones))
+            ->whereIn('school_id', array_keys($schools))
+            ->findAll();
+
+        foreach ($school_mappings as $school_mapping) {
+            $this->schools[$school_mapping['school_id']] = $schools[$school_mapping['school_id']];
+        }
     }
 
 }
