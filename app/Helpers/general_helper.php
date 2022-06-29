@@ -37,7 +37,8 @@ function get_curl_response($url)
         CURLOPT_ENCODING => "",
         CURLOPT_SSL_VERIFYPEER => 0,
         CURLOPT_MAXREDIRS => 999,
-        CURLOPT_TIMEOUT => 30000,
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "GET",
         CURLOPT_HTTPHEADER => array(
@@ -70,13 +71,13 @@ function dump_array_in_file($array, $file_name, $exists)
     fclose($fp);
 }
 
-function import_data_into_db($file_name, $table_name)
+function import_data_into_db($file_name, $db_group, $table_name)
 {
     $sql = "LOAD DATA LOCAL INFILE '$file_name' REPLACE INTO TABLE $table_name"
         . " FIELDS TERMINATED BY ','"
         . " OPTIONALLY ENCLOSED BY '\"' "
         . " LINES TERMINATED BY '\n'";
-    $db = db_connect();
+    $db = db_connect($db_group);
     if (!($db->simpleQuery($sql))) {
         log_message('error', "Query execute failed: error - " . $db->error()['message']);
     }

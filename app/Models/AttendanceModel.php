@@ -58,7 +58,7 @@ class AttendanceModel extends Model
             }
             log_message("info", $total_attendance_count . " attendance records fetched for date = " . $date->format("d/m/Y"));
         }
-        import_data_into_db($file_name, $this->table);
+        import_data_into_db($file_name, $this->DBGroup, $this->table);
     }
 
     public function getStudentAttendanceForLast30DaysFrom($student_id, $date): array

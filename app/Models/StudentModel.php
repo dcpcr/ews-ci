@@ -52,7 +52,7 @@ class StudentModel extends Model
             }
         }
         if ($student_count > 0) {
-            import_data_into_db($file_name, $this->table);
+            import_data_into_db($file_name, $this->DBGroup, $this->table);
             log_message("info", $student_count . " students imported.");
         } else {
             log_message("notice", "No students imported today!");
