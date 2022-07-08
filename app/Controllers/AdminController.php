@@ -116,9 +116,9 @@ class AdminController extends AuthController
         $this->view_data['page_title'] = 'Reasons of Absenteeism';
         $school_ids = array_keys($this->schools);
         $case_reason_model = new CaseReasonModel();
-        $maleCount= $case_reason_model->getReasonsMaleCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        $femaleCount= $case_reason_model->getReasonsFemaleCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        $transgenderCount= $case_reason_model->getReasonsTransgenderCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $maleCount= $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'],'Male');
+        $femaleCount= $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'],'Female');
+        $transgenderCount= $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'],'Transgender');
         $this->view_data['response'] = ['reasonMaleCount' => $maleCount, 'reasonFemaleCount' => $femaleCount ,'reasonTransgenderCount' => $transgenderCount];
         $this->view_name = 'dashboard/absenteeism';
     }
