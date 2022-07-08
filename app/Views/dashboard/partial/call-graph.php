@@ -1,4 +1,3 @@
-
 <div class="row">
     <div class="col-md-12 col-sm-6">
         <!-- STACKED BAR CHART -->
@@ -15,6 +14,5 @@
             <!-- /.card-body -->
         </div>
         <!-- /.card -->
-
     </div>
 </div>

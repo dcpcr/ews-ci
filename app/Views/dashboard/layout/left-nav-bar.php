@@ -8,39 +8,42 @@
             <li class="nav-header ml-1 mt-4 text-sm" style="color: #898989">MENU</li>
 
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/case'); ?>" class="nav-link case" id = "case-nav">
+                <a href="<?php echo site_url('dashboard/case'); ?>" class="nav-link case" id="case-nav">
                     <p>Case Status</p>
                 </a>
             </li>
 
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/absenteeism'); ?>" class="nav-link absemteeism" id = "absenteeism-nav">
+                <a href="<?php echo site_url('dashboard/absenteeism'); ?>" class="nav-link absenteeism"
+                   id="absenteeism-nav">
                     <p>Reasons of Absenteeism</p>
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/highrisk'); ?>" class="nav-link highrisk" id = "highrisk-nav">
+                <a href="<?php echo site_url('dashboard/highrisk'); ?>" class="nav-link highrisk" id="highrisk-nav">
                     <p>
                         High Risk Cases
                     </p>
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/homevisits'); ?>" class="nav-link homevisits" id = "homevisits-nav">
+                <a href="<?php echo site_url('dashboard/homevisits'); ?>" class="nav-link homevisits"
+                   id="homevisits-nav">
                     <p>
                         Home Visits
                     </p>
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/call'); ?>" class="nav-link call" id ="call-nav">
+                <a href="<?php echo site_url('dashboard/call'); ?>" class="nav-link call" id="call-nav">
                     <p>
                         Call Disposition
                     </p>
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/attendance'); ?>" class="nav-link attendance" id = "attendance-nav">
+                <a href="<?php echo site_url('dashboard/attendance'); ?>" class="nav-link attendance"
+                   id="attendance-nav">
                     <p>
                         Attendance Performance
                     </p>

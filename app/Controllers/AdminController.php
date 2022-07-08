@@ -108,18 +108,27 @@ class AdminController extends AuthController
         $this->view_name = 'dashboard/case';
     }
 
+    private function getGenderWiseReasonsCount(string $gender): array
+    {
+        $school_ids = array_keys($this->schools);
+        $case_reason_model = new CaseReasonModel();
+        return $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], $gender);
+    }
+
     private function prepareAbsenteeismData(): void
     {
         $this->view_data['details'] = "The Early Warning System has laid out a process for ascertaining the various reasons that lead to 
             long absenteeism among students. The following report shows the distribution of such reasons, including the 
             frequency of cases detected across genders.";
         $this->view_data['page_title'] = 'Reasons of Absenteeism';
-        $school_ids = array_keys($this->schools);
-        $case_reason_model = new CaseReasonModel();
-        $maleCount= $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'],'Male');
-        $femaleCount= $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'],'Female');
-        $transgenderCount= $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'],'Transgender');
-        $this->view_data['response'] = ['reasonMaleCount' => $maleCount, 'reasonFemaleCount' => $femaleCount ,'reasonTransgenderCount' => $transgenderCount];
+        $maleCount = $this->getGenderWiseReasonsCount('Male');
+        $femaleCount = $this->getGenderWiseReasonsCount('Female');
+        $transgenderCount = $this->getGenderWiseReasonsCount('Transgender');
+        $this->view_data['response'] = [
+            'reason_male_count' => $maleCount,
+            'reason_female_count' => $femaleCount,
+            'reason_transgender_count' => $transgenderCount
+        ];
         $this->view_name = 'dashboard/absenteeism';
     }
 
@@ -139,8 +148,8 @@ class AdminController extends AuthController
         $this->view_data['details'] = "This is Dummy text";
         $this->view_data['page_title'] = 'Call Disposition';
         $school_ids = array_keys($this->schools);
-        $callDisposition_model = new CallDispositionModel();
-        $this->view_data['response'] = $callDisposition_model
+        $call_disposition_model = new CallDispositionModel();
+        $this->view_data['response'] = $call_disposition_model
             ->getCallDisposition($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $this->view_name = 'dashboard/call';
     }
