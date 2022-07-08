@@ -139,8 +139,8 @@ class AdminController extends AuthController
         $this->view_data['details'] = "This is Dummy text";
         $this->view_data['page_title'] = 'Call Disposition';
         $school_ids = array_keys($this->schools);
-        $case_model = new CallDispositionModel();
-        $this->view_data['response'] = $case_model
+        $callDisposition_model = new CallDispositionModel();
+        $this->view_data['response'] = $callDisposition_model
             ->getCallDisposition($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $this->view_name = 'dashboard/call';
     }
