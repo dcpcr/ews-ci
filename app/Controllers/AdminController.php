@@ -370,9 +370,14 @@ class AdminController extends AuthController
             ->whereIn('school_id', array_keys($schools))
             ->findAll();
 
-        foreach ($school_mappings as $school_mapping) {
-            $this->schools[$school_mapping['school_id']] = $schools[$school_mapping['school_id']];
+        if (count($school_mappings) == 0) {
+            $this->schools = [
+                '' => '', //adding a dummy school
+            ];
+        } else {
+            foreach ($school_mappings as $school_mapping) {
+                $this->schools[$school_mapping['school_id']] = $schools[$school_mapping['school_id']];
+            }
         }
     }
-
 }

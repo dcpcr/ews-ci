@@ -1,8 +1,22 @@
+const $ = jQuery
 $(function () {
     //Initialize Select2 Elements
     $('.select2bs4').select2({
         theme: 'bootstrap4'
     })
+
+    $('.select2bs4').on('select2:select', function (e) {
+        const last_selection = e.params.data;
+        const full_selection = $(this).select2('data');
+        if (last_selection.text.trim() == "All") {
+            $(this).val(last_selection.id).trigger('change');
+        } else {
+            const ids = $.map(full_selection, function (n) {
+                return (n.text.trim()) != "All" ? n.id : null;
+            });
+            $(this).val(ids).trigger('change');
+        }
+    });
 
     //Date range as a button
     $('#daterange-btn').daterangepicker({
@@ -30,9 +44,4 @@ $(function () {
             $(this).removeAttr('disabled');
         })
     });
-
 })
-
-document.addEventListener('DOMContentLoaded', function () {
-
-});
