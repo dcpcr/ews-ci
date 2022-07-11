@@ -18,14 +18,12 @@ class Reason extends Migration
 
             ],
 
-
-            'reason_name' => [
+            'name' => [
                 'type' => 'CHAR',
                 'constraint' => '50',
                 'NOT NULL' => true,
 
             ],
-
 
             'active' => [
                 'type' => 'int',

@@ -14,26 +14,21 @@ class CallDisposition extends Migration
                 'type' => 'INT',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
-
             ],
+
             'case_id' => [
                 'type' => 'BIGINT',
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
+
             'operator_id' => [
                 'type' => 'BIGINT',
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
-            'disposition_type' => [
-                'type' => 'ENUM("Wrong Phone Number","Invalid Number","Not Answered","Busy","DND","Connected","other")',
 
-
-            ],
-
-
+            'disposition_type' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
 
         ]);
 

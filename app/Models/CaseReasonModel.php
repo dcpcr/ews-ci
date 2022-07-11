@@ -14,7 +14,7 @@ class CaseReasonModel extends Model
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
-        return $this->select(['reason_name', 'count(*) as count'])
+        return $this->select(['reason.name as reason_name', 'count(*) as count'])
             ->join('reason', 'reason.id=case_reason.reason_id')
             ->join('detected_case', 'detected_case.id=case_reason.case_id')
             ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
