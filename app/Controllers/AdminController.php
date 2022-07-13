@@ -164,7 +164,7 @@ class AdminController extends AuthController
 
     private function initializeClasses(): array
     {
-        return ['XII', 'XI', 'X', 'IX', 'VIII', 'VII', 'VI', 'V', 'IV', 'III', 'II', 'I'];
+        return ['XII', 'XI', 'X', 'IX', 'VIII', 'VII', 'VI', 'V', 'IV', 'III', 'II', 'I', 'KG', 'Nursery'];
     }
 
     protected function initializeDuration($duration): array

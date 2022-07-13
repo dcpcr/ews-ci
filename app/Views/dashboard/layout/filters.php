@@ -186,7 +186,7 @@
                                         style='width: 100%;'>
 
                                     <?php
-                                    $classes = ['XII', 'XI', 'X', 'IX', 'VIII', 'VII', 'VI', 'V', 'IV', 'III', 'II', 'I'];
+                                    $classes = ['XII', 'XI', 'X', 'IX', 'VIII', 'VII', 'VI', 'V', 'IV', 'III', 'II', 'I', 'KG', 'Nursery'];
                                     if ($selected_classes == ['All']) {
                                         echo "<option selected>All</option>";
                                     } else {
