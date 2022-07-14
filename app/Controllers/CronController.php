@@ -46,10 +46,8 @@ class CronController extends BaseController
         if ($this->request->isCLI()) {
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
-            //$begin = new \DateTimeImmutable();
-            //$end = $begin;
-            $begin = new \DateTimeImmutable('2022-07-09');
-            $end = new \DateTimeImmutable('2022-07-12');
+            $begin = new \DateTimeImmutable();
+            $end = $begin;
             $this->import_school_data();
             $this->import_student_data();
             $this->import_attendance_data($begin, $end);
