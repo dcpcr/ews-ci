@@ -16,8 +16,6 @@ class SchoolModel extends Model
     protected $returnType = 'array';
     protected $allowedFields = ['id', 'name'];
 
-    //TODO: add created and updated fields to the school table
-
     public function __construct(?ConnectionInterface &$db = null, ?ValidationInterface $validation = null)
     {
         parent::__construct($db, $validation);
@@ -36,6 +34,7 @@ class SchoolModel extends Model
             log_message("notice", "No schools could be scraped today!!");
         }
     }
+
     public function getSchoolWiseStudentCount($school_ids, $classes): array
     {
         $sub_query = $this->select([
@@ -50,7 +49,7 @@ class SchoolModel extends Model
 
         $builder = $this->select([
             'count_total',
-            'school.id as school_id','district.name as district_name','zone.name as zone_name'
+            'school.id as school_id', 'district.name as district_name', 'zone.name as zone_name'
         ])
             ->join('(' . $sub_query . ') `s1`', 'school.id = s1.school_id', 'left')
             ->join('school_mapping', 'school_mapping.school_id = school.id')
@@ -65,13 +64,15 @@ class SchoolModel extends Model
     public function getMarkedSchoolAttendance($school_ids, $classes, $start, $end): array
     {
         helper('general');
-        $ews_db= get_database_name_from_db_group('default');
+        $ews_db = get_database_name_from_db_group('default');
         $sub_query = $this->select([
             'count(distinct(student.id)) as count_att',
+            'count(student.id)/count(distinct(attendance.date)) as avg_att',
+            'count(distinct(attendance.date)) as days_att',
             'school.id as school_id'
         ])
-            ->join('student', 'school.id = student.school_id' )
-            ->join($ews_db.'.attendance as attendance', 'student.id = attendance.student_id')
+            ->join('student', 'school.id = student.school_id')
+            ->join($ews_db . '.attendance as attendance', 'student.id = attendance.student_id')
             ->whereIn('school.id', $school_ids)
             ->whereIn('student.class', $classes)
             ->where("STR_TO_DATE(attendance.date,'%d/%m/%Y') BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
@@ -81,6 +82,8 @@ class SchoolModel extends Model
 
         $builder = $this->select([
             'count_att',
+            'avg_att',
+            'days_att',
             'school.id as school_id',
             'school.name as school_name'
         ])

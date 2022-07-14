@@ -9,6 +9,8 @@ foreach ($markedAttendanceCount as $school) {
     $school_data [$school['school_id']] ['school_name'] = $school['school_name'];
     $school_data [$school['school_id']] ['school_id'] = $school['school_id'];
     $school_data [$school['school_id']] ['attendance_count'] = is_null($school['count_att']) ? 0 : $school['count_att'];
+    $school_data [$school['school_id']] ['average_count'] = is_null($school['avg_att']) ? 0 : $school['avg_att'];
+    $school_data [$school['school_id']] ['marked_days_count'] = is_null($school['days_att']) ? 0 : $school['days_att'];
 }
 foreach ($schoolWiseStudentCount as $school) {
     $school_data [$school['school_id']] ['student_count'] = is_null($school['count_total']) ? 0 : $school['count_total'];
@@ -25,7 +27,9 @@ foreach ($school_data as $school_id => $school) {
         "Total_Students" => $school['student_count'],
         "District" => $school['district_name'],
         "Zone" => $school['zone_name'],
-        "Attendance_Marked" => $school['attendance_count']
+        "Attendance_Marked" => $school['attendance_count'],
+        "Average_Attendance_Marked" => $school['average_count'],
+        "Attendance_Marked_Days" => $school['marked_days_count'],
     ];
 }
 ?>
