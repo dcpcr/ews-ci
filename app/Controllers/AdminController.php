@@ -307,11 +307,15 @@ class AdminController extends AuthController
         $school_mappings = $this->school_mapping_model->where('district_id', $district['id'])->findAll();
         foreach ($school_mappings as $school_mapping) {
             $zone = $this->zone_model->where('id', $school_mapping['zone_id'])->first();
-            $data['user_zone'] [$zone['id']] = $zone['name'];
+            if ($zone) {
+                $data['user_zone'] [$zone['id']] = $zone['name'];
+            }
         }
         foreach ($school_mappings as $school_mapping) {
             $school = $this->school_model->where('id', $school_mapping['school_id'])->first();
-            $data['user_school'] [$school['id']] = $school['name'];
+            if ($school) {
+                $data['user_school'] [$school['id']] = $school['name'];
+            }
         }
 
         $this->districts = $data['user_district'];
@@ -340,7 +344,9 @@ class AdminController extends AuthController
         $school_mappings = $this->school_mapping_model->where('zone_id', $zone['id'])->findAll();
         foreach ($school_mappings as $school_mapping) {
             $school = $this->school_model->where('id', $school_mapping['school_id'])->first();
-            $data['user_school'] [$school['id']] = $school['name'];
+            if ($school) {
+                $data['user_school'] [$school['id']] = $school['name'];
+            }
         }
 
         $this->districts = $data['user_district'];
