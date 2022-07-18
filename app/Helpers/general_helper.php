@@ -28,7 +28,7 @@ function get_array_from_dom_table($table, $has_header): array
     return $response_array;
 }
 
-function get_curl_response($url)
+function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '',$token='')
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -40,9 +40,13 @@ function get_curl_response($url)
         CURLOPT_TIMEOUT => 10,
         CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_CUSTOMREQUEST => "$method",
+        CURLOPT_POSTFIELDS => array('from_date' => "$from_date", 'to_date' => "$to_date"),
         CURLOPT_HTTPHEADER => array(
-            "cache-control: no-cache",
+            "Authorization: $token",
+            "username: $username",
+            "password: $password",
+            "cache-control: no-cache"
         ),
     ));
 
@@ -55,6 +59,18 @@ function get_curl_response($url)
     } else {
         return $response;
     }
+}
+
+function getCyfutureToken()
+{
+    $url = getenv('cyfuture_token_url');
+    $username = getenv('cyfuture_username');
+    $password = getenv('cyfuture_password');
+    $method = getenv('method');
+    $response = get_curl_response($url, $username, $password, $method);
+    $data = json_decode($response, true);
+    //TODO: ERROR handling
+    return $data['token'];
 }
 
 function dump_array_in_file($array, $file_name, $exists)

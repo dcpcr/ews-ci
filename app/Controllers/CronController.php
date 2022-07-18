@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\AttendanceModel;
 use App\Models\CaseModel;
+use App\Models\CaseReasonModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
@@ -40,6 +41,12 @@ class CronController extends BaseController
         $case_model->detectCases($from_date, $to_date);
     }
 
+    protected function update_detected_case_operator_form_data()
+    {
+        $case_reason_model= new CaseReasonModel();
+        $case_reason_model->downloadOperatorFormData();
+    }
+
     public function runDaily()
     {
         ini_set("memory_limit", "-1");
@@ -52,6 +59,7 @@ class CronController extends BaseController
             $this->import_student_data();
             $this->import_attendance_data($begin, $end);
             $this->update_detected_cases($begin, $end);
+            $this->update_detected_case_operator_form_data();
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);
