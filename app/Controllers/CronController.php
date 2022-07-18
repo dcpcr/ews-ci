@@ -3,13 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\AttendanceModel;
-use App\Models\BackToSchoolModel;
-use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
-use App\Models\DcpcrHelplineTicketModel;
-use App\Models\HighRiskModel;
-use App\Models\HomeVisitModel;
-use App\Models\ReasonForAbsenteeismModel;
+use App\Models\CaseReasonModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
@@ -46,31 +41,12 @@ class CronController extends BaseController
         $case_model->detectCases($from_date, $to_date);
     }
 
-    /**
-     * @throws \ReflectionException
-     */
-    private function updateCaseData()
+    protected function update_detected_case_operator_form_data()
     {
-        helper('cyfuture');
-        $cases = download_operator_form_data();
-        $reason_for_absenteeism_model= new ReasonForAbsenteeismModel();
-        $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
-        $call_disposition_model = new CallDispositionModel();
-        $call_disposition_model->insertUpdateCallDisposition($cases);
-        $high_risk_model= new HighRiskModel();
-        $high_risk_model->insertUpdateHighRisk($cases);
-        $back_to_school = new BackToSchoolModel();
-        $back_to_school->insertUpdateBackToSchool($cases);
-        $home_visit= new HomeVisitModel();
-        $home_visit-> insertUpdateHomeVisit($cases);
-        $dcpcr_ticket= new DcpcrHelplineTicketModel;
-        $dcpcr_ticket->insertUpdateDcpcrTicketDetails($cases);
-
+        $case_reason_model= new CaseReasonModel();
+        $case_reason_model->downloadOperatorFormData();
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public function runDaily()
     {
         ini_set("memory_limit", "-1");
@@ -79,11 +55,11 @@ class CronController extends BaseController
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             $begin = new \DateTimeImmutable();
             $end = $begin;
-            $this->updateCaseData();
             $this->import_school_data();
             $this->import_student_data();
             $this->import_attendance_data($begin, $end);
             $this->update_detected_cases($begin, $end);
+            $this->update_detected_case_operator_form_data();
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);
