@@ -121,8 +121,7 @@ class CaseReasonModel extends Model
         foreach ($data as $row) {
             for ($i = 0; $i < count($row); $i++) {
                 $case_id = $row["$i"]["case_id"];
-                //$agent_name = $row["$i"]["agent_name"];
-                $agent_name = 'Praveen';
+                $agent_name = $row["$i"]["agent_name"];
                 $student_id = $row["$i"]["student_ID"];
                 $did_respondent_receive_call = $row["$i"]["did_respondent_receive_call"];
                 $did_disconnected_call = $row["$i"]["did_disconnected_call"];
