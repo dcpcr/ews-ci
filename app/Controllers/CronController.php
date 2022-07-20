@@ -7,6 +7,7 @@ use App\Models\CaseModel;
 use App\Models\CaseReasonModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
+use App\Models\SmsModel;
 use App\Models\StudentModel;
 
 class CronController extends BaseController
@@ -45,6 +46,19 @@ class CronController extends BaseController
     {
         $case_reason_model= new CaseReasonModel();
         $case_reason_model->downloadOperatorFormData();
+    }
+    public function sms()
+    {
+        $username=getenv('cdac_username');
+        $password=getenv('cdac_password');
+        $sender_id=getenv('cdac_senderId');
+        $Secure_key=getenv('cdac_deptSecureKey');
+        $template_id="1307162126864296262";
+        $mobile_nos="8882223317,8318735079,9320060499";
+        //Don't change the Uncode Message content.
+        $messageUnicode="बच्चे को सेहत, पोषण, या कोई और समस्या हो या संबंधित जानकारी चाहिए, तो DCPCR दिल्ली सरकार हेल्पलाइन 9311551393 पर कॉल करें।DCPCR"; //message content in unicode
+        $sms_model= new SmsModel();
+        $sms_model->sendSms($username,$password,$sender_id,$messageUnicode,$mobile_nos,$Secure_key,$template_id);
     }
 
     public function runDaily()
