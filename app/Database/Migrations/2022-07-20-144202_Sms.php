@@ -6,6 +6,7 @@ use CodeIgniter\Database\Migration;
 
 class Sms extends Migration
 {
+    protected $DBGroup = 'master';
     public function up()
     {
         $this->forge->addField([
@@ -37,12 +38,11 @@ class Sms extends Migration
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
-            'delivery_report' => [
-                'type' => 'BIGINT',
-                'constraint' => 10,
-                'unsigned' => true,
+            'report_fetched' => [
+                'type' => 'Char',
+                'constraint' => 3,
                 'NOT NULL' => true,
-                'Default'=>'0',
+                'Default'=>'No',
             ],
             'updated_at' => [
                 'type' => 'datetime',
