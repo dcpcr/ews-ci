@@ -82,3 +82,14 @@ function import_data_into_db($file_name, $db_group, $table_name)
         log_message('error', "Query execute failed: error - " . $db->error()['message']);
     }
 }
+
+function get_array_from_csv($filename): array
+{
+    $arr = array();
+    $file = fopen($filename, 'r');
+    while (($line = fgetcsv($file)) !== FALSE) {
+        $arr[] = $line;
+    }
+    fclose($file);
+    return $arr;
+}

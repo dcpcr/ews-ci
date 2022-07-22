@@ -21,9 +21,13 @@ class DetectedCase extends Migration
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
-            'detection_criteria' => [
-                'type' => 'ENUM("7 Consecutive Days Absent ","<60% Attendance","0")',
-                'default' => '0',
+            'seven_days_criteria' => [
+                'type' => 'BIT',
+                'default' => 0,
+            ],
+            'thirty_days_criteria' => [
+                'type' => 'BIT',
+                'default' => 0,
             ],
             'status' => [
                 'type' => 'ENUM("Fresh","In Pursuit","Untraceable","Home Visit","Ticket-Raised-Normal-Resolved","Ticket-Raised-SOS","To Be Back To School","Not Sure","Refused","Back To School")',
@@ -34,14 +38,19 @@ class DetectedCase extends Migration
                 'default' => null,
             ],
             'system_bts' => [
-                'type' => 'ENUM("Yes","No")',
-                'default' => 'No',
+                'type' => 'int',
+                'default' => '0',
+            ],
+            'priority' => [
+                'type' => 'ENUM("High","Low","Medium")',
+                'default' => 'Medium',
             ],
         ]);
 
         $this->forge->addField(['`day` date default (curdate()) NOT NULL']);
 
         $this->forge->addPrimaryKey('id');
+        $this->forge->addKey('student_id');
         $this->forge->createTable('detected_case');
     }
 
@@ -50,6 +59,4 @@ class DetectedCase extends Migration
         //
         $this->forge->dropTable('detected_case');
     }
-
-
 }

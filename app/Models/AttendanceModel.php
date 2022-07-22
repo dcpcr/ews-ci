@@ -5,6 +5,8 @@ namespace App\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
 use CodeIgniter\Validation\ValidationInterface;
+use DateTimeImmutable;
+use Exception;
 
 class AttendanceModel extends Model
 {
@@ -59,13 +61,58 @@ class AttendanceModel extends Model
             log_message("info", $total_attendance_count . " attendance records fetched for date = " . $date->format("d/m/Y"));
         }
         import_data_into_db($file_name, $this->DBGroup, $this->table);
+        log_message("info", "Attendance records dumped in DB. " . $date->format("d/m/Y"));
     }
 
-    public function getStudentAttendanceForLast30DaysFrom($student_id, $date): array
+    public function getStudentAttendanceForLastNDaysFrom($student_id, $date, $N): array
     {
         return $this->select(["STR_TO_DATE(date,'%d/%m/%Y') as day", "attendance_status"])
             ->where("student_id = '$student_id' and 
             STR_TO_DATE(date,'%d/%m/%Y') <= STR_TO_DATE('" . $date->format("d/m/Y") . "','%d/%m/%Y')")
-            ->orderBy("day", "desc")->findAll(30);
+            ->orderBy("day", "desc")->findAll($N);
+    }
+
+    public function getStudentAttendanceBetween($student_id, $from_date, $to_date): array
+    {
+        return $this->select(["STR_TO_DATE(date,'%d/%m/%Y') as day", "attendance_status"])
+            ->where("student_id = '$student_id' and 
+            STR_TO_DATE(date,'%d/%m/%Y') <= STR_TO_DATE('" . $to_date->format("d/m/Y") . "','%d/%m/%Y') and 
+            STR_TO_DATE(date,'%d/%m/%Y') >= STR_TO_DATE('" . $from_date->format("d/m/Y") . "','%d/%m/%Y')")
+            ->orderBy("day", "desc")->findAll();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getStudentAttendanceForCases($case_ids): array
+    {
+        $case_model = new CaseModel();
+        $fetched_cases = $case_model->getCasesForIds($case_ids);
+        $data_array = array();
+        $i = 0;
+        foreach ($fetched_cases as $case) {
+            $data_array[$i]['id'] = $case['id'];
+            $data_array[$i]['student_id'] = $case['student_id'];
+            $today = new DateTimeImmutable();
+            $case_day = new DateTimeImmutable($case['day']);
+            $attendance = $this->getStudentAttendanceBetween($case['student_id'], $case_day, $today);
+            $j = 0;
+            foreach ($attendance as $att) {
+                $j++;
+                $data_array[$i]['attendance' . $j] = $att['day'] . "-" . $att['attendance_status'];
+            }
+            $i++;
+        }
+        return $data_array;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getStudentAttendance($filename, $tofilename)
+    {
+        $cases = get_array_from_csv($filename);
+        $data_array = $this->getStudentAttendanceForCases(array_column($cases, 0));
+        dump_array_in_file($data_array, $tofilename, false);
     }
 }
