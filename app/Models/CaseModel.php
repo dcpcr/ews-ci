@@ -110,7 +110,7 @@ class CaseModel extends Model
                     log_message("error", "Case Insert Failed! There were " . $insert_count . " cases detected. on date - " . $date->format("d/m/Y"));
                 }
             }
-            $update_count = count($insert_data_array);
+            $update_count = count($update_data_array);
             if ($update_count > 0) {
                 try {
                     $this->updateBatch($update_data_array, 'id');
