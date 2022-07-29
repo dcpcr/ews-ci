@@ -145,7 +145,7 @@ class ApiController extends ResourceController
             );
     }
 
-    // test url for case api request => /api/case/?student=20190086097&markeddays=7
+    // test url for case api request => /api/attendance/?student=20190086097&markeddays=7
     public function getAttendance(): \CodeIgniter\HTTP\Response
     {
         $rules = [
@@ -167,6 +167,7 @@ class ApiController extends ResourceController
             ->getResponse(
                 [
                     'student' => $student_id,
+                    'markeddays' => count($data),
                     'data' => $data,
                 ]
             );
