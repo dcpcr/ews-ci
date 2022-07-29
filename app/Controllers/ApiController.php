@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ApiUserModel;
+use App\Models\AttendanceModel;
 use App\Models\CaseModel;
 use App\Models\MitraModel;
 use CodeIgniter\API\ResponseTrait;
@@ -144,13 +145,13 @@ class ApiController extends ResourceController
             );
     }
 
-    // test url for mitra api request => /api/mitra/?student_id=20150371728
-    public function getMitra(): \CodeIgniter\HTTP\Response
+    // test url for case api request => /api/case/?student=20190086097&markeddays=7
+    public function getAttendance(): \CodeIgniter\HTTP\Response
     {
         $rules = [
-            'student_id' => 'trim|required|numeric|greater_than[0]|exact_length[11]',
+            'student' => 'trim|required|numeric|greater_than[0]|min_length[11]|max_length[11]',
+            'markeddays' => 'trim|required|numeric|greater_than[0]',
         ];
-
         if (!$this->validateRequest($_GET, $rules)) {
             return $this
                 ->getResponse(
@@ -158,11 +159,35 @@ class ApiController extends ResourceController
                     ResponseInterface::HTTP_BAD_REQUEST
                 );
         }
+        $marked_days = $_GET['markeddays'];
+        $student_id = $_GET['student'];
+        $attendance_model = new AttendanceModel();
+        $data = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, new \DateTime(), $marked_days);
+        return $this
+            ->getResponse(
+                [
+                    'student' => $student_id,
+                    'data' => $data,
+                ]
+            );
+    }
 
+    // test url for mitra api request => /api/mitra/?student_id=20150371728
+    public function getMitra(): \CodeIgniter\HTTP\Response
+    {
+        $rules = [
+            'student_id' => 'trim|required|numeric|greater_than[0]|exact_length[11]',
+        ];
+        if (!$this->validateRequest($_GET, $rules)) {
+            return $this
+                ->getResponse(
+                    $this->validator->getErrors(),
+                    ResponseInterface::HTTP_BAD_REQUEST
+                );
+        }
         $student_id = $_GET['student_id'];
         $mitra_model = new MitraModel();
         $mitra_details = $mitra_model->getMitraDetailsForStudent($student_id);
-
         return $this
             ->getResponse(
                 [
