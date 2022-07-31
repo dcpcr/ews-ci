@@ -27,6 +27,11 @@ class StudentModel extends Model
         helper('edutel');
     }
 
+    public function getClasses(): array
+    {
+        return $this->select('class')->distinct()->findAll();
+    }
+
     public function updateStudents(string $file_name)
     {
         $school_ids = get_school_ids();

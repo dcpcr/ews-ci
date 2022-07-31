@@ -61,6 +61,44 @@ class SchoolModel extends Model
         return $query->getResultArray();
     }
 
+    public function getMarkedSchoolAttendanceClassWise($date): array
+    {
+        helper('general');
+        $ews_db = get_database_name_from_db_group('default');
+        return $this->select([
+            'count(student.id) as attendance_count',
+            'school.id as school_id',
+            'class.name as class',
+        ])
+            ->join('student', 'school.id = student.school_id')
+            ->join('class', 'student.class = class.name')
+            ->join($ews_db . '.attendance as attendance', 'student.id = attendance.student_id')
+            ->where("attendance.date  = '" . $date->format("d/m/Y") . "'")
+            ->groupBy(['school.id', 'class.id'])
+            //->groupBy('school.id')
+            //->groupBy('class.id')
+            ->findAll();
+    }
+
+    public function getTotalMarkedStudentsClassWise($date): array
+    {
+        helper('general');
+        $ews_db = get_database_name_from_db_group('default');
+        return $this->select([
+            'count(distinct(student.id)) as total_marked_students',
+            'school.id as school_id',
+            'class.id as class_id',
+        ])
+            ->join('student', 'school.id = student.school_id')
+            ->join('class', 'student.class = class.name')
+            ->join($ews_db . '.attendance as attendance', 'student.id = attendance.student_id')
+            ->where("STR_TO_DATE(attendance.date,'%d/%m/%Y') <= STR_TO_DATE('" . $date->format("d/m/Y") . "' , '%d/%m/%Y')")
+            ->groupBy(['school.id', 'class.id'])
+            //->groupBy('class.id')
+            ->findAll();
+    }
+
+
     public function getMarkedSchoolAttendance($school_ids, $classes, $start, $end): array
     {
         helper('general');

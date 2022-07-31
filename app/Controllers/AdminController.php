@@ -44,6 +44,7 @@ class AdminController extends AuthController
         $this->school_model = new SchoolModel();
         $this->district_model = new DistrictModel();
         $this->zone_model = new ZoneModel();
+        helper('ews');
     }
 
 
@@ -181,11 +182,6 @@ class AdminController extends AuthController
         $this->view_name = 'dashboard/homevisits';
     }
 
-    private function initializeClasses(): array
-    {
-        return ['XII', 'XI', 'X', 'IX', 'VIII', 'VII', 'VI', 'V', 'IV', 'III', 'II', 'I', 'KG', 'Nursery'];
-    }
-
     protected function initializeDuration($duration): array
     {
         $data = [];
@@ -237,7 +233,7 @@ class AdminController extends AuthController
 
         $class_get = $this->request->getGet('class');
         $this->classes = (empty($class_get) || ($class_get == ['All']))
-            ? $this->initializeClasses() : $this->request->getGet('class');
+            ? get_all_classes() : $this->request->getGet('class');
 
         $duration_get = $this->request->getGet('duration');
         $this->duration = $this->initializeDuration($duration_get);
