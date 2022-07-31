@@ -29,7 +29,7 @@ class CaseModel extends Model
             $insert_data_array = array();
             $update_data_array = array();
             $marked_students = $attendance_model->distinct()->select('student_id')
-                ->where("date ='" . $date->format("d/m/Y") . "'")->findAll();
+                ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")->findAll();
             if (empty($marked_students)) {
                 log_message("info", "No students' attendance is marked for the day " . $date->format("d/m/Y"));
             }

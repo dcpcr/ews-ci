@@ -14,15 +14,14 @@ class Attendance extends Migration
                 'type' => 'BIGINT',
                 'unsigned' => true,
                 'NOT NULL' => true,
-
             ],
             'attendance_status' => [
                 'type' => 'CHAR',
                 'constraint' => '1',
             ],
             'date' => [
-                'type' => 'char',
-                'constraint' => '20',
+                'type' => 'date',
+                'NOT NULL' => true,
             ],
         ]);
         $this->forge->addPrimaryKey(['student_id', 'date']);

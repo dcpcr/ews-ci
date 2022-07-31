@@ -75,7 +75,7 @@ class SchoolModel extends Model
             ->join($ews_db . '.attendance as attendance', 'student.id = attendance.student_id')
             ->whereIn('school.id', $school_ids)
             ->whereIn('student.class', $classes)
-            ->where("STR_TO_DATE(attendance.date,'%d/%m/%Y') BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+            ->where("attendance.date BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $end . "', '%m/%d/%Y')")
             ->groupBy('school.id')
             ->getCompiledSelect();

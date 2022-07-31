@@ -39,7 +39,7 @@ class AttendanceModel extends Model
                 if ($data_array) {
                     for ($i = 0; $i < count($data_array); $i++) {
                         if (trim($data_array[$i]['attendance']) != "") {
-                            $data_array[$i]['date'] = $date->format("d/m/Y");
+                            $data_array[$i]['date'] = $date->format("Y-m-d");
                             $final_array[$i]['student_id'] = $data_array[$i]['Student_ID'];
                             $final_array[$i]['attendance'] = $data_array[$i]['attendance'];
                             $final_array[$i]['date'] = $data_array[$i]['date'];
@@ -61,23 +61,24 @@ class AttendanceModel extends Model
             log_message("info", $total_attendance_count . " attendance records fetched for date = " . $date->format("d/m/Y"));
         }
         import_data_into_db($file_name, $this->DBGroup, $this->table);
-        log_message("info", "Attendance records dumped in DB. " . $date->format("d/m/Y"));
+        log_message("info", "Attendance records dumped in DB. From date - " .
+            $from_date->format("d/m/Y") . " To Date - " . $to_date->format("d/m/Y"));
     }
 
     public function getStudentAttendanceForLastNDaysFrom($student_id, $date, $N): array
     {
-        return $this->select(["STR_TO_DATE(date,'%d/%m/%Y') as day", "attendance_status"])
+        return $this->select(["DATE_FORMAT(date,'%y-%m-%d') as day", "attendance_status"])
             ->where("student_id = '$student_id' and 
-            STR_TO_DATE(date,'%d/%m/%Y') <= STR_TO_DATE('" . $date->format("d/m/Y") . "','%d/%m/%Y')")
+                date <= STR_TO_DATE('" . $date->format("d/m/Y") . "','%d/%m/%Y')")
             ->orderBy("day", "desc")->findAll($N);
     }
 
     public function getStudentAttendanceBetween($student_id, $from_date, $to_date): array
     {
-        return $this->select(["STR_TO_DATE(date,'%d/%m/%Y') as day", "attendance_status"])
+        return $this->select(["DATE_FORMAT(date,'%y-%m-%d') as day", "attendance_status"])
             ->where("student_id = '$student_id' and 
-            STR_TO_DATE(date,'%d/%m/%Y') <= STR_TO_DATE('" . $to_date->format("d/m/Y") . "','%d/%m/%Y') and 
-            STR_TO_DATE(date,'%d/%m/%Y') >= STR_TO_DATE('" . $from_date->format("d/m/Y") . "','%d/%m/%Y')")
+            date <= STR_TO_DATE('" . $to_date->format("d/m/Y") . "','%d/%m/%Y') and 
+            date >= STR_TO_DATE('" . $from_date->format("d/m/Y") . "','%d/%m/%Y')")
             ->orderBy("day", "desc")->findAll();
     }
 

@@ -1,5 +1,5 @@
 <?php
-ini_set("memory_limit","1024M");
+ini_set("memory_limit","2048M");
 
 // Path to the front controller (this file)
 define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
