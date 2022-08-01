@@ -42,7 +42,7 @@ function get_cyfuture_token()
     }
 }
 
-function downloadOperatorFormData()
+function download_operator_form_data()
 {
 
     $token = get_cyfuture_Token();
@@ -63,40 +63,40 @@ function downloadOperatorFormData()
     }
 
 }
-function extractReasonDataFromCases($cases): array
+function extract_reason_data_from_cases($cases): array
 {
-    $reason_keys = ['case_id', 'reason_of_absense','other_reason_of_absense'];
-    return extractValuesFromObjects($cases, $reason_keys);
+    $keys = ['case_id', 'reason_of_absense','other_reason_of_absense'];
+    return extract_values_from_objects($cases, $keys);
 }
 
-function extractCallDispositionDataFromCases($cases): array
+function extract_call_disposition_data_from_cases($cases): array
 {
-    $reason_keys = ['case_id', 'call_dis'];
-    return extractValuesFromObjects($cases, $reason_keys);
+    $keys = ['case_id', 'call_dis'];
+    return extract_values_from_objects($cases, $keys);
 }
 //raised_ticket
-function extractHighRiskDataFromCases($cases): array
+function extract_high_risk_data_from_cases($cases): array
 {
-    $reason_keys = ['case_id', 'raised_ticket'];
-    return extractValuesFromObjects($cases, $reason_keys);
+    $keys = ['case_id', 'raised_ticket'];
+    return extract_values_from_objects($cases, $keys);
 }
 
-function extractBackToSchoolDataFromCases($cases): array
+function extract_back_to_school_data_from_cases($cases): array
 {
-    $reason_keys = ['case_id', 'will_student_be_able_to_join_school'];
-    return extractValuesFromObjects($cases, $reason_keys);
+    $keys = ['case_id', 'will_student_be_able_to_join_school'];
+    return extract_values_from_objects($cases, $keys);
 }
 
-function extractHomeVisitDataFromCases($cases): array
+function extract_home_visit_data_from_cases($cases): array
 {
-    $reason_keys = ['case_id', 'is_home_visit_required'];
-    return extractValuesFromObjects($cases, $reason_keys);
+    $keys = ['case_id', 'is_home_visit_required'];
+    return extract_values_from_objects($cases, $keys);
 }
 
-function extractDcpcrHelplineTicketDataFromCases($cases): array
+function extract_dcpcr_helpline_ticket_data_from_cases($cases): array
 {
-    $reason_keys = ['case_id', 'name_division','sub_name_division','nature_case',];
-    return extractValuesFromObjects($cases, $reason_keys);
+    $keys = ['case_id', 'name_division','sub_name_division','nature_case',];
+    return extract_values_from_objects($cases, $keys);
 }
 
 

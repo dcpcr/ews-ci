@@ -24,11 +24,11 @@ class HighRiskModel extends Model
    {
        helper('cyfuture');
        if ($cases) {
-           $highRiskData = extractHighRiskDataFromCases($cases);
+           $highRiskData = extract_high_risk_data_from_cases($cases);
            $keyMapping = array(
                "raised_ticket" => "status"
            );
-           $tableData = prepareDataforTable($highRiskData, $keyMapping);
+           $tableData = prepare_data_for_table($highRiskData, $keyMapping);
            $this->ignore(true)->insertBatch($tableData);
            $this->updateBatch($tableData, 'case_id');
        }

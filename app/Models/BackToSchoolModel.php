@@ -16,7 +16,6 @@ class BackToSchoolModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = ['case_id','status'];
 
-
     /**
      * @throws \ReflectionException
      */
@@ -24,11 +23,11 @@ class BackToSchoolModel extends Model
     {
         helper('cyfuture');
         if ($cases) {
-            $backToSchoolData = extractBackToSchoolDataFromCases($cases);
+            $backToSchoolData = extract_back_to_school_data_from_cases($cases);
             $keyMapping = array(
                 "will_student_be_able_to_join_school" => "status"
             );
-            $tableData = prepareDataforTable($backToSchoolData, $keyMapping);
+            $tableData = prepare_data_for_table($backToSchoolData, $keyMapping);
             $this->ignore(true)->insertBatch($tableData);
             $this->updateBatch($tableData, 'case_id');
         }

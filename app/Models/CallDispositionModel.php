@@ -23,11 +23,11 @@ class CallDispositionModel extends Model
    {
        helper('cyfuture');
        if ($cases) {
-           $reasonData = extractCallDispositionDataFromCases($cases);
+           $reasonData = extract_call_disposition_data_from_cases($cases);
            $keyMapping = array(
                "call_dis" => "call_disposition_id"
            );
-           $tableData = prepareDataforTable($reasonData, $keyMapping);
+           $tableData = prepare_data_for_table($reasonData, $keyMapping);
            $this->ignore(true)->insertBatch($tableData);
            $this->updateBatch($tableData, 'case_id');
        }

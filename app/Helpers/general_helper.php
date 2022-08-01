@@ -28,7 +28,7 @@ function get_array_from_dom_table($table, $has_header): array
     return $response_array;
 }
 
-function get_curl_response($url)
+function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '', $token = '')
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -40,9 +40,13 @@ function get_curl_response($url)
         CURLOPT_TIMEOUT => 10,
         CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_CUSTOMREQUEST => "$method",
+        CURLOPT_POSTFIELDS => array('from_date' => "$from_date", 'to_date' => "$to_date"),
         CURLOPT_HTTPHEADER => array(
-            "cache-control: no-cache",
+            "Authorization: $token",
+            "username: $username",
+            "password: $password",
+            "cache-control: no-cache"
         ),
     ));
 
@@ -83,17 +87,7 @@ function import_data_into_db($file_name, $db_group, $table_name)
     }
 }
 
-function get_array_from_csv($filename): array
-{
-    $arr = array();
-    $file = fopen($filename, 'r');
-    while (($line = fgetcsv($file)) !== FALSE) {
-        $arr[] = $line;
-    }
-    fclose($file);
-    return $arr;
-}
-function extractValuesFromObjects($objects, $keys): array
+function extract_values_from_objects($objects, $keys): array
 {
     $row = [];
     $result_data = [];
@@ -129,7 +123,7 @@ function new_key($column_name, $replaces)
     return $column_name;
 }
 
-function prepareDataforTable($data_table, $key_mapping)
+function prepare_data_for_table($data_table, $key_mapping)
 {
     /*    eg. New Mapping Key array sample ['oldkey1'=>'newkey1','oldkey2'=>'newkey2','oldkey3'=>'newkey3',]*/
     replace_key($data_table, $key_mapping);
