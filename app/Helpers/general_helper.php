@@ -28,7 +28,7 @@ function get_array_from_dom_table($table, $has_header): array
     return $response_array;
 }
 
-function get_curl_response($url)
+function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '', $token = '')
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -40,9 +40,13 @@ function get_curl_response($url)
         CURLOPT_TIMEOUT => 10,
         CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_CUSTOMREQUEST => "$method",
+        CURLOPT_POSTFIELDS => array('from_date' => "$from_date", 'to_date' => "$to_date"),
         CURLOPT_HTTPHEADER => array(
-            "cache-control: no-cache",
+            "Authorization: $token",
+            "username: $username",
+            "password: $password",
+            "cache-control: no-cache"
         ),
     ));
 
@@ -92,4 +96,47 @@ function get_array_from_csv($filename): array
     }
     fclose($file);
     return $arr;
+}
+
+function extract_values_from_objects($objects, $keys): array
+{
+    $row = [];
+    $result_data = [];
+    foreach ($objects as $object) {
+        foreach ($keys as $key) {
+            $row["$key"] = $object["$key"];
+        }
+        $result_data[] = $row;
+    }
+    return $result_data;
+}
+
+function replace_key(&$array, $replaces)
+{
+    foreach ($array as $key => $row) {
+        $new_k = new_key($key, $replaces);
+        if (is_array($row)) {
+            replace_key($row, $replaces);
+        }
+
+        $array[$new_k] = $row;
+        if ($new_k != $key) {
+            unset($array[$key]);
+        }
+    }
+}
+
+function new_key($column_name, $replaces)
+{
+    if (array_key_exists($column_name, $replaces)) {
+        $column_name = str_replace($column_name, $replaces[$column_name], $column_name);
+    }
+    return $column_name;
+}
+
+function prepare_data_for_table($data_table, $key_mapping)
+{
+    /*    eg. New Mapping Key array sample ['oldkey1'=>'newkey1','oldkey2'=>'newkey2','oldkey3'=>'newkey3',]*/
+    replace_key($data_table, $key_mapping);
+    return $data_table;
 }
