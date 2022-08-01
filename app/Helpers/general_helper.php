@@ -87,6 +87,7 @@ function import_data_into_db($file_name, $db_group, $table_name)
     }
 }
 
+
 function get_array_from_csv($filename): array
 {
     $arr = array();
@@ -125,6 +126,7 @@ function replace_key(&$array, $replaces)
         }
     }
 }
+
 function new_key($column_name, $replaces)
 {
     if (array_key_exists($column_name, $replaces)) {
