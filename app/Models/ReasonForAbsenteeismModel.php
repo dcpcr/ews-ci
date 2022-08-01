@@ -24,12 +24,12 @@ class ReasonForAbsenteeismModel extends Model
     {
         helper('cyfuture');
         if ($cases) {
-            $reasonData = extractReasonDataFromCases($cases);
+            $reasonData = extract_reason_data_from_cases($cases);
             $keyMapping = array(
                 "reason_of_absense" => "reason",
                 "other_reason_of_absense" => "other_reason"
             );
-            $tableData = prepareDataforTable($reasonData, $keyMapping);
+            $tableData = prepare_data_for_table($reasonData, $keyMapping);
             $this->ignore(true)->insertBatch($tableData);
             $this->updateBatch($tableData, 'case_id');
         }

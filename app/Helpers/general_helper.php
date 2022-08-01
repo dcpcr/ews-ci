@@ -87,7 +87,7 @@ function import_data_into_db($file_name, $db_group, $table_name)
     }
 }
 
-function extractValuesFromObjects($objects, $keys): array
+function extract_values_from_objects($objects, $keys): array
 {
     $row = [];
     $result_data = [];
@@ -123,7 +123,7 @@ function new_key($column_name, $replaces)
     return $column_name;
 }
 
-function prepareDataforTable($data_table, $key_mapping)
+function prepare_data_for_table($data_table, $key_mapping)
 {
     /*    eg. New Mapping Key array sample ['oldkey1'=>'newkey1','oldkey2'=>'newkey2','oldkey3'=>'newkey3',]*/
     replace_key($data_table, $key_mapping);

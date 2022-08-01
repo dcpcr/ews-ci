@@ -52,7 +52,7 @@ class CronController extends BaseController
     private function updateCaseData()
     {
         helper('cyfuture');
-        $cases = downloadOperatorFormData();
+        $cases = download_operator_form_data();
         $reason_for_absenteeism_model= new ReasonForAbsenteeismModel();
         $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
         $call_disposition_model = new CallDispositionModel();
@@ -80,10 +80,10 @@ class CronController extends BaseController
             $begin = new \DateTimeImmutable();
             $end = $begin;
             $this->updateCaseData();
-            /*$this->import_school_data();
+            $this->import_school_data();
             $this->import_student_data();
             $this->import_attendance_data($begin, $end);
-            $this->update_detected_cases($begin, $end);*/
+            $this->update_detected_cases($begin, $end);
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);

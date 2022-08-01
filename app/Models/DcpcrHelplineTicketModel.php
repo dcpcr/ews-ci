@@ -23,13 +23,13 @@ class DcpcrHelplineTicketModel extends Model
     {
         helper('cyfuture');
         if ($cases) {
-            $highRiskData = extractDcpcrHelplineTicketDataFromCases($cases);
+            $highRiskData = extract_dcpcr_helpline_ticket_data_from_cases($cases);
             $keyMapping = array(
                 "name_division"=> "division",
                 "sub_name_division"=> "sub_division",
                 "nature_case"=> "nature",
             );
-            $tableData = prepareDataforTable($highRiskData, $keyMapping);
+            $tableData = prepare_data_for_table($highRiskData, $keyMapping);
             $this->ignore(true)->insertBatch($tableData);
             $this->updateBatch($tableData, 'case_id');
         }

@@ -23,11 +23,11 @@ class HomeVisitModel extends Model
     {
         helper('cyfuture');
         if ($cases) {
-            $highRiskData = extractHomeVisitDataFromCases($cases);
+            $highRiskData = extract_home_visit_data_from_cases($cases);
             $keyMapping = array(
                 "is_home_visit_required" => "status"
             );
-            $tableData = prepareDataforTable($highRiskData, $keyMapping);
+            $tableData = prepare_data_for_table($highRiskData, $keyMapping);
             $this->ignore(true)->insertBatch($tableData);
             $this->updateBatch($tableData, 'case_id');
         }
