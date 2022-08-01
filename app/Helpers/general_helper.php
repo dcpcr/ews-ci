@@ -87,6 +87,17 @@ function import_data_into_db($file_name, $db_group, $table_name)
     }
 }
 
+function get_array_from_csv($filename): array
+{
+    $arr = array();
+    $file = fopen($filename, 'r');
+    while (($line = fgetcsv($file)) !== FALSE) {
+        $arr[] = $line;
+    }
+    fclose($file);
+    return $arr;
+}
+
 function extract_values_from_objects($objects, $keys): array
 {
     $row = [];
@@ -114,7 +125,6 @@ function replace_key(&$array, $replaces)
         }
     }
 }
-
 function new_key($column_name, $replaces)
 {
     if (array_key_exists($column_name, $replaces)) {
