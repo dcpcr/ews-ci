@@ -73,10 +73,8 @@ class SchoolModel extends Model
             ->join('student', 'school.id = student.school_id')
             ->join('class', 'student.class = class.name')
             ->join($ews_db . '.attendance as attendance', 'student.id = attendance.student_id')
-            ->where("attendance.date  = '" . $date->format("d/m/Y") . "'")
+            ->where("attendance.date = STR_TO_DATE('" . $date->format("d/m/Y") . "','%d/%m/%Y')")
             ->groupBy(['school.id', 'class.id'])
-            //->groupBy('school.id')
-            //->groupBy('class.id')
             ->findAll();
     }
 
@@ -87,14 +85,13 @@ class SchoolModel extends Model
         return $this->select([
             'count(distinct(student.id)) as total_marked_students',
             'school.id as school_id',
-            'class.id as class_id',
+            'class.name as class',
         ])
             ->join('student', 'school.id = student.school_id')
             ->join('class', 'student.class = class.name')
             ->join($ews_db . '.attendance as attendance', 'student.id = attendance.student_id')
-            ->where("STR_TO_DATE(attendance.date,'%d/%m/%Y') <= STR_TO_DATE('" . $date->format("d/m/Y") . "' , '%d/%m/%Y')")
-            ->groupBy(['school.id', 'class.id'])
-            //->groupBy('class.id')
+            ->where("attendance.date <= STR_TO_DATE('" . $date->format("d/m/Y") . "' , '%d/%m/%Y')")
+            ->groupBy(['school.id', 'class.name'])
             ->findAll();
     }
 
@@ -131,6 +128,4 @@ class SchoolModel extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
-
-
 }

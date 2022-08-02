@@ -12,5 +12,5 @@ function get_school_ids(): array
 function get_all_classes(): array
 {
     $class_model = new ClassModel();
-    return $class_model->select('name')->findAll();
+    return array_column($class_model->getClasses(), 'name');
 }

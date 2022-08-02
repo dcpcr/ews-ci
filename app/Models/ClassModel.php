@@ -41,6 +41,10 @@ class ClassModel extends Model
         }
     }
 
+    public function getClasses() {
+        return $this->select('name')->findAll();
+    }
+
     private function get_order_of_class()
     {
     }

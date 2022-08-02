@@ -73,6 +73,14 @@ class AttendanceModel extends Model
             ->orderBy("day", "desc")->findAll($N);
     }
 
+    public function getUniqueStudents($start, $end): array
+    {
+        return $this->select('student_id')->distinct()
+            ->where("date between STR_TO_DATE('" . $start->format("d/m/Y") . "','%d/%m/%Y') and 
+                STR_TO_DATE('" . $end->format("d/m/Y") . "','%d/%m/%Y')")
+            ->findAll();
+    }
+
     public function getStudentAttendanceBetween($student_id, $from_date, $to_date): array
     {
         return $this->select(["DATE_FORMAT(date,'%y-%m-%d') as day", "attendance_status"])
@@ -116,4 +124,25 @@ class AttendanceModel extends Model
         $data_array = $this->getStudentAttendanceForCases(array_column($cases, 0));
         dump_array_in_file($data_array, $tofilename, false);
     }
+
+    public function getMarkedSchoolAttendance($school_ids, $classes, $start, $end): array
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        $result = $this->select([
+            'count(distinct(student.id)) as count_att',
+            'count(student.id)/count(distinct(attendance.date)) as avg_att',
+            'count(distinct(attendance.date)) as days_att',
+            'student.school_id as school_id'
+        ])
+            ->join($master_db . '.student as student', 'student.id = attendance.student_id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("attendance.date BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->groupBy('student.school_id')
+            ->findAll();
+        return $result;
+    }
+
 }

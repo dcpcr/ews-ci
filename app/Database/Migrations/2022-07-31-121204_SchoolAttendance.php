@@ -21,8 +21,8 @@ class SchoolAttendance extends Migration
                 'NOT NULL' => true,
             ],
             'date' => [
-                'type' => 'char',
-                'constraint' => '20',
+                'type' => 'date',
+                'NOT NULL' => true,
             ],
             'attendance_count' => [
                 'type' => 'int',
@@ -35,8 +35,10 @@ class SchoolAttendance extends Migration
                 'NOT NULL' => true,
             ],
         ]);
-        $this->forge->addPrimaryKey(['school_id', 'date']);
+        $this->forge->addPrimaryKey(['school_id', 'class', 'date']);
+        $this->forge->addKey(['school_id', 'class']);
         $this->forge->addKey('school_id');
+        $this->forge->addKey('class');
         $this->forge->addKey('date');
         $this->forge->createTable('school_attendance');
     }

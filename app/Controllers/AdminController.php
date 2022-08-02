@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\AttendanceModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\CaseReasonModel;
@@ -166,8 +167,10 @@ class AdminController extends AuthController
 
         $school_wise_student_count = $this->school_model
             ->getSchoolWiseStudentCount($school_ids, $this->classes);
-        $marked_attendance_count = $this->school_model
-            ->getMarkedSchoolAttendance($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        //$marked_attendance_count = $this->school_model
+          //  ->getMarkedSchoolAttendance($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $am = new AttendanceModel();
+        $marked_attendance_count = $am->getMarkedSchoolAttendance($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $this->view_data['response'] = ['schoolWiseStudentCount' => $school_wise_student_count, 'markedAttendanceCount' => $marked_attendance_count];
         $this->view_name = 'dashboard/attendance';
     }
