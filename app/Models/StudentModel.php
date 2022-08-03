@@ -58,4 +58,13 @@ class StudentModel extends Model
             log_message("notice", "No students imported today!");
         }
     }
+
+    public function getNewStudentMobileNumbers(): array
+    {
+
+        $previous_date = date("Y-m-d", strtotime('-1 day', strtotime(date("Y-m-d"))));
+        return $this->select(['mobile'])->where("date_format(`created_at`,'%Y-%m-%d') =", $previous_date)->findAll();
+
+    }
+
 }

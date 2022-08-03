@@ -12,6 +12,7 @@ use App\Models\HomeVisitModel;
 use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
+use App\Models\SmsBatchModel;
 use App\Models\StudentModel;
 
 class CronController extends BaseController
@@ -53,20 +54,46 @@ class CronController extends BaseController
     {
         helper('cyfuture');
         $cases = download_operator_form_data();
-        $reason_for_absenteeism_model= new ReasonForAbsenteeismModel();
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
         $call_disposition_model = new CallDispositionModel();
         $call_disposition_model->insertUpdateCallDisposition($cases);
-        $high_risk_model= new HighRiskModel();
+        $high_risk_model = new HighRiskModel();
         $high_risk_model->insertUpdateHighRisk($cases);
         $back_to_school = new BackToSchoolModel();
         $back_to_school->insertUpdateBackToSchool($cases);
-        $home_visit= new HomeVisitModel();
-        $home_visit-> insertUpdateHomeVisit($cases);
-        $dcpcr_ticket= new DcpcrHelplineTicketModel;
+        $home_visit = new HomeVisitModel();
+        $home_visit->insertUpdateHomeVisit($cases);
+        $dcpcr_ticket = new DcpcrHelplineTicketModel;
         $dcpcr_ticket->insertUpdateDcpcrTicketDetails($cases);
 
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    private function sendSmsToStudentNewRecord()
+    {
+        helper('cdac');
+        $student_model = new StudentModel();
+        $mobile_numbers = $student_model->getNewStudentMobileNumbers();
+        if (count($mobile_numbers) > 0) {
+            send_bulk_unicode_promotional_sms($mobile_numbers);
+        }
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    private function SmsDeliveryReport()
+    {
+        helper('cdac');
+        $sms_batch_model = new SmsBatchModel();
+        $messageIds = $sms_batch_model->getMessageId();
+        fetch_sms_delivery_report($messageIds);
+    }
+
+
 
     /**
      * @throws \ReflectionException
@@ -80,6 +107,8 @@ class CronController extends BaseController
             $begin = new \DateTimeImmutable();
             $end = $begin;
             $this->updateCaseData();
+            $this->sendSmsToStudentNewRecord();
+            $this->SmsDeliveryReport();
             $this->import_school_data();
             $this->import_student_data();
             $this->import_attendance_data($begin, $end);
