@@ -6,7 +6,7 @@ use CodeIgniter\Database\Migration;
 
 class SmsBatch extends Migration
 {
-    protected $DBGroup = 'master';
+
     public function up()
     {
         $this->forge->addField([
@@ -36,11 +36,6 @@ class SmsBatch extends Migration
             ],
 
         ]);
-        $this->forge->addField(
-            [
-                'created_at timestamp not null default current_timestamp',
-                'updated_at timestamp not null default current_timestamp on update current_timestamp',
-            ]);
         $this->forge->addPrimaryKey(['id']);
         $this->forge->addKey('message_id');
         $this->forge->addKey('sms_template_id');

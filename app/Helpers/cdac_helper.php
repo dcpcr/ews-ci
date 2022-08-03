@@ -63,19 +63,9 @@ function helpline_promotion_template_id()
     return $templateid;
 }
 
-function convert_mobile_array_to_comma_separated_string($mobile_number_array)
-{
-    if (count($mobile_number_array) > 0) {
-        $string = '';
-        foreach ($mobile_number_array as $mobile) {
-            $string .= $mobile['mobile'] . ",";
-        }
-        return $final_mobile_number_string = substr($string, 0, strlen($string) - 1);
-    } else {
-        return "";
-    }
 
-}
+//call this method for sending single unicode sms, uncomment next line to use
+//sendSingleUnicode($username, $encryp_password, $senderid, $messageUnicode, $mobileno, $deptSecureKey, $templateid);
 
 //function to send unicode sms by making http connection
 function post_to_url_unicode($url, $data)
@@ -192,7 +182,7 @@ function send_bulk_unicode_promotional_sms($mobile_numbers)
     $secure_key = get_cdac_securekey();
     $template_id = helpline_promotion_template_id();
     $response = send_bulk_unicode($username, $password, $sender_id, $message_unicode, $mobile_numbers, $secure_key, $template_id);
-    insert_response($response, $template_id);
+    insert_response($response, $template_id, $mobile_numbers);
 
 
 }
@@ -215,46 +205,49 @@ function send_single_unicode_promotional_sms($mobile_number)
 /**
  * @throws ReflectionException
  */
-function insert_response($response, string $template_id): void
+function insert_response($response, string $template_id, $mobile_numbers): void
 {
     $response = str_replace("\n", "", $response);
     $response_arr = explode(',', $response);
+    var_dump($response_arr);
     //TODO: Error handling
     $statusCode = $response_arr[0];
     $messageId = $response_arr[1];
     $sms_batch_model = new SmsBatchModel();
     $sms_batch_model->insterSmsBatchData($messageId, $statusCode, $template_id);
-
+    /*$sms_submitted_model = new SmsDeliveryReportModel();
+    $sms_submitted_model->insertMobileNumbersSmsBatch($batch, $mobile_numbers);*/
 }
 
-/**
- * @throws ReflectionException
- */
-function fetch_sms_delivery_report($message_id, $batch_id)
+function fetch_sms_delivery_report($message_ids)
 {
     $username = get_cdac_username();
     $password = get_cdac_password();
     $sms_batch = new SmsDeliveryReportModel();
-    $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $message_id . "&pwd_encrypted=false";
-    helper('general');
-    $response = get_curl_response($url);
-    //$response = '917701891704,DELIVERED,2022-07-29 04:58:53 918758191659,DELIVERED,2022-07-29 04:58:52 919873177238,FAILEDBYTELCO,2022-07-29 04:58:49 917428194597,DELIVERED,2022-07-29 04:58:51 919818775784,DELIVERED,2022-07-29 04:59:09 917766863434,DELIVERED,2022-07-29 04:58:51 919667345583,DELIVERED,2022-07-29 04:58:51 919065414962,DELIVERED,2022-07-29 04:58:52 919818442421,DELIVERED,2022-07-29 04:58:52 919911814770,SUBMITTED,0000-00-00 00:00:00';
-    $response = preg_replace('/\s/', ',', $response);
-    $response_arr = explode(',', $response);
-    $j = 0;
-    $k = 1;
-    $report_data=[];
-    for ($i = 0; $i < count($response_arr) / 4; $i++) {
-        $report_data[] = array(
-            'sms_batch_id' => $batch_id,
-            'mobile_number' => $response_arr["$j"],
-            'status' => $response_arr["$k"]
-        );
-        $j = $j + 4;
-        $k = $k + 4;
-    }
+    var_dump($message_ids);
+    if (count($message_ids) > 0) {
+        foreach ($message_ids as $ids) {
+            $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $ids['message_id'] . "&pwd_encrypted=false";
+            helper('general');
+            $response = get_curl_response($url);
+           // $response = '917701891704,DELIVERED,2022-07-29 04:58:53 918758191659,DELIVERED,2022-07-29 04:58:52 919873177238,FAILEDBYTELCO,2022-07-29 04:58:49 917428194597,DELIVERED,2022-07-29 04:58:51 919818775784,DELIVERED,2022-07-29 04:59:09 917766863434,DELIVERED,2022-07-29 04:58:51 919667345583,DELIVERED,2022-07-29 04:58:51 919065414962,DELIVERED,2022-07-29 04:58:52 919818442421,DELIVERED,2022-07-29 04:58:52 919911814770,SUBMITTED,0000-00-00 00:00:00';
+            $response = preg_replace('/\s/', ',', $response);
+            $response_arr = explode(',', $response);
+            $j = 0;
+            $k = 1;
+            for ($i = 0; $i < count($response_arr) / 4; $i++) {
+                $report_data[] = array(
+                    //TODO add batch id
+                    'mobile_number' => $response_arr["$j"],
+                    'status' => $response_arr["$k"]
+                );
+                $j = $j + 4;
+                $k = $k + 4;
+            }
+            $sms_batch->insertMobileNumbersSmsBatch($report_data);
 
-    $sms_batch->insertMobileNumbersSmsBatch($report_data);
+        }
+    }
 
 }
 

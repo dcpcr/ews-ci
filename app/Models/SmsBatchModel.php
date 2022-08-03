@@ -12,7 +12,7 @@ class SmsBatchModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $protectFields    = true;
-    protected $allowedFields    = ['id','message_id','sms_template_id','status_code','report_fetched'];
+    protected $allowedFields    = ['message_id','sms_template_id','status_code','report_fetched'];
 
 
     /**
@@ -34,15 +34,7 @@ class SmsBatchModel extends Model
 
     public function getMessageId(): array
     {
-        return $this->select('id,message_id')->where('report_fetched <','4')->get()->getResultArray();
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function updateReportFetchFalg($batch_id)
-    {
-        $this->set('report_fetched',"report_fetched+1",false)->where('id',"$batch_id")->update();
+        return $this->select('message_id')->where('report_fetched=','0' and 'report_fetched <','4' )->findAll();
     }
 
 
