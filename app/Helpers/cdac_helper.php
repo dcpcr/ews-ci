@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\SmsBatchModel;
-use App\Models\SmsSubmittedModel;
+use App\Models\SmsDeliveryReportModel;
 
 function get_cdac_username()
 {
@@ -130,7 +130,7 @@ function ordutf8($string, &$offset)
 
 
 //function to send single unicode sms
-function sendSingleUnicode($username, $encryp_password, $senderid, $messageUnicode, $mobileno, $deptSecureKey, $templateid)
+function send_single_unicode($username, $encryp_password, $senderid, $messageUnicode, $mobileno, $deptSecureKey, $templateid)
 {
     $finalmessage = string_to_finalmessage(trim($messageUnicode));
     $key = hash('sha512', trim($username) . trim($senderid) . trim($finalmessage) . trim($deptSecureKey));
@@ -146,11 +146,11 @@ function sendSingleUnicode($username, $encryp_password, $senderid, $messageUnico
         "templateid" => trim($templateid)
     );
 
-   return post_to_url_unicode("https://msdgweb.mgov.gov.in/esms/sendsmsrequestDLT", $data); //calling post_to_url_unicode to send single unicode sms
+    return post_to_url_unicode("https://msdgweb.mgov.gov.in/esms/sendsmsrequestDLT", $data); //calling post_to_url_unicode to send single unicode sms
 }
 
 //function to send bulk unicode sms
-function sendBulkUnicode($username, $encryp_password, $senderid, $messageUnicode, $mobileNos, $deptSecureKey, $templateid)
+function send_bulk_unicode($username, $encryp_password, $senderid, $messageUnicode, $mobileNos, $deptSecureKey, $templateid)
 {
     $finalmessage = string_to_finalmessage(trim($messageUnicode));
     $key = hash('sha512', trim($username) . trim($senderid) . trim($finalmessage) . trim($deptSecureKey));
@@ -173,7 +173,7 @@ function sendBulkUnicode($username, $encryp_password, $senderid, $messageUnicode
 /**
  * @throws ReflectionException
  */
-function sendBulkUnicodePromotionalSms($mobile_numbers)
+function send_bulk_unicode_promotional_sms($mobile_numbers)
 {
     $username = get_cdac_username();
     $password = get_cdac_password();
@@ -181,7 +181,7 @@ function sendBulkUnicodePromotionalSms($mobile_numbers)
     $message_unicode = helpline_promotion_message();
     $secure_key = get_cdac_securekey();
     $template_id = helpline_promotion_template_id();
-    $response = sendBulkUnicode($username, $password, $sender_id, $message_unicode, $mobile_numbers, $secure_key, $template_id);
+    $response = send_bulk_unicode($username, $password, $sender_id, $message_unicode, $mobile_numbers, $secure_key, $template_id);
     insert_response($response, $template_id, $mobile_numbers);
 
 
@@ -190,7 +190,7 @@ function sendBulkUnicodePromotionalSms($mobile_numbers)
 /**
  * @throws ReflectionException
  */
-function sendSignleUnicodePromotionalSms($mobile_number)
+function send_single_unicode_promotional_sms($mobile_number)
 {
     $username = get_cdac_username();
     $password = get_cdac_password();
@@ -198,7 +198,7 @@ function sendSignleUnicodePromotionalSms($mobile_number)
     $message_unicode = helpline_promotion_message();
     $secure_key = get_cdac_securekey();
     $template_id = helpline_promotion_template_id();
-    $response = sendSingleUnicode($username, $password, $sender_id, $message_unicode, $mobile_number, $secure_key, $template_id);
+    $response = send_single_unicode($username, $password, $sender_id, $message_unicode, $mobile_number, $secure_key, $template_id);
     insert_response($response, $template_id, $mobile_number);
 }
 
@@ -214,10 +214,40 @@ function insert_response($response, string $template_id, $mobile_numbers): void
     $statusCode = $response_arr[0];
     $messageId = $response_arr[1];
     $sms_batch_model = new SmsBatchModel();
-    $batch = $sms_batch_model->insterSmsBatchData($messageId, $statusCode, $template_id);
-    $sms_submitted_model = new SmsSubmittedModel();
-    $sms_submitted_model->insertMobileNumbersSmsBatch($batch, $mobile_numbers);
+    $sms_batch_model->insterSmsBatchData($messageId, $statusCode, $template_id);
+    /*$sms_submitted_model = new SmsDeliveryReportModel();
+    $sms_submitted_model->insertMobileNumbersSmsBatch($batch, $mobile_numbers);*/
 }
 
+function fetch_sms_delivery_report($message_ids)
+{
+    $username = get_cdac_username();
+    $password = get_cdac_password();
+    $sms_batch = new SmsDeliveryReportModel();
+    var_dump($message_ids);
+    if (count($message_ids) > 0) {
+        foreach ($message_ids as $ids) {
+            $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $ids['message_id'] . "&pwd_encrypted=false";
+            helper('general');
+            $response = get_curl_response($url);
+           // $response = '917701891704,DELIVERED,2022-07-29 04:58:53 918758191659,DELIVERED,2022-07-29 04:58:52 919873177238,FAILEDBYTELCO,2022-07-29 04:58:49 917428194597,DELIVERED,2022-07-29 04:58:51 919818775784,DELIVERED,2022-07-29 04:59:09 917766863434,DELIVERED,2022-07-29 04:58:51 919667345583,DELIVERED,2022-07-29 04:58:51 919065414962,DELIVERED,2022-07-29 04:58:52 919818442421,DELIVERED,2022-07-29 04:58:52 919911814770,SUBMITTED,0000-00-00 00:00:00';
+            $response = preg_replace('/\s/', ',', $response);
+            $response_arr = explode(',', $response);
+            $j = 0;
+            $k = 1;
+            for ($i = 0; $i < count($response_arr) / 4; $i++) {
+                $report_data[] = array(
+                    //TODO add batch id
+                    'mobile_number' => $response_arr["$j"],
+                    'status' => $response_arr["$k"]
+                );
+                $j = $j + 4;
+                $k = $k + 4;
+            }
+            $sms_batch->insertMobileNumbersSmsBatch($report_data);
 
+        }
+    }
+
+}
 
