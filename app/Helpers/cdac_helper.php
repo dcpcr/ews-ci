@@ -63,9 +63,21 @@ function helpline_promotion_template_id()
     return $templateid;
 }
 
+function convert_mobile_array_to_comma_separated_string($mobile_number_array)
+{
+    if (count($mobile_number_array) > 0) {
+        $string = '';
+        foreach ($mobile_number_array as $mobile) {
+            $string .= $mobile['mobile'] . ",";
+        }
+        return $final_mobile_number_string = substr($string, 0, strlen($string) - 1);
+    }
+    else
+    {
+        return "";
+    }
 
-//call this method for sending single unicode sms, uncomment next line to use
-//sendSingleUnicode($username, $encryp_password, $senderid, $messageUnicode, $mobileno, $deptSecureKey, $templateid);
+}
 
 //function to send unicode sms by making http connection
 function post_to_url_unicode($url, $data)
@@ -182,7 +194,7 @@ function send_bulk_unicode_promotional_sms($mobile_numbers)
     $secure_key = get_cdac_securekey();
     $template_id = helpline_promotion_template_id();
     $response = send_bulk_unicode($username, $password, $sender_id, $message_unicode, $mobile_numbers, $secure_key, $template_id);
-    insert_response($response, $template_id, $mobile_numbers);
+    insert_response($response, $template_id);
 
 
 }
@@ -209,7 +221,6 @@ function insert_response($response, string $template_id): void
 {
     $response = str_replace("\n", "", $response);
     $response_arr = explode(',', $response);
-    var_dump($response_arr);
     //TODO: Error handling
     $statusCode = $response_arr[0];
     $messageId = $response_arr[1];
@@ -223,7 +234,6 @@ function fetch_sms_delivery_report($message_ids)
     $username = get_cdac_username();
     $password = get_cdac_password();
     $sms_batch = new SmsDeliveryReportModel();
-    var_dump($message_ids);
     if (count($message_ids) > 0) {
         foreach ($message_ids as $ids) {
             $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $ids['message_id'] . "&pwd_encrypted=false";

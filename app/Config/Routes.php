@@ -34,6 +34,7 @@ $routes->setAutoRoute(true);
 $routes->get('operator', 'OperatorController::index', ['as' => 'operator']);
 $routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
 $routes->cli("cron/run", "CronController::runDaily");
+$routes->cli("cron/send_promotional_sms", "CronController::promotionalSmsCron");
 $routes->post('api_login', 'ApiController::login');
 $routes->get('api/case', 'ApiController::getCases');
 $routes->get('api/mitra', 'ApiController::getMitra');
