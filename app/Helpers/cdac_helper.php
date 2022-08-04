@@ -205,7 +205,7 @@ function send_single_unicode_promotional_sms($mobile_number)
 /**
  * @throws ReflectionException
  */
-function insert_response($response, string $template_id, $mobile_numbers): void
+function insert_response($response, string $template_id): void
 {
     $response = str_replace("\n", "", $response);
     $response_arr = explode(',', $response);
@@ -215,8 +215,7 @@ function insert_response($response, string $template_id, $mobile_numbers): void
     $messageId = $response_arr[1];
     $sms_batch_model = new SmsBatchModel();
     $sms_batch_model->insterSmsBatchData($messageId, $statusCode, $template_id);
-    /*$sms_submitted_model = new SmsDeliveryReportModel();
-    $sms_submitted_model->insertMobileNumbersSmsBatch($batch, $mobile_numbers);*/
+
 }
 
 function fetch_sms_delivery_report($message_ids)
