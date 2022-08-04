@@ -6,7 +6,7 @@ use CodeIgniter\Database\Migration;
 
 class SmsDeliveryReport extends Migration
 {
-
+    protected $DBGroup = 'master';
     public function up()
     {
         $this->forge->addField([
