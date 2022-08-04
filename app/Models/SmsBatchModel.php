@@ -12,7 +12,7 @@ class SmsBatchModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $protectFields    = true;
-    protected $allowedFields    = ['message_id','sms_template_id','status_code','report_fetched'];
+    protected $allowedFields    = ['id','message_id','sms_template_id','status_code','report_fetched'];
 
 
     /**

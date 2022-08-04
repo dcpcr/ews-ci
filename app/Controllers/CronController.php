@@ -78,13 +78,8 @@ class CronController extends BaseController
         $student_model = new StudentModel();
         $mobile_numbers = $student_model->getNewStudentMobileNumbers();
         if (count($mobile_numbers) > 0) {
-            $string='';
-           foreach ($mobile_numbers as $mobile)
-           {
-               $string.=$mobile['mobile'].",";
-           }
-           $final_mobile_number_string=substr($string,0,strlen($string)-1);
-           send_bulk_unicode_promotional_sms($final_mobile_number_string);
+            $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
+            send_bulk_unicode_promotional_sms($final_mobile_number_string);
         }
     }
 
@@ -99,7 +94,35 @@ class CronController extends BaseController
         fetch_sms_delivery_report($messageIds);
     }
 
-
+    /**
+     * @throws \ReflectionException
+     */
+    private function send_sms_to_all_student()
+    {
+        helper('cdac');
+        $limit = 10000;//Sms batch of 10,000
+        $offset = 0;
+        $count = 0;
+        $student_model = new StudentModel();
+        $total_student_count = $student_model->getTotalStudentCount();
+        while ($count < $total_student_count) {
+            if ($offset == 0)
+            {
+                $student_mobile = $student_model->getNewStudentMobileNumbers("$limit", "$offset");
+                $offset++;
+                $offset = $offset + $limit;
+                $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($student_mobile);
+                send_bulk_unicode_promotional_sms($final_mobile_number_string);
+            }
+            $student_mobile = $student_model->getNewStudentMobileNumbers("$limit", "$offset");
+            $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($student_mobile);
+            send_bulk_unicode_promotional_sms($final_mobile_number_string);
+            $offset = $offset + $limit;
+            $count = $count + $limit;
+            echo "\n";
+            echo " $count < $total_student_count";
+        }
+    }
 
     /**
      * @throws \ReflectionException
@@ -112,17 +135,34 @@ class CronController extends BaseController
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             $begin = new \DateTimeImmutable();
             $end = $begin;
-           // $this->updateCaseData();
+            $this->updateCaseData();
             $this->sendSmsToStudentNewRecord();
-           /* $this->SmsDeliveryReport();
+            $this->SmsDeliveryReport();
             $this->import_school_data();
             $this->import_student_data();
             $this->import_attendance_data($begin, $end);
-            $this->update_detected_cases($begin, $end);*/
+            $this->update_detected_cases($begin, $end);
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);
             log_message('info', "Execution time of script = " . $execution_time . " sec");
+        } else {
+            log_message('info', "Access to this functionally without CLI is not allowed");
+        }
+    }
+
+    public function promotionalSmsCron()
+    {
+        ini_set("memory_limit", "-1");
+        if ($this->request->isCLI()) {
+            log_message('info', "Cron request");
+            $start_time = microtime(true); //Find a better mechanism of logging time of execution
+            $begin = new \DateTimeImmutable();
+            $this->send_sms_to_all_student();
+            // Calculate script execution time
+            $end_time = microtime(true);
+            $execution_time = ($end_time - $start_time);
+            log_message('info', "Execution time for send promotional sms script = " . $execution_time . " sec");
         } else {
             log_message('info', "Access to this functionally without CLI is not allowed");
         }
