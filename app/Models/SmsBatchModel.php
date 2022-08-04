@@ -34,7 +34,15 @@ class SmsBatchModel extends Model
 
     public function getMessageId(): array
     {
-        return $this->select('message_id')->where('report_fetched=','0' and 'report_fetched <','4' )->findAll();
+        return $this->select('id,message_id')->where('report_fetched <','4')->get()->getResultArray();
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function updateReportFetchFalg($batch_id)
+    {
+        $this->set('report_fetched',"report_fetched+1",false)->where('id',"$batch_id")->update();
     }
 
 

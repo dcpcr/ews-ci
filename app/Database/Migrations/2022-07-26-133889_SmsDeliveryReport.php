@@ -32,15 +32,20 @@ class SmsDeliveryReport extends Migration
             ],
 
         ]);
+        $this->forge->addField(
+            [
+                'created_at timestamp not null default current_timestamp',
+                'updated_at timestamp not null default current_timestamp on update current_timestamp',
+            ]);
         $this->forge->addPrimaryKey(['id']);
         $this->forge->addKey('sms_batch_id');
         $this->forge->addKey('mobile_number');
         $this->forge->addKey('status');
-        $this->forge->createTable('sms_delivery_status');
+        $this->forge->createTable('sms_delivery_report');
     }
 
     public function down()
     {
-        $this->forge->dropTable('sms_delivery_status');
+        $this->forge->dropTable('sms_delivery_report');
     }
 }

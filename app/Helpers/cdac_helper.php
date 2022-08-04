@@ -71,9 +71,7 @@ function convert_mobile_array_to_comma_separated_string($mobile_number_array)
             $string .= $mobile['mobile'] . ",";
         }
         return $final_mobile_number_string = substr($string, 0, strlen($string) - 1);
-    }
-    else
-    {
+    } else {
         return "";
     }
 
@@ -229,34 +227,34 @@ function insert_response($response, string $template_id): void
 
 }
 
-function fetch_sms_delivery_report($message_ids)
+/**
+ * @throws ReflectionException
+ */
+function fetch_sms_delivery_report($message_id, $batch_id)
 {
     $username = get_cdac_username();
     $password = get_cdac_password();
     $sms_batch = new SmsDeliveryReportModel();
-    if (count($message_ids) > 0) {
-        foreach ($message_ids as $ids) {
-            $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $ids['message_id'] . "&pwd_encrypted=false";
-            helper('general');
-            $response = get_curl_response($url);
-           // $response = '917701891704,DELIVERED,2022-07-29 04:58:53 918758191659,DELIVERED,2022-07-29 04:58:52 919873177238,FAILEDBYTELCO,2022-07-29 04:58:49 917428194597,DELIVERED,2022-07-29 04:58:51 919818775784,DELIVERED,2022-07-29 04:59:09 917766863434,DELIVERED,2022-07-29 04:58:51 919667345583,DELIVERED,2022-07-29 04:58:51 919065414962,DELIVERED,2022-07-29 04:58:52 919818442421,DELIVERED,2022-07-29 04:58:52 919911814770,SUBMITTED,0000-00-00 00:00:00';
-            $response = preg_replace('/\s/', ',', $response);
-            $response_arr = explode(',', $response);
-            $j = 0;
-            $k = 1;
-            for ($i = 0; $i < count($response_arr) / 4; $i++) {
-                $report_data[] = array(
-                    //TODO add batch id
-                    'mobile_number' => $response_arr["$j"],
-                    'status' => $response_arr["$k"]
-                );
-                $j = $j + 4;
-                $k = $k + 4;
-            }
-            $sms_batch->insertMobileNumbersSmsBatch($report_data);
-
-        }
+    $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $message_id . "&pwd_encrypted=false";
+    helper('general');
+    $response = get_curl_response($url);
+    //$response = '917701891704,DELIVERED,2022-07-29 04:58:53 918758191659,DELIVERED,2022-07-29 04:58:52 919873177238,FAILEDBYTELCO,2022-07-29 04:58:49 917428194597,DELIVERED,2022-07-29 04:58:51 919818775784,DELIVERED,2022-07-29 04:59:09 917766863434,DELIVERED,2022-07-29 04:58:51 919667345583,DELIVERED,2022-07-29 04:58:51 919065414962,DELIVERED,2022-07-29 04:58:52 919818442421,DELIVERED,2022-07-29 04:58:52 919911814770,SUBMITTED,0000-00-00 00:00:00';
+    $response = preg_replace('/\s/', ',', $response);
+    $response_arr = explode(',', $response);
+    $j = 0;
+    $k = 1;
+    $report_data=[];
+    for ($i = 0; $i < count($response_arr) / 4; $i++) {
+        $report_data[] = array(
+            'sms_batch_id' => $batch_id,
+            'mobile_number' => $response_arr["$j"],
+            'status' => $response_arr["$k"]
+        );
+        $j = $j + 4;
+        $k = $k + 4;
     }
+
+    $sms_batch->insertMobileNumbersSmsBatch($report_data);
 
 }
 
