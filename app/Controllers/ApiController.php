@@ -196,4 +196,58 @@ class ApiController extends ResourceController
                 ]
             );
     }
+
+    public function sendIntimationSms(): \CodeIgniter\HTTP\Response
+    {
+        $rules = [
+            'student_id' => 'trim|required|numeric|greater_than[0]|exact_length[11]',
+            'student_name' => 'trim|required|alpha',
+            'mobile' => 'trim|required|numeric|greater_than[0]|exact_length[10]',
+        ];
+        if (!$this->validateRequest($_GET, $rules)) {
+            return $this
+                ->getResponse(
+                    $this->validator->getErrors(),
+                    ResponseInterface::HTTP_BAD_REQUEST
+                );
+        }
+        $student_id = $_GET['student_id'];
+        $student_name = $_GET['student_name'];
+        $mobile_number = $_GET['mobile'];
+        helper('ews_sms_template_helper');
+        $response=send_advance_intimation_ews_case_sms($mobile_number,$student_id,$student_name);
+        return $this
+            ->getResponse(
+                [
+                    'data' => $response,
+                ]
+            );
+    }
+
+    public function sendNormalConnectedCallsSms(): \CodeIgniter\HTTP\Response
+    {
+        $rules = [
+            'student_id' => 'trim|required|numeric|greater_than[0]|exact_length[11]',
+            'student_name' => 'trim|required|alpha',
+            'mobile' => 'trim|required|numeric|greater_than[0]|exact_length[10]',
+        ];
+        if (!$this->validateRequest($_GET, $rules)) {
+            return $this
+                ->getResponse(
+                    $this->validator->getErrors(),
+                    ResponseInterface::HTTP_BAD_REQUEST
+                );
+        }
+        $student_id = $_GET['student_id'];
+        $student_name = $_GET['student_name'];
+        $mobile_number = $_GET['mobile'];
+        helper('ews_sms_template_helper');
+        $response=normal_connected_call_sms($mobile_number,$student_id,$student_name);
+        return $this
+            ->getResponse(
+                [
+                    'data' => $response,
+                ]
+            );
+    }
 }
