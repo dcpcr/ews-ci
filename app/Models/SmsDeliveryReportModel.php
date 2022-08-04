@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class SmsDeliveryReportModel extends Model
 {
-    protected $DBGroup = 'default';
+    protected $DBGroup = 'master';
     protected $table = 'sms_batch_report';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
