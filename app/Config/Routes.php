@@ -39,6 +39,8 @@ $routes->post('api_login', 'ApiController::login');
 $routes->get('api/case', 'ApiController::getCases');
 $routes->get('api/mitra', 'ApiController::getMitra');
 $routes->get('api/attendance', 'ApiController::getAttendance');
+$routes->get('api/intimation_sms', 'ApiController::sendIntimationSms');
+$routes->get('api/connected_sms', 'ApiController::sendNormalConnectedCallsSms');
 
 // Myth:Auth routes file.
 $routes->group('', ['namespace' => 'Myth\Auth\Controllers'], static function ($routes) {
