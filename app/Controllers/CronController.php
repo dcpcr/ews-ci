@@ -78,7 +78,13 @@ class CronController extends BaseController
         $student_model = new StudentModel();
         $mobile_numbers = $student_model->getNewStudentMobileNumbers();
         if (count($mobile_numbers) > 0) {
-            send_bulk_unicode_promotional_sms($mobile_numbers);
+            $string='';
+           foreach ($mobile_numbers as $mobile)
+           {
+               $string.=$mobile['mobile'].",";
+           }
+           $final_mobile_number_string=substr($string,0,strlen($string)-1);
+           send_bulk_unicode_promotional_sms($final_mobile_number_string);
         }
     }
 
@@ -106,13 +112,13 @@ class CronController extends BaseController
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             $begin = new \DateTimeImmutable();
             $end = $begin;
-            $this->updateCaseData();
+           // $this->updateCaseData();
             $this->sendSmsToStudentNewRecord();
-            $this->SmsDeliveryReport();
+           /* $this->SmsDeliveryReport();
             $this->import_school_data();
             $this->import_student_data();
             $this->import_attendance_data($begin, $end);
-            $this->update_detected_cases($begin, $end);
+            $this->update_detected_cases($begin, $end);*/
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);
