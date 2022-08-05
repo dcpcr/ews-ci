@@ -34,14 +34,11 @@ $routes->setAutoRoute(true);
 $routes->get('operator', 'OperatorController::index', ['as' => 'operator']);
 $routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
 $routes->cli("cron/run", "CronController::runDaily");
-$routes->cli("cron/send_bulk_promotional_sms_to_student", "CronController::promotionalSmsToAllStudentsCron");
-$routes->cli("cron/send_single_test_sms", "CronController::smsTest");
 $routes->post('api_login', 'ApiController::login');
 $routes->get('api/case', 'ApiController::getCases');
 $routes->get('api/mitra', 'ApiController::getMitra');
 $routes->get('api/attendance', 'ApiController::getAttendance');
-$routes->get('api/intimation_sms', 'ApiController::sendIntimationSms');
-$routes->get('api/connected_sms', 'ApiController::sendNormalConnectedCallsSms');
+$routes->get('api/intimation_sms', 'ApiController::sendEwsSms');
 
 // Myth:Auth routes file.
 $routes->group('', ['namespace' => 'Myth\Auth\Controllers'], static function ($routes) {
