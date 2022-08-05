@@ -2,6 +2,7 @@
 
 use App\Models\SmsBatchModel;
 use App\Models\SmsDeliveryReportModel;
+use App\Models\StudentModel;
 
 function get_cdac_username()
 {
@@ -243,7 +244,7 @@ function fetch_sms_delivery_report($message_id, $batch_id)
     $response_arr = explode(',', $response);
     $j = 0;
     $k = 1;
-    $report_data=[];
+    $report_data = [];
     for ($i = 0; $i < count($response_arr) / 4; $i++) {
         $report_data[] = array(
             'sms_batch_id' => $batch_id,
@@ -258,3 +259,35 @@ function fetch_sms_delivery_report($message_id, $batch_id)
 
 }
 
+function send_sms_to_all_student()
+{
+    $limit = 10000;//Sms batch of 10,000
+    $offset = 0;
+    $count = 0;
+    $student_model = new StudentModel();
+    $total_student_count = $student_model->getTotalStudentCount();
+    while ($count < $total_student_count) {
+        if ($offset == 0) {
+            $student_mobile = $student_model->getNewStudentMobileNumbers("$limit", "$offset");
+            $offset++;
+            $offset = $offset + $limit;
+            $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($student_mobile);
+            send_bulk_unicode_promotional_sms($final_mobile_number_string);
+        }
+        $student_mobile = $student_model->getNewStudentMobileNumbers("$limit", "$offset");
+        $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($student_mobile);
+        send_bulk_unicode_promotional_sms($final_mobile_number_string);
+        $offset = $offset + $limit;
+        $count = $count + $limit;
+    }
+}
+
+function send($message_unicode, $mobile_number, $template_id)
+{
+    $username = get_cdac_username();
+    $password = get_cdac_password();
+    $sender_id = get_cdac_senderid();
+    $secure_key = get_cdac_securekey();
+    return send_bulk_unicode($username, $password, $sender_id, $message_unicode, $mobile_number, $secure_key, $template_id);
+
+}
