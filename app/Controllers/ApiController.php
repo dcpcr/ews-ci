@@ -196,6 +196,7 @@ class ApiController extends ResourceController
                 ]
             );
     }
+
     public function sendEwsSms(): \CodeIgniter\HTTP\Response
     {
         $rules = [
@@ -218,10 +219,26 @@ class ApiController extends ResourceController
         helper('ews_sms_template_helper');
         switch ($_GET['sms_type']) {
             case "new_case":
-                $response=send_advance_intimation_ews_case_sms($mobile_number,$student_id,$student_name);
+                $response = send_sms_to_new_ews_detected_case($mobile_number, $student_id, $student_name);
                 break;
+            case "call_connected":
+                $response = send_sms_to_connected_call_sms($mobile_number, $student_id, $student_name);
+                break;
+            case "ticket_raised":
+                $response = send_sms_to_connected_call_with_ticket_raised($mobile_number, $student_id, $student_name);
+                break;
+            case "unable_to_contact":
+                $response = not_able_to_contact_sms($mobile_number, $student_id, $student_name);
+                break;
+            case "incomplete_info":
+                $response = incomplete_information_sms($mobile_number, $student_id, $student_name);
+                break;
+            case "case_closed":
+                $response = case_closed_sms($mobile_number, $student_id, $student_name);
+                break;
+
             default:
-                $response="";
+                $response = "Invalid Sms Type";
         }
 
         return $this
