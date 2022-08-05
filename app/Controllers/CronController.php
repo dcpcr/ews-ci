@@ -13,6 +13,7 @@ use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\SmsBatchModel;
+use App\Models\SmsDeliveryReportModel;
 use App\Models\StudentModel;
 
 class CronController extends BaseController
@@ -86,17 +87,16 @@ class CronController extends BaseController
     /**
      * @throws \ReflectionException
      */
-    public function getSmsDeliveryReport()
+    private function getSmsDeliveryReport()
     {
         helper('cdac');
         $sms_batch_model = new SmsBatchModel();
 
         $messageIds = $sms_batch_model->getMessageId();
-        for($i=0;$i<count($messageIds);$i++)
-        {
-            $messageId= $messageIds[$i]['message_id'];
-            $batch_id= $messageIds[$i]['id'];
-            fetch_sms_delivery_report($messageId,$batch_id);
+        for ($i = 0; $i < count($messageIds); $i++) {
+            $messageId = $messageIds[$i]['message_id'];
+            $batch_id = $messageIds[$i]['id'];
+            fetch_sms_delivery_report($messageId, $batch_id);
             $sms_batch_model->updateReportFetchFalg($batch_id);
             sleep(10);
         }
@@ -126,9 +126,18 @@ class CronController extends BaseController
             send_bulk_unicode_promotional_sms($final_mobile_number_string);
             $offset = $offset + $limit;
             $count = $count + $limit;
-            echo "\n";
-            echo " $count < $total_student_count";
         }
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function smsTest($mobile_number='8882223317')
+    {
+        helper('cdac');
+        send_single_unicode_promotional_sms("$mobile_number");
+        $sms_batch_model = new SmsDeliveryReportModel();
+        echo $res=$sms_batch_model->fetchLatestSmsDeliveryReportOfMobileNumbers('8882223317');
     }
 
     /**
@@ -161,7 +170,7 @@ class CronController extends BaseController
     /**
      * @throws \ReflectionException
      */
-    public function promotionalSmsCron()
+    public function promotionalSmsToAllStudentsCron() //Please be carefull because it will send 18 lakh sms in single call
     {
         ini_set("memory_limit", "-1");
         if ($this->request->isCLI()) {
