@@ -23,8 +23,7 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-        'apiauth'       => JWTAuthenticationFilter::class
-        //'apiauth'       => \App\Filters\ JWTAuthenticationFilter::class
+        'apiauth'       => \App\Filters\JWTAuthenticationFilter::class
     ];
 
     /**
