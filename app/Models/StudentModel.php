@@ -59,11 +59,22 @@ class StudentModel extends Model
         }
     }
 
-    public function getNewStudentMobileNumbers($limit = '', $offset = ''): array
+    /**
+     * @throws \ReflectionException
+     */
+    public function getNewStudentsMobileNumber($limit = '', $offset = ''): array
     {
 
         $previous_date = date("Y-m-d", strtotime('-1 day', strtotime(date("Y-m-d"))));
         return $this->select(['mobile'])->where("date_format(`created_at`,'%Y-%m-%d') =", $previous_date)->findAll("$limit", "$offset");
+
+    }
+
+    public function getStudentsMobileNumber($limit = '', $offset = ''): array
+    {
+
+        return $this->select(['mobile'])->where("mobile !=", '')->findAll("$limit", "$offset");
+
     }
 
     public function getTotalStudentCount()

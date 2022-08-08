@@ -197,13 +197,13 @@ class ApiController extends ResourceController
             );
     }
 
-    public function sendEwsSms(): \CodeIgniter\HTTP\Response
+    public function ewsSms(): \CodeIgniter\HTTP\Response
     {
         $rules = [
             'student_id' => 'trim|required|numeric|greater_than[0]|exact_length[11]',
-            'student_name' => 'trim|required|alpha',
+            'student_name' => 'trim|required|alpha_space',
             'mobile' => 'trim|required|numeric|greater_than[0]|exact_length[10]',
-            'sms_type' => 'trim|required|alpha|',
+            'sms_type' => 'trim|required|alpha_numeric_punct|in_list[new_case,call_connected,ticket_raised,unable_to_contact,incomplete_info,case_closed]',
         ];
         if (!$this->validateRequest($_GET, $rules)) {
             return $this
@@ -217,15 +217,16 @@ class ApiController extends ResourceController
         $student_name = $_GET['student_name'];
         $mobile_number = $_GET['mobile'];
         helper('ews_sms_template_helper');
+        $response='';
         switch ($_GET['sms_type']) {
             case "new_case":
-                $response = send_sms_to_new_ews_detected_case($mobile_number, $student_id, $student_name);
+                $response = new_ews_detected_case_sms($mobile_number, $student_id, $student_name);
                 break;
             case "call_connected":
-                $response = send_sms_to_connected_call_sms($mobile_number, $student_id, $student_name);
+                $response = connected_call_sms($mobile_number, $student_id, $student_name);
                 break;
             case "ticket_raised":
-                $response = send_sms_to_connected_call_with_ticket_raised($mobile_number, $student_id, $student_name);
+                $response = connected_call_with_ticket_raised_sms($mobile_number, $student_id, $student_name);
                 break;
             case "unable_to_contact":
                 $response = not_able_to_contact_sms($mobile_number, $student_id, $student_name);
@@ -237,8 +238,6 @@ class ApiController extends ResourceController
                 $response = case_closed_sms($mobile_number, $student_id, $student_name);
                 break;
 
-            default:
-                $response = "Invalid Sms Type";
         }
 
         return $this
