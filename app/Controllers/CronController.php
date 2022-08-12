@@ -80,7 +80,7 @@ class CronController extends BaseController
     {
         helper('cdac');
         $student_model = new StudentModel();
-        $mobile_numbers=$student_model->getNewStudentsMobileNumber();
+        $mobile_numbers = $student_model->getNewStudentsMobileNumber();
         send_sms_to_all_new_students($mobile_numbers);
 
     }
@@ -96,10 +96,21 @@ class CronController extends BaseController
 
     }
 
+    public function runDailyAtNight()
+    {
+        $this->runDaily(false);
+    }
+
+    public function runDailyAtMorning()
+    {
+        $this->runDaily(true);
+    }
+
+
     /**
      * @throws \ReflectionException
      */
-    public function runDaily()
+    public function runDaily($morning)
     {
         ini_set("memory_limit", "-1");
         if ($this->request->isCLI()) {
@@ -107,13 +118,16 @@ class CronController extends BaseController
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             $begin = new \DateTimeImmutable();
             $end = $begin;
-            $this->updateCaseData();
-            $this->SmsToAllNewStudentRecord();
-            $this->smsDeliveryReport();
-            $this->import_school_data();
-            $this->import_student_data();
-            $this->import_attendance_data($begin, $end);
-            $this->update_detected_cases($begin, $end);
+            if ($morning) {
+                $this->SmsToAllNewStudentRecord();
+            } else {
+                $this->updateCaseData();
+                $this->smsDeliveryReport();
+                $this->import_school_data();
+                $this->import_student_data();
+                $this->import_attendance_data($begin, $end);
+                $this->update_detected_cases($begin, $end);
+            }
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);
