@@ -33,7 +33,8 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 $routes->get('operator', 'OperatorController::index', ['as' => 'operator']);
 $routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
-$routes->cli("cron/run", "CronController::runDaily");
+$routes->cli("cron/night", "CronController::runDailyAtNight");
+$routes->cli("cron/morning", "CronController::runDailyAtNight");
 $routes->post('api_login', 'ApiController::login');
 $routes->get('api/case', 'ApiController::getCases');
 $routes->get('api/mitra', 'ApiController::getMitra');
