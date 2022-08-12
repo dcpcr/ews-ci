@@ -83,9 +83,9 @@ class StudentModel extends Model
         return $count[0]['id'];
     }
 
-    public function getStudentDetails($student_id)
+    public function getStudentDetailsFormStudentTable($student_id)
     {
-        return $this->select(['name','id','mobile'])->find("$student_id");
+        return $this->select(['name', 'id', 'mobile', 'class', 'section'])->find("$student_id");
     }
 
 }

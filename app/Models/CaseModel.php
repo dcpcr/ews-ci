@@ -259,11 +259,15 @@ class CaseModel extends Model
     public function getStudentDetails($case_id)
     {
         helper('general');
-        $master_db = get_database_name_from_db_group('master');
-        $res= $this->select(['student_id'])
-            ->find("$case_id");
-        $student_model = new StudentModel();
-        return $student_model->getStudentDetails( $res['student_id']);
-
+        $res = $this->select(['student_id'])->find("$case_id");
+        if ($res != NULL) {
+            $student_model = new StudentModel();
+            $response = $student_model->getStudentDetailsFormStudentTable($res['student_id']);
+            if ($response != 'NULL') {
+                return $response;
+            }
+        } else {
+            return false;
+        }
     }
 }

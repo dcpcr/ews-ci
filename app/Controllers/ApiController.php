@@ -218,35 +218,32 @@ class ApiController extends ResourceController
         $case_id = $_GET['case_id'];
         $case_model = new CaseModel();
         $student_details = $case_model->getStudentDetails($case_id);
-        var_dump($student_details);
-        die();
         $response = '';
-        if (count($student_details) == 1) {
-            foreach ($student_details as $row) {
-                $student_id = $row['student_id'];
-                $student_name = $row['student_name'];
-                $mobile_number = $row['student_mobile'];
-                helper('ews_sms_template_helper');
-                switch ($_GET['sms_type']) {
-                    case "new_case":
-                        $response = new_ews_detected_case_sms($mobile_number, $student_id, $student_name);
-                        break;
-                    case "call_connected":
-                        $response = connected_call_sms($mobile_number, $student_id, $student_name);
-                        break;
-                    case "ticket_raised":
-                        $response = connected_call_with_ticket_raised_sms($mobile_number, $student_id, $student_name);
-                        break;
-                    case "unable_to_contact":
-                        $response = not_able_to_contact_sms($mobile_number, $student_id, $student_name);
-                        break;
-                    case "incomplete_info":
-                        $response = incomplete_information_sms($mobile_number, $student_id, $student_name);
-                        break;
-                    case "case_closed":
-                        $response = case_closed_sms($mobile_number, $student_id, $student_name);
-                        break;
-                }
+        var_dump($student_details);
+        if ($student_details) {
+            $student_id = $student_details['id'];
+            $student_name = "Name: " . $student_details['name'] . " Class: " . $student_details['class'] . " Section: " . $student_details['section'];
+            $mobile_number = $student_details['mobile'];
+            helper('ews_sms_template_helper');
+            switch ($_GET['sms_type']) {
+                case "new_case":
+                    $response = new_ews_detected_case_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "call_connected":
+                    $response = connected_call_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "ticket_raised":
+                    $response = connected_call_with_ticket_raised_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "unable_to_contact":
+                    $response = not_able_to_contact_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "incomplete_info":
+                    $response = incomplete_information_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "case_closed":
+                    $response = case_closed_sms($mobile_number, $student_id, $student_name);
+                    break;
             }
 
 
