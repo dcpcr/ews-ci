@@ -96,11 +96,17 @@ class CronController extends BaseController
 
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function runDailyAtNight()
     {
         $this->runDaily(false);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function runDailyAtMorning()
     {
         $this->runDaily(true);
@@ -110,7 +116,7 @@ class CronController extends BaseController
     /**
      * @throws \ReflectionException
      */
-    public function runDaily($morning)
+    private function runDaily($morning)
     {
         ini_set("memory_limit", "-1");
         if ($this->request->isCLI()) {
