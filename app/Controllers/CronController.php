@@ -76,7 +76,7 @@ class CronController extends BaseController
     /**
      * @throws \ReflectionException
      */
-    private function SmsToAllNewStudentRecord()
+    private function sendSmsToAllNewStudents()
     {
         helper('cdac');
         $student_model = new StudentModel();
@@ -125,7 +125,7 @@ class CronController extends BaseController
             $begin = new \DateTimeImmutable();
             $end = $begin;
             if ($morning) {
-                $this->SmsToAllNewStudentRecord();
+                $this->sendSmsToAllNewStudents();
             } else {
                 $this->updateCaseData();
                 $this->smsDeliveryReport();
