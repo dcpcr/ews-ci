@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Database\Migrations\DetectedCase;
 use App\Models\ApiUserModel;
 use App\Models\AttendanceModel;
 use App\Models\CaseModel;
@@ -200,9 +201,7 @@ class ApiController extends ResourceController
     public function ewsSms(): \CodeIgniter\HTTP\Response
     {
         $rules = [
-            'student_id' => 'trim|required|numeric|greater_than[0]|exact_length[11]',
-            'student_name' => 'trim|required|alpha_space',
-            'mobile' => 'trim|required|numeric|greater_than[0]|exact_length[10]',
+            'case_id' => 'trim|required|numeric|greater_than[0]',
             'sms_type' => 'trim|required|alpha_numeric_punct|in_list[new_case,call_connected,ticket_raised,unable_to_contact,incomplete_info,case_closed]',
         ];
         if (!$this->validateRequest($_GET, $rules)) {
@@ -212,12 +211,14 @@ class ApiController extends ResourceController
                     ResponseInterface::HTTP_BAD_REQUEST
                 );
         }
-
+        $case_id = $_GET['case_id'];
+        $case_model = new CaseModel();
+        $student_details = $case_model->getStudentDetails($case_id);
         $student_id = $_GET['student_id'];
         $student_name = $_GET['student_name'];
         $mobile_number = $_GET['mobile'];
         helper('ews_sms_template_helper');
-        $response='';
+        $response = '';
         switch ($_GET['sms_type']) {
             case "new_case":
                 $response = new_ews_detected_case_sms($mobile_number, $student_id, $student_name);

@@ -254,4 +254,10 @@ class CaseModel extends Model
         }
         return $count;
     }
+
+
+    public function getStudentDetails($case_id)
+    {
+        
+    }
 }
