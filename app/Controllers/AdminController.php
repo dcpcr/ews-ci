@@ -59,6 +59,31 @@ class AdminController extends AuthController
         return $result;
     }
 
+    public function ajax($report_type)
+    {
+        if ($this->request->isAJAX()) {
+            log_message('info', "Ajax request");
+            if ($this->doesUserHavePermission()) {
+                $this->initializeFilterData();
+                if ($report_type == 'case') {
+                    if ($this->request->getGet('dl') == 'Yes') {
+                        echo json_encode($this->getCaseTableData()['data']);
+                    } else {
+                        echo json_encode($this->getCaseTableData());
+                    }
+
+                } else {
+                    log_message("notice", "Wrong report type in Ajax call - " . $report_type);
+                }
+            } else {
+                //TODO: Send error json
+                log_message("notice", "The user - " . user()->username . " - does not have the permission to view this page.");
+            }
+        } else {
+            log_message('info', "Access to this functionally without Ajax Call is not allowed");
+        }
+    }
+
     public function index($report_type)
     {
         if ($this->doesUserHavePermission()) {
@@ -91,6 +116,14 @@ class AdminController extends AuthController
         }
     }
 
+    private function getCaseTableData(): array
+    {
+        $school_ids = array_keys($this->schools);
+        $case_model = new CaseModel();
+        return $case_model
+            ->getDetectedCasesForDataTable($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+    }
+
     private function prepareCaseData(): void
     {
         $this->view_data['details'] = "The Early Warning System detects long absenteeism, i.e., uninformed absence of 7 consecutive days 
@@ -104,7 +137,11 @@ class AdminController extends AuthController
         $school_ids = array_keys($this->schools);
         $case_model = new CaseModel();
         $this->view_data['response'] = $case_model
-            ->getDetectedCases($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+            ->getDetectedCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_data['response'][] = [
+            'count' => array_sum(array_column($this->view_data['response'], "count")),
+            'gender' => 'Total',
+        ];
         $this->view_name = 'dashboard/case';
     }
 
@@ -405,4 +442,5 @@ class AdminController extends AuthController
             }
         }
     }
+
 }

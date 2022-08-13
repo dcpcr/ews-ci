@@ -5,6 +5,7 @@ namespace App\Models;
 use CodeIgniter\Model;
 use DateTimeImmutable;
 use Exception;
+use SSP\SSP;
 
 class CaseModel extends Model
 {
@@ -128,11 +129,29 @@ class CaseModel extends Model
         return $this->whereIn('id', $caseIds)->findAll();
     }
 
-    public function getDetectedCases(array $school_ids, $classes, $start, $end): array
+    public function getDetectedCasesCountGenderWise(array $school_ids, $classes, $start, $end): array
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
         return $this->select([
+            'count(*) as count',
+            'student.gender as gender',
+        ])
+            ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->groupBy('gender')
+            ->findAll();
+    }
+
+    public function getDetectedCasesForDataTable(array $school_ids, array $classes, $start, $end): array
+    {
+
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        $query = $this->select([
             $this->table . '.id as case_id',
             $this->table . '.seven_days_criteria',
             $this->table . '.thirty_days_criteria',
@@ -144,7 +163,6 @@ class CaseModel extends Model
             'student.name as student_name',
             'student.gender',
             'student.class',
-            'student.section',
             'student.section',
             'student.dob',
             'student.mother',
@@ -162,7 +180,42 @@ class CaseModel extends Model
             ->whereIn('student.class', $classes)
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $end . "', '%m/%d/%Y')")
-            ->findAll();
+            ->getCompiledSelect();
+
+        $table = '(' . $query . ') temp';
+
+        $columns = array(
+            array('db' => 'case_id', 'dt' => 0),
+            array('db' => 'seven_days_criteria', 'dt' => 1),
+            array('db' => 'thirty_days_criteria', 'dt' => 2),
+            array('db' => 'system_bts', 'dt' => 3),
+            array('db' => 'priority', 'dt' => 4),
+            array('db' => 'day', 'dt' => 5),
+            array('db' => 'status', 'dt' => 6),
+            array('db' => 'student_id', 'dt' => 7),
+            array('db' => 'student_name', 'dt' => 8),
+            array('db' => 'gender', 'dt' => 9),
+            array('db' => 'class', 'dt' => 10),
+            array('db' => 'section', 'dt' => 11),
+            array('db' => 'dob', 'dt' => 12),
+            array('db' => 'mother', 'dt' => 13),
+            array('db' => 'father', 'dt' => 14),
+            array('db' => 'mobile', 'dt' => 15),
+            array('db' => 'address', 'dt' => 16),
+            array('db' => 'school_id', 'dt' => 17),
+            array('db' => 'school_name', 'dt' => 18),
+            array('db' => 'district', 'dt' => 19),
+            array('db' => 'zone', 'dt' => 20),
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => get_database_username_from_db_group($this->DBGroup),
+            'pass' => $this->db()->password,
+            'db' => $this->db()->database,
+            'host' => $this->db()->hostname,
+        );
+        return SSP::simple($_GET, $sql_details, $table, 'case_id', $columns);
     }
 
     public function getDetectedCaseForAPI($from_date, $to_date, $offset, $no_of_records_per_page)
@@ -181,7 +234,6 @@ class CaseModel extends Model
             'student.name as student_name',
             'student.gender',
             'student.class',
-            'student.section',
             'student.section',
             'student.dob',
             'student.mother',

@@ -32,6 +32,7 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('operator', 'OperatorController::index', ['as' => 'operator']);
+$routes->get('dashboard/ajax/(:segment)', 'AdminController::ajax/$1', ['as' => 'dashboard.ajax']);
 $routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
 $routes->cli("cron/run", "CronController::runDaily");
 $routes->post('api_login', 'ApiController::login');

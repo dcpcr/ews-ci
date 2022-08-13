@@ -1,19 +1,23 @@
 <?php
-$male_count = $female_count = $transgender_count = 0;
+$total_count = $male_count = $female_count = $transgender_count = 0;
 if (count($response) > 0) {
     foreach ($response as $row) {
-        if ($row['gender'] == 'Male') {
-            $male_count++;
-        }
-        if ($row['gender'] == 'Female') {
-            $female_count++;
-        }
-        if ($row['gender'] == "Transgender") {
-            $transgender_count++;
+        if (isset($row['gender'])) {
+            if ($row['gender'] == 'Male') {
+                $male_count = $row['count'];
+            }
+            if ($row['gender'] == 'Female') {
+                $female_count = $row['count'];
+            }
+            if ($row['gender'] == "Transgender") {
+                $transgender_count = $row['count'];
+            }
+            if ($row['gender'] == "Total") {
+                $total_count = $row['count'];
+            }
         }
     }
 }
-
 ?>
 <div class="row">
     <div class="col-12">
@@ -30,21 +34,21 @@ if (count($response) > 0) {
                             <span class="fa fa-info-circle" data-toggle="tooltip" data-placement="right"
                                   title="Students who have been absent for 7 consecutive days OR more than 66.67% days in a month (i.e. 20/30 days)"></span>
                         </div>
-                        <input disabled type="text" class="knob" id="total" value="<?= count($response) ?>"
+                        <input disabled type="text" class="knob" id="total" value="<?= $total_count ?>"
                                data-skin="tron"
                                data-thickness="0.2" data-width="100"
                                data-height="100" data-fgColor="#efb155" data-readonly="true">
 
                         <div class="knob-label-bottom text-center">Male - <span class="number"><?= $male_count ?></span>
-                            (<?= (count($response) > 0) ? floor($male_count / count($response) * 100) : 0; ?>%)
+                            (<?= ($total_count > 0) ? floor($male_count / $total_count * 100) : 0; ?>%)
                         </div>
                         <div class="knob-label-bottom text-center">Female - <span
                                     class="number"><?= $female_count ?></span>
-                            (<?= (count($response) > 0) ? floor($female_count / count($response) * 100) : "0"; ?>%)
+                            (<?= ($total_count > 0) ? floor($female_count / $total_count * 100) : "0"; ?>%)
                         </div>
                         <div class="knob-label-bottom text-center">Transgender - <span
                                     class="number"><?= $transgender_count ?></span>
-                            (<?= (count($response) > 0) ? floor($transgender_count / count($response) * 100) : "0"; ?>%)
+                            (<?= ($total_count > 0) ? floor($transgender_count / $total_count * 100) : "0"; ?>%)
                         </div>
                     </div>
                     <div class="col mx-1">

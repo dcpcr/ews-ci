@@ -19,56 +19,68 @@ $(function () {
     });
     /* END JQUERY KNOB */
     $("#casetable").DataTable({
-        pageLength: 40,
-        data: casedata,
-        deferRender: true,
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: ajax_url,
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            type: "GET"
+        },
+        pageLength: 10,
         columns: [
-            {data: 'case_id', title: 'Case Id'},
-            {data: 'day', title: 'Day'},
-            {data: 'status', title: 'Status'},
-            {data: 'student_id', title: 'Student Id'},
-            {data: 'student_name', title: 'Student Name'},
-            {data: 'school_id', title: 'School Id'},
-            {data: 'school_name', title: 'School Name'},
-            {data: 'class', title: 'Class'},
-            {data: 'gender', title: 'Gender'},
-            {data: 'dob', title: 'DoB', "searchable": false},
-            {data: 'father', title: 'Father  Name', "searchable": false},
-            {data: 'mother', title: 'Mother Name', "searchable": false},
-            {data: 'mobile', title: 'Mobile'},
-            {data: 'address', title: 'Address'},
-            {data: 'district', title: 'District'},
-            {data: 'zone', title: 'Zone'},
-            {data: 'seven_days_criteria', title: '7 Consecutive Days'},
-            {data: 'thirty_days_criteria', title: '20/30 Days'},
-            {data: 'system_bts', title: 'Present Days After Detection'},
-            {
-                data: 'priority',
-                title: 'Priority',
-                render: function ( data, type, row ) {
-                    // If display or filter data is requested, format the date
-                    if ( type === 'sort' ) {
-                        if (data === "High")
-                            return 3;
-                        if (data === "Medium")
-                            return 2;
-                        if (data === "Low")
-                            return 1;
-                    }
-                    return data;
-                }
-            },
+            {data: 0, title: 'Case Id'},
+            {data: 5, title: 'Day'},
+            {data: 6, title: 'Status'},
+            {data: 7, title: 'Student Id'},
+            {data: 8, title: 'Student Name'},
+            {data: 17, title: 'School Id'},
+            {data: 18, title: 'School Name'},
+            {data: 10, title: 'Class'},
+            {data: 11, title: 'Section'},
+            {data: 9, title: 'Gender'},
+            {data: 12, title: 'DoB', "searchable": false},
+            {data: 14, title: 'Father  Name', "searchable": false},
+            {data: 13, title: 'Mother Name', "searchable": false},
+            {data: 15, title: 'Mobile'},
+            {data: 16, title: 'Address'},
+            {data: 19, title: 'District', "searchable": false},
+            {data: 20, title: 'Zone', "searchable": false},
+            {data: 1, title: '7 Consecutive Days', "searchable": false},
+            {data: 2, title: '20/30 Days', "searchable": false},
+            {data: 3, title: 'Present Days After Detection', "searchable": false},
+            {data: 4, title: 'Priority'},
         ],
         columnDefs: [
-            {"visible": false, "targets": [7, 8, 9, 10, 11, 12, 13, 14, 15]},
+            {"visible": false, "targets": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16]},
         ],
         responsive: false,
-        lengthChange: false,
+        lengthChange: true,
         autoWidth: false,
         ordering: true,
         order: [
-            [19, 'desc'], [0, 'asc']
+            [20, 'desc'], [0, 'asc']
         ],
-        buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-4'f><'col-sm-12 col-md-2'l>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        buttons: ['download', 'copy', 'print', 'colvis']
     }).buttons().container().appendTo('#casetable_wrapper .col-md-6:eq(0)');
 })
+
+$.fn.dataTable.ext.buttons.download =
+    {
+        text: "Export All (CSV)",
+        url: ajax_url + '&dl=Yes',
+        action: function (e, dt, node, config) {
+            console.log(config);
+            $.ajax({
+                url: config.url,
+            })
+                .done(function (data) {
+                    let csv = MyUtil.convertJsonStringToCSV(data);
+                    $.fn.dataTable.fileSave(
+                        new Blob([csv]), 'Export.csv'
+                    );
+                });
+        }
+    };

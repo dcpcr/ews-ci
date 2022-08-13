@@ -1,23 +1,12 @@
 $(function () {
-    function get_segment_from_url(index) {
-        const pathname = window.location.pathname;
-        const segments = pathname.split('/');
-        return segments[index];
-    }
 
-    const segment = get_segment_from_url(2);
+    const segment = MyUtil.get_segment_from_url(2);
     const nav_id = '#' + segment + "-nav";
     $(nav_id).addClass('active');
 
     $('[data-toggle="tooltip"]').tooltip();
 
-    function get_query_data_from_url(index) {
-        const pathname = window.location.href;
-        const segments = pathname.split('?');
-        return segments[index];
-    }
-
-    const query_data = get_query_data_from_url(1);
+    const query_data = MyUtil.get_query_data_from_url(1);
 
     if (typeof query_data !== 'undefined') {
         $('a.case').attr('href', $('a.case').attr('href') + '?' + query_data);
@@ -28,3 +17,29 @@ $(function () {
         $('a.attendance').attr('href', $('a.attendance').attr('href') + '?' + query_data);
     }
 });
+
+MyUtil = {
+    get_query_data_from_url: function (index) {
+        const pathname = window.location.href;
+        const segments = pathname.split('?');
+        return segments[index];
+    },
+    get_segment_from_url: function (index) {
+        const pathname = window.location.pathname;
+        const segments = pathname.split('/');
+        return segments[index];
+    },
+    convertJsonStringToCSV: function (data) {
+        const json = JSON.parse(data);
+        const replacer = function (key, value) {
+            return value === null ? '' : value
+        };
+        return json.map(function (row) {
+            return row.map(function (value) {
+                    return JSON.stringify(value, replacer);
+                }
+            ).join(',');
+        }).join('\r\n');
+    }
+
+}

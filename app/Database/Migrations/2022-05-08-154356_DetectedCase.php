@@ -42,7 +42,7 @@ class DetectedCase extends Migration
                 'default' => '0',
             ],
             'priority' => [
-                'type' => 'ENUM("High","Low","Medium")',
+                'type' => 'ENUM("Low","Medium","High")',
                 'default' => 'Medium',
             ],
         ]);

@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="<?= csrf_token()?>" content="<?=csrf_hash()?>" class="csrf">
     <title></title>
 
     <!-- Add our own ews styesheet -->
