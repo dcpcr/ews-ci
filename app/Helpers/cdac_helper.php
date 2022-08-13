@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CdacSmsDeliveryReportModel;
+use App\Models\CdacSmsStatusModel;
 use App\Models\CdacSmsModel;
 use App\Models\StudentModel;
 
@@ -157,7 +157,7 @@ function fetch_sms_delivery_report($message_id, $batch_id)
 {
     $username = get_cdac_username();
     $password = get_cdac_password();
-    $sms_batch = new CdacSmsDeliveryReportModel();
+    $sms_batch = new CdacSmsStatusModel();
     $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $message_id . "&pwd_encrypted=false";
     helper('general');
     $response = get_curl_response($url);

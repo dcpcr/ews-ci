@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class CdacSmsDeliveryReportModel extends Model
+class CdacSmsStatusModel extends Model
 {
     protected $DBGroup = 'master';
     protected $table = 'cdac_sms_delivery_report';

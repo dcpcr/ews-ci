@@ -6,7 +6,7 @@ use App\Models\AttendanceModel;
 use App\Models\BackToSchoolModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
-use App\Models\CdacSmsDeliveryReportModel;
+use App\Models\CdacSmsStatusModel;
 use App\Models\DcpcrHelplineTicketModel;
 use App\Models\HighRiskModel;
 use App\Models\HomeVisitModel;
@@ -90,7 +90,7 @@ class CronController extends BaseController
     public function smsDeliveryReport()
     {
         helper('cdac');
-        $sms_batch_model = new CdacSmsDeliveryReportModel();
+        $sms_batch_model = new CdacSmsStatusModel();
         $sms_batch_model->fetchSmsDeliveryReport();
 
     }

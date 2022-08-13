@@ -16,7 +16,7 @@ class CdacSmsDeliveryReport extends Migration
                 'NOT NULL' => true,
                 'auto_increment' => true,
             ],
-            'sms_batch_id' => [
+            'batch_id' => [
                 'type' => 'BIGINT',
                 'unsigned' => true,
                 'NOT NULL' => true,
@@ -40,11 +40,11 @@ class CdacSmsDeliveryReport extends Migration
         $this->forge->addKey('sms_batch_id');
         $this->forge->addKey('mobile_number');
         $this->forge->addKey('status');
-        $this->forge->createTable('cdac_sms_delivery_report');
+        $this->forge->createTable('cdac_sms_status');
     }
 
     public function down()
     {
-        $this->forge->dropTable('cdac_sms_delivery_report');
+        $this->forge->dropTable('cdac_sms_status');
     }
 }
