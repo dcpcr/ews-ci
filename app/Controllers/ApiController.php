@@ -201,7 +201,7 @@ class ApiController extends ResourceController
     /**
      * @throws \ReflectionException
      */
-    //?case_id=12&sms_type=case_closed
+    //api/send_sms/?case_id=12&sms_type=case_closed
     public function ewsSms(): \CodeIgniter\HTTP\Response
     {
         $rules = [

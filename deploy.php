@@ -76,7 +76,8 @@ after('deploy:success', 'crontab:sync');
 after('deploy:success', 'db-changes');
 
 add('crontab:jobs', [
-    '0 23 * * * cd {{current_path}}/public && {{bin/php}} index.php cron run >> /dev/null 2>&1',
+    '0 23 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
+    '0 10 * * * cd {{current_path}}/public && {{bin/php}} index.php cron morning >> /dev/null 2>&1',
 ]);
 
 task('db-changes', function () {
