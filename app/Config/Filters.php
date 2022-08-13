@@ -2,7 +2,6 @@
 
 namespace Config;
 
-use App\Filters\JWTAuthenticationFilter as JWTAuthenticationFilterAlias;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
