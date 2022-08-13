@@ -252,9 +252,9 @@ function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
 function send_sms_to_all_new_students($mobile_numbers)
 {
     if (count($mobile_numbers) > 0) {
-         $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
+        $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
         bulk_helpline_promotion_sms($final_mobile_number_string);
-     }
+    }
 
 }
 

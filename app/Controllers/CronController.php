@@ -80,7 +80,7 @@ class CronController extends BaseController
     {
         helper('cdac');
         $student_model = new StudentModel();
-        $mobile_numbers = $student_model->getNewStudentsMobileNumber();
+        $mobile_numbers = $student_model->getMobileForNewStudents();
         send_sms_to_all_new_students($mobile_numbers);
 
     }
@@ -115,6 +115,7 @@ class CronController extends BaseController
 
     /**
      * @throws \ReflectionException
+     * @throws \Exception
      */
     private function runDaily($morning)
     {
