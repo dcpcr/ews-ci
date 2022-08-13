@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class CdacSmsStatusModel extends Model
 {
     protected $DBGroup = 'master';
-    protected $table = 'cdac_sms_delivery_report';
+    protected $table = 'cdac_sms_status';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
