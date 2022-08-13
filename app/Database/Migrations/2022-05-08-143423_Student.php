@@ -64,11 +64,6 @@ class Student extends Migration
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
-            'sms_status' => [
-                'type' => 'INT',
-                'int' => 2,
-                'default' => 0,
-            ],
         ]);
         $this->forge->addField(
             [

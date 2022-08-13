@@ -4,10 +4,10 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class SmsBatchModel extends Model
+class CdacSmsModel extends Model
 {
     protected $DBGroup = 'master';
-    protected $table = 'sms_batch';
+    protected $table = 'cdac_sms';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
@@ -18,7 +18,7 @@ class SmsBatchModel extends Model
     /**
      * @throws \ReflectionException
      */
-    public function insterSmsBatchData($messageId, $statusCode, $templateId): array
+    public function insertSmsBatchData($messageId, $statusCode, $templateId): array
     {
         $array = explode('=', $messageId);
         $finalMessageId = trim($array[1]);
@@ -32,24 +32,6 @@ class SmsBatchModel extends Model
 
     }
 
-    /**
-     * @throws \ReflectionException
-     */
-    public function fetchSmsDeliveryReport()
-    {
-        helper('cdac');
-        $messageIds=$this->select('id,message_id')->where('report_fetched <', '4')->get()->getResultArray();
-        if(count($messageIds)>0)
-        {
-            for ($i = 0; $i < count($messageIds); $i++) {
-                $messageId = $messageIds[$i]['message_id'];
-                $batch_id = $messageIds[$i]['id'];
-                fetch_sms_delivery_report($messageId, $batch_id);
-                $this->updateReportFetchFalg($batch_id);
-                sleep(0);
-            }
-        }
-    }
 
     /**
      * @throws \ReflectionException
