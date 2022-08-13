@@ -11,7 +11,7 @@ class CdacSmsStatusModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
-    protected $allowedFields = ['sms_batch_id', 'mobile_number', 'status'];
+    protected $allowedFields = ['batch_id', 'mobile_number', 'status'];
 
     /**
      * @throws \ReflectionException
