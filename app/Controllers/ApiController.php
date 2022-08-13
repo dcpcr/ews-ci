@@ -258,14 +258,15 @@ class ApiController extends ResourceController
                 ]
             );
     }
+
     /**
      * @throws \ReflectionException
      */
     public function sendSmsToAllStudents():\CodeIgniter\HTTP\Response
     {
         $rules = [
-            'verification_key' => 'trim|required|alpha_numeric_punct|greater_than[0]|exact_length[10]',
-            'sms_batch_size' => 'trim|required|numeric|greater_than[0]|less_than[100000]|exact_length[6]',
+            'verification_key' => 'trim|required|alpha_numeric|exact_length[19]',
+            'sms_batch_size' => 'trim|required|numeric|greater_than[0]|less_than[100000]|max_length[6]',
         ];
         if (!$this->validateRequest($_GET, $rules)) {
             return $this
@@ -274,7 +275,7 @@ class ApiController extends ResourceController
                     ResponseInterface::HTTP_BAD_REQUEST
                 );
         }
-        if($_GET['verification_key']=='SendPromoSms2All')
+        if($_GET['verification_key']=='SendSms2AllStudents')
         {
             helper('cdac');
             $batch_size=$_GET['sms_batch_size'];
