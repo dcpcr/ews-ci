@@ -258,7 +258,6 @@ class ApiController extends ResourceController
                 ]
             );
     }
-
     /**
      * @throws \ReflectionException
      */
