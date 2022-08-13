@@ -258,4 +258,39 @@ class ApiController extends ResourceController
                 ]
             );
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function sendSmsToAllStudents():\CodeIgniter\HTTP\Response
+    {
+        $rules = [
+            'verification_key' => 'trim|required|alpha_numeric_punct|greater_than[0]|exact_length[10]',
+            'sms_batch_size' => 'trim|required|numeric|greater_than[0]|less_than[100000]|exact_length[6]',
+        ];
+        if (!$this->validateRequest($_GET, $rules)) {
+            return $this
+                ->getResponse(
+                    $this->validator->getErrors(),
+                    ResponseInterface::HTTP_BAD_REQUEST
+                );
+        }
+        if($_GET['verification_key']=='SendPromoSms2All')
+        {
+            helper('cdac');
+            $batch_size=$_GET['sms_batch_size'];
+            send_sms_to_all_student("$batch_size");
+            $response="DCPCR Helpline Promotional Sms Sent to all Students";
+        }
+        else
+        {
+            $response="Opps! Something Went Wrong.";
+        }
+        return $this
+            ->getResponse(
+                [
+                    'data' => $response,
+                ]
+            );
+    }
 }

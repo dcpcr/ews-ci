@@ -184,9 +184,8 @@ function fetch_sms_delivery_report($message_id, $batch_id)
 /**
  * @throws ReflectionException
  */
-function send_sms_to_all_student()
+function send_sms_to_all_student($limit = '10000')
 {
-    $limit = 100000;//Sms batch of 10,000
     $offset = 0;
     $count = 0;
     $student_model = new StudentModel();
@@ -199,11 +198,12 @@ function send_sms_to_all_student()
             $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($student_mobile);
             bulk_helpline_promotion_sms($final_mobile_number_string);
         }
+        $offset = $offset + $limit;
+        $count = $count + $limit;
         $student_mobile = $student_model->getStudentsMobileNumber("$limit", "$offset");
         $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($student_mobile);
         bulk_helpline_promotion_sms($final_mobile_number_string);
-        $offset = $offset + $limit;
-        $count = $count + $limit;
+
     }
 }
 
