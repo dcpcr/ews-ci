@@ -6,6 +6,7 @@ use App\Models\AttendanceModel;
 use App\Models\BackToSchoolModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
+use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
 use App\Models\HighRiskModel;
 use App\Models\HomeVisitModel;
@@ -40,6 +41,9 @@ class CronController extends BaseController
         $attendance_model->downloadAttendance($file_name, $from_date, $to_date);
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function update_detected_cases($from_date, $to_date)
     {
         $case_model = new CaseModel();
@@ -53,17 +57,17 @@ class CronController extends BaseController
     {
         helper('cyfuture');
         $cases = download_operator_form_data();
-        $reason_for_absenteeism_model= new ReasonForAbsenteeismModel();
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
         $call_disposition_model = new CallDispositionModel();
         $call_disposition_model->insertUpdateCallDisposition($cases);
-        $high_risk_model= new HighRiskModel();
+        $high_risk_model = new HighRiskModel();
         $high_risk_model->insertUpdateHighRisk($cases);
         $back_to_school = new BackToSchoolModel();
         $back_to_school->insertUpdateBackToSchool($cases);
-        $home_visit= new HomeVisitModel();
-        $home_visit-> insertUpdateHomeVisit($cases);
-        $dcpcr_ticket= new DcpcrHelplineTicketModel;
+        $home_visit = new HomeVisitModel();
+        $home_visit->insertUpdateHomeVisit($cases);
+        $dcpcr_ticket = new DcpcrHelplineTicketModel;
         $dcpcr_ticket->insertUpdateDcpcrTicketDetails($cases);
 
     }
@@ -71,7 +75,45 @@ class CronController extends BaseController
     /**
      * @throws \ReflectionException
      */
-    public function runDaily()
+    private function sendSmsToAllNewStudents()
+    {
+        helper('cdac');
+        send_sms_to_all_new_students('100000');
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    private function smsDeliveryReport()
+    {
+        helper('cdac');
+        $cdac_sms_model = new CdacSmsModel();
+        $cdac_sms_model->fetchSmsDeliveryReport();
+        update_sms_status_of_students_mobile_numbers();
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function runDailyAtNight()
+    {
+        $this->runDaily(false);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function runDailyAtMorning()
+    {
+        $this->runDaily(true);
+    }
+
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Exception
+     */
+    private function runDaily($morning)
     {
         ini_set("memory_limit", "-1");
         if ($this->request->isCLI()) {
@@ -79,11 +121,16 @@ class CronController extends BaseController
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             $begin = new \DateTimeImmutable();
             $end = $begin;
-            $this->updateCaseData();
-            $this->import_school_data();
-            $this->import_student_data();
-            $this->import_attendance_data($begin, $end);
-            $this->update_detected_cases($begin, $end);
+            if ($morning) {
+                $this->sendSmsToAllNewStudents();
+            } else {
+                $this->updateCaseData();
+                $this->smsDeliveryReport();
+                $this->import_school_data();
+                $this->import_student_data();
+                $this->import_attendance_data($begin, $end);
+                $this->update_detected_cases($begin, $end);
+            }
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);

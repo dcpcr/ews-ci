@@ -67,6 +67,18 @@ function get_curl_response($url, $username = '', $password = '', $method = 'GET'
     }
 }
 
+function getCyfutureToken()
+{
+    $url = getenv('cyfuture_token_url');
+    $username = getenv('cyfuture_username');
+    $password = getenv('cyfuture_password');
+    $method = getenv('method');
+    $response = get_curl_response($url, $username, $password, $method);
+    $data = json_decode($response, true);
+    //TODO: ERROR handling
+    return $data['token'];
+}
+
 function dump_array_in_file($array, $file_name, $exists)
 {
     if ($exists) {
