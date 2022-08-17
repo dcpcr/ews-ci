@@ -197,7 +197,6 @@ function send_sms_to_all_new_students($limit = '100')
             $offset++;
             $offset = $offset + $limit;
             bulk_helpline_promotion_sms($student_mobile);
-            die();
         }
         $student_mobile = $student_model->getMobileOfNewStudents("$limit", "$offset");
         bulk_helpline_promotion_sms($student_mobile);
@@ -254,13 +253,11 @@ function update_sms_status_of_students_mobile_numbers()
     $mobile_numbers = $student_model->getMobileOfStudentsToUpdateDeliveryReport();
     if (count($mobile_numbers) > 0) {
         foreach ($mobile_numbers as $row) {
-            echo $mobile_number = $row['mobile'];
+            $mobile_number = $row['mobile'];
             $cdac_sms_status = new CdacSmsStatusModel();
             $sms_delivery_status = $cdac_sms_status->fetchLatestSmsDeliveryReportOfMobileNumbers("$mobile_number");
             $student_model->updateSmsStatus("$mobile_number", "$sms_delivery_status");
-            die();
+
         }
     }
-
-
 }
