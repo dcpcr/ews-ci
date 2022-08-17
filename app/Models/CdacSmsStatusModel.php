@@ -40,23 +40,4 @@ class CdacSmsStatusModel extends Model
 
 
     }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function fetchSmsDeliveryReport()
-    {
-        helper('cdac');
-        $messageIds = $this->select('id,message_id')->where('report_fetched <', '4')->get()->getResultArray();
-        if (count($messageIds) > 0) {
-            for ($i = 0; $i < count($messageIds); $i++) {
-                $messageId = $messageIds[$i]['message_id'];
-                $batch_id = $messageIds[$i]['id'];
-                fetch_sms_delivery_report($messageId, $batch_id);
-                $cdac_sms_model = new CdacSmsModel();
-                $cdac_sms_model->updateReportFetchFalg($batch_id);
-                sleep(3);
-            }
-        }
-    }
 }

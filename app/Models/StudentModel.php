@@ -12,6 +12,7 @@ class StudentModel extends Model
     protected $table = 'student';
     protected $primaryKey = 'id';
     protected $returnType = 'array';
+    protected $allowedFields = ['sms_status'];
 
     // Validation
     protected $validationRules = [];
@@ -62,14 +63,14 @@ class StudentModel extends Model
     /**
      * @throws \ReflectionException
      */
-    public function getMobileForNewStudents(): array
+    public function getMobileOfNewStudents($limit = '', $offset = '0'): array
     {
-        return $this->select(['mobile'])->where('sms_status is NULL', NULL, FALSE)->findAll('');
+        return $this->select(['mobile'])->where('sms_status is NULL', NULL, FALSE)->findAll("$limit", "$offset");
     }
 
-    public function getStudentsMobileNumber($limit = '', $offset = ''): array
+    public function getMobileOfStudentsToUpdateDeliveryReport(): array
     {
-        return $this->select(['mobile'])->where("mobile !=", '')->findAll("$limit", "$offset");
+        return $this->select(['mobile'])->where("sms_status is NULL or sms_status='SUBMITTED'")->findAll();
     }
 
     public function getTotalStudentCount()
@@ -81,6 +82,14 @@ class StudentModel extends Model
     public function getStudentDetailsFormStudentTable($student_id)
     {
         return $this->select(['name', 'id', 'mobile', 'class', 'section'])->find("$student_id");
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function updateSmsStatus($mobile, $sms_delivery_status): bool
+    {
+        return $this->set('sms_status', "$sms_delivery_status")->where('mobile',"$mobile")->update();
     }
 
 }

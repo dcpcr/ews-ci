@@ -184,26 +184,25 @@ function fetch_sms_delivery_report($message_id, $batch_id)
 /**
  * @throws ReflectionException
  */
-function send_sms_to_all_student($limit = '10000')
+function send_sms_to_all_new_students($limit = '100')
 {
+    helper('helpline_sms_template');
     $offset = 0;
     $count = 0;
     $student_model = new StudentModel();
     $total_student_count = $student_model->getTotalStudentCount();
     while ($count < $total_student_count) {
         if ($offset == 0) {
-            $student_mobile = $student_model->getStudentsMobileNumber("$limit", "$offset");
+            $student_mobile = $student_model->getMobileOfNewStudents("$limit", "$offset");
             $offset++;
             $offset = $offset + $limit;
-            $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($student_mobile);
-            bulk_helpline_promotion_sms($final_mobile_number_string);
+            bulk_helpline_promotion_sms($student_mobile);
+            die();
         }
+        $student_mobile = $student_model->getMobileOfNewStudents("$limit", "$offset");
+        bulk_helpline_promotion_sms($student_mobile);
         $offset = $offset + $limit;
         $count = $count + $limit;
-        $student_mobile = $student_model->getStudentsMobileNumber("$limit", "$offset");
-        $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($student_mobile);
-        bulk_helpline_promotion_sms($final_mobile_number_string);
-
     }
 }
 
@@ -249,12 +248,19 @@ function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
 /**
  * @throws ReflectionException
  */
-function send_sms_to_all_new_students($mobile_numbers)
+function update_sms_status_of_students_mobile_numbers()
 {
+    $student_model = new StudentModel();
+    $mobile_numbers = $student_model->getMobileOfStudentsToUpdateDeliveryReport();
     if (count($mobile_numbers) > 0) {
-        $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
-        bulk_helpline_promotion_sms($final_mobile_number_string);
+        foreach ($mobile_numbers as $row) {
+            echo $mobile_number = $row['mobile'];
+            $cdac_sms_status = new CdacSmsStatusModel();
+            $sms_delivery_status = $cdac_sms_status->fetchLatestSmsDeliveryReportOfMobileNumbers("$mobile_number");
+            $student_model->updateSmsStatus("$mobile_number", "$sms_delivery_status");
+            die();
+        }
     }
 
-}
 
+}

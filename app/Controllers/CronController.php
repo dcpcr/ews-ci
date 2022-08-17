@@ -6,7 +6,7 @@ use App\Models\AttendanceModel;
 use App\Models\BackToSchoolModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
-use App\Models\CdacSmsStatusModel;
+use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
 use App\Models\HighRiskModel;
 use App\Models\HomeVisitModel;
@@ -78,21 +78,18 @@ class CronController extends BaseController
     private function sendSmsToAllNewStudents()
     {
         helper('cdac');
-        $student_model = new StudentModel();
-        $mobile_numbers = $student_model->getMobileForNewStudents();
-        send_sms_to_all_new_students($mobile_numbers);
-
+        send_sms_to_all_new_students('100000');
     }
 
     /**
      * @throws \ReflectionException
      */
-    public function smsDeliveryReport()
+    private function smsDeliveryReport()
     {
         helper('cdac');
-        $sms_batch_model = new CdacSmsStatusModel();
-        $sms_batch_model->fetchSmsDeliveryReport();
-
+        $cdac_sms_model = new CdacSmsModel();
+        $cdac_sms_model->fetchSmsDeliveryReport();
+        update_sms_status_of_students_mobile_numbers();
     }
 
     /**
