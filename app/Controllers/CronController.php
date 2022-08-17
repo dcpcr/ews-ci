@@ -78,7 +78,7 @@ class CronController extends BaseController
     private function sendSmsToAllNewStudents()
     {
         helper('cdac');
-        send_sms_to_all_new_students('100000');
+        send_sms_to_all_new_students();
     }
 
     /**

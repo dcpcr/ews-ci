@@ -184,7 +184,7 @@ function fetch_sms_delivery_report($message_id, $batch_id)
 /**
  * @throws ReflectionException
  */
-function send_sms_to_all_new_students($limit = '100')
+function send_sms_to_all_new_students($limit = '10000')
 {
     helper('helpline_sms_template');
     $offset = 0;
