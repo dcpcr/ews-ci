@@ -77,19 +77,19 @@ class CronController extends BaseController
      */
     private function sendSmsToAllNewStudents()
     {
-        helper('cdac');
-        send_sms_to_all_new_students();
+        $student_model = new StudentModel();
+        $student_model->send_sms_to_all_new_students(1000);
     }
 
     /**
      * @throws \ReflectionException
      */
-    private function smsDeliveryReport()
+    private function fetchAndUpdateSmsDeliveryReport()
     {
-        helper('cdac');
         $cdac_sms_model = new CdacSmsModel();
         $cdac_sms_model->fetchSmsDeliveryReport();
-        update_sms_status_of_students_mobile_numbers();
+        $student_model = new StudentModel();
+        $student_model->updateSmsDeliveryStatusOfStudentsMobileNumbers();
     }
 
     /**
@@ -125,7 +125,7 @@ class CronController extends BaseController
                 $this->sendSmsToAllNewStudents();
             } else {
                 $this->updateCaseData();
-                $this->smsDeliveryReport();
+                $this->fetchAndUpdateSmsDeliveryReport();
                 $this->import_school_data();
                 $this->import_student_data();
                 $this->import_attendance_data($begin, $end);

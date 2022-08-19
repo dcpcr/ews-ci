@@ -36,7 +36,7 @@ class CdacSmsModel extends Model
     /**
      * @throws \ReflectionException
      */
-    public function updateReportFetchFalg($batch_id)
+    public function updateReportFetchFlag($batch_id)
     {
         $this->set('report_fetched', "report_fetched+1", false)->where('id', "$batch_id")->update();
     }
@@ -53,8 +53,7 @@ class CdacSmsModel extends Model
                 $messageId = $messageIds[$i]['message_id'];
                 $batch_id = $messageIds[$i]['id'];
                 fetch_sms_delivery_report($messageId, $batch_id);
-                $cdac_sms_model = new CdacSmsModel();
-                $cdac_sms_model->updateReportFetchFalg($batch_id);
+                $this->updateReportFetchFlag($batch_id);
                 sleep(3);
             }
         }

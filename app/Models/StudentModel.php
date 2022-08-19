@@ -70,7 +70,7 @@ class StudentModel extends Model
 
     public function getMobileOfStudentsToUpdateDeliveryReport(): array
     {
-        return $this->select(['mobile'])->where("sms_status is NULL or sms_status='SUBMITTED'")->findAll();
+        return $this->select(['mobile'])->where("sms_status='SUBMITTED'")->findAll();
     }
 
     public function getTotalStudentCount()
@@ -87,9 +87,72 @@ class StudentModel extends Model
     /**
      * @throws \ReflectionException
      */
-    public function updateSmsStatus($mobile, $sms_delivery_status): bool
+    public function updateSmsStatus($mobile_and_sms_status_data): bool
     {
-        return $this->set('sms_status', "$sms_delivery_status")->where('mobile',"$mobile")->update();
+        return $this->updateBatch($mobile_and_sms_status_data, 'mobile');
+    }
+
+
+
+    /**
+     * @throws \ReflectionException
+     */
+
+    function send_sms_to_all_new_students($limit = '10000')
+    {
+        helper('helpline_sms_template');
+        $offset = 0;
+        $count = 0;
+        $total_student_count = $this->getTotalStudentCount();
+        while ($count < $total_student_count) {
+            if ($offset == 0) {
+                $student_mobile = $this->getMobileOfNewStudents("$limit", "$offset");
+                $offset++;
+                $offset = $offset + $limit;
+                $data = [];
+                foreach ($student_mobile as $row) {
+                    $data[] = [
+                        'mobile' => $row['mobile'],
+                        'sms_status' => 'SUBMITTED'
+                    ];
+                }
+                $this->updateSmsStatus($data);
+                bulk_helpline_promotion_sms($student_mobile);
+            }
+            $student_mobile = $this->getMobileOfNewStudents("$limit", "$offset");
+            $data = [];
+            foreach ($student_mobile as $row) {
+                $data[] = [
+                    'mobile' => $row['mobile'],
+                    'sms_status' => 'SUBMITTED'
+                ];
+            }
+            $this->updateSmsStatus($data);
+            bulk_helpline_promotion_sms($student_mobile);
+            $offset = $offset + $limit;
+            $count = $count + $limit;
+        }
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    function updateSmsDeliveryStatusOfStudentsMobileNumbers()
+    {
+        $mobile_numbers = $this->getMobileOfStudentsToUpdateDeliveryReport();
+        $cdac_sms_status = new CdacSmsStatusModel();
+        $sms_delivery_status = $cdac_sms_status->fetchLatestSmsDeliveryReportOfMobileNumbers($mobile_numbers);
+        if (!empty($sms_delivery_status)) {
+            $sms_status_data = [];
+            foreach ($sms_delivery_status as $row) {
+                $sms_status_data[] = [
+                    'mobile' => $row['mobile'],
+                    'sms_status' => $row['status']
+                ];
+            }
+            var_dump($sms_delivery_status);
+            $this->updateSmsStatus($sms_status_data);
+        }
     }
 
 }

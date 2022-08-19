@@ -29,15 +29,13 @@ class CdacSmsStatusModel extends Model
     {
 
         if (!empty($mobile_number)) {
-            $mobile_number = "91" . $mobile_number;
-            $subQuery = $this->selectMax('created_at')->where('mobile_number', $mobile_number)->get()->getResultArray();
-            $created_at = $subQuery[0]['created_at'];
-            $result = $this->select('status')->Where('created_at', $created_at)->where('mobile_number', $mobile_number)->findAll();
-            return $result['0']['status'];
-        } else {
-            return "10 digit mobile number is required as parameter";
+            $mobile_number_string = '';
+            foreach ($mobile_number as $row) {
+                $mobile_number_string .= "91" . $row['mobile'] . ',';
+            }
+            $mobile_number_string = substr($mobile_number_string, 0, strlen($mobile_number_string) - 1);
+            $sql = 'SELECT id,batch_id,SUBSTR(mobile_number, 3, 10) as mobile,status,created_at FROM `cdac_sms_status` where(mobile_number, created_at) in(select mobile_number,max(`created_at`) as created_at from cdac_sms_status where mobile_number in(' . $mobile_number_string . ') group by mobile_number)';
+            return $this->db->query($sql)->getResultArray();
         }
-
-
     }
 }

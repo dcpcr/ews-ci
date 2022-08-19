@@ -103,7 +103,7 @@ function ordutf8($string, &$offset)
 
 
 //function to send single unicode sms
-function submit_single_unicode_sms($message_unicode, $mobile_no, $template_id)
+function submit_unicode_sms($message_unicode, $mobile_number, $template_id, $bulk)
 {
     $username = get_cdac_username();
     $password = get_cdac_password();
@@ -111,43 +111,23 @@ function submit_single_unicode_sms($message_unicode, $mobile_no, $template_id)
     $secure_key = get_cdac_securekey();
     $final_message = string_to_finalmessage(trim($message_unicode));
     $key = hash('sha512', trim($username) . trim($sender_id) . trim($final_message) . trim($secure_key));
-
+    if (!$bulk) {
+        $bulk_or_single = 'mobileno';
+    } else {
+        $bulk_or_single = 'bulkmobno';
+    }
     $data = array(
         "username" => trim($username),
         "password" => trim($password),
         "senderid" => trim($sender_id),
         "content" => trim($final_message),
         "smsservicetype" => "unicodemsg",
-        "mobileno" => trim($mobile_no),
+        "$bulk_or_single" => trim($mobile_number),
         "key" => trim($key),
         "templateid" => trim($template_id)
     );
 
     return post_to_url_unicode("https://msdgweb.mgov.gov.in/esms/sendsmsrequestDLT", $data); //calling post_to_url_unicode to send single unicode sms
-}
-
-//function to send bulk unicode sms
-function send_bulk_unicode($message_unicode, $mobile_numbers, $template_id)
-{
-    $username = get_cdac_username();
-    $password = get_cdac_password();
-    $sender_id = get_cdac_senderid();
-    $secure_key = get_cdac_securekey();
-    $final_message = string_to_finalmessage(trim($message_unicode));
-    $key = hash('sha512', trim($username) . trim($sender_id) . trim($final_message) . trim($secure_key));
-
-    $data = array(
-        "username" => trim($username),
-        "password" => trim($password),
-        "senderid" => trim($sender_id),
-        "content" => trim($final_message),
-        "smsservicetype" => "unicodemsg",
-        "bulkmobno" => trim($mobile_numbers),
-        "key" => trim($key),
-        "templateid" => trim($template_id)
-    );
-
-    return post_to_url_unicode("https://msdgweb.mgov.gov.in/esms/sendsmsrequestDLT", $data); //calling post_to_url_unicode to send bulk unicode sms
 }
 
 /**
@@ -169,7 +149,7 @@ function fetch_sms_delivery_report($message_id, $batch_id)
     $report_data = [];
     for ($i = 0; $i < count($response_arr) / 4; $i++) {
         $report_data[] = array(
-            'sms_batch_id' => $batch_id,
+            'batch_id' => $batch_id,
             'mobile_number' => $response_arr["$j"],
             'status' => $response_arr["$k"]
         );
@@ -178,31 +158,6 @@ function fetch_sms_delivery_report($message_id, $batch_id)
     }
 
     $sms_batch->insertMobileNumbersSmsBatch($report_data);
-
-}
-
-/**
- * @throws ReflectionException
- */
-function send_sms_to_all_new_students($limit = '10000')
-{
-    helper('helpline_sms_template');
-    $offset = 0;
-    $count = 0;
-    $student_model = new StudentModel();
-    $total_student_count = $student_model->getTotalStudentCount();
-    while ($count < $total_student_count) {
-        if ($offset == 0) {
-            $student_mobile = $student_model->getMobileOfNewStudents("$limit", "$offset");
-            $offset++;
-            $offset = $offset + $limit;
-            bulk_helpline_promotion_sms($student_mobile);
-        }
-        $student_mobile = $student_model->getMobileOfNewStudents("$limit", "$offset");
-        bulk_helpline_promotion_sms($student_mobile);
-        $offset = $offset + $limit;
-        $count = $count + $limit;
-    }
 }
 
 /**
@@ -225,7 +180,7 @@ function insert_response($response, string $template_id): void
  */
 function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
 {
-    $response = submit_single_unicode_sms($message_unicode, $mobile_number, $template_id);
+    $response = submit_unicode_sms($message_unicode, $mobile_number, $template_id, false);
     insert_response($response, $template_id);
     return $response;
 
@@ -238,26 +193,10 @@ function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
 {
 
     $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
-    $response = submit_single_unicode_sms($message_unicode, $final_mobile_number_string, $template_id);
+    $response = submit_unicode_sms($message_unicode, $final_mobile_number_string, $template_id, true);
     insert_response($response, $template_id);
     return $response;
 
 }
 
-/**
- * @throws ReflectionException
- */
-function update_sms_status_of_students_mobile_numbers()
-{
-    $student_model = new StudentModel();
-    $mobile_numbers = $student_model->getMobileOfStudentsToUpdateDeliveryReport();
-    if (count($mobile_numbers) > 0) {
-        foreach ($mobile_numbers as $row) {
-            $mobile_number = $row['mobile'];
-            $cdac_sms_status = new CdacSmsStatusModel();
-            $sms_delivery_status = $cdac_sms_status->fetchLatestSmsDeliveryReportOfMobileNumbers("$mobile_number");
-            $student_model->updateSmsStatus("$mobile_number", "$sms_delivery_status");
 
-        }
-    }
-}
