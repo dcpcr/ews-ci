@@ -44,7 +44,7 @@ class CdacSmsModel extends Model
     /**
      * @throws \ReflectionException
      */
-    public function fetchSmsDeliveryReport()
+    public function downloadSmsDeliveryReport()
     {
         helper('cdac');
         $messageIds = $this->select('id,message_id')->where('report_fetched <', '4')->get()->getResultArray();

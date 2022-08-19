@@ -18,7 +18,7 @@ use App\Models\StudentModel;
 class CronController extends BaseController
 {
 
-    protected function import_school_data()
+    protected function importSchoolData()
     {
         $file_name = "schools.csv";
         $school_model = new SchoolModel();
@@ -27,14 +27,14 @@ class CronController extends BaseController
         $school_mapping_model->updateMappings();
     }
 
-    protected function import_student_data()
+    protected function importStudentData()
     {
         $file_name = "student.csv";
         $student_model = new StudentModel();
         $student_model->updateStudents($file_name);
     }
 
-    protected function import_attendance_data($from_date, $to_date)
+    protected function importAttendanceData($from_date, $to_date)
     {
         $file_name = "attendance.csv";
         $attendance_model = new AttendanceModel();
@@ -44,7 +44,7 @@ class CronController extends BaseController
     /**
      * @throws \Exception
      */
-    protected function update_detected_cases($from_date, $to_date)
+    protected function updateDetectedCases($from_date, $to_date)
     {
         $case_model = new CaseModel();
         $case_model->detectCases($from_date, $to_date);
@@ -87,7 +87,7 @@ class CronController extends BaseController
     private function fetchAndUpdateSmsDeliveryReport()
     {
         $cdac_sms_model = new CdacSmsModel();
-        $cdac_sms_model->fetchSmsDeliveryReport();
+        $cdac_sms_model->downloadSmsDeliveryReport();
         $student_model = new StudentModel();
         $student_model->updateSmsDeliveryStatusOfStudentsMobileNumbers();
     }
@@ -126,10 +126,10 @@ class CronController extends BaseController
             } else {
                 $this->updateCaseData();
                 $this->fetchAndUpdateSmsDeliveryReport();
-                $this->import_school_data();
-                $this->import_student_data();
-                $this->import_attendance_data($begin, $end);
-                $this->update_detected_cases($begin, $end);
+                $this->importSchoolData();
+                $this->importStudentData();
+                $this->importAttendanceData($begin, $end);
+                $this->updateDetectedCases($begin, $end);
             }
             // Calculate script execution time
             $end_time = microtime(true);
