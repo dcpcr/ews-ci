@@ -218,7 +218,6 @@ class ApiController extends ResourceController
         $case_model = new CaseModel();
         $student_details = $case_model->getStudentDetails($case_id);
         $response = '';
-        var_dump($student_details);
         if ($student_details) {
             $student_id = $student_details['id'];
             $student_name = "Name: " . $student_details['name'] . " Class: " . $student_details['class'] . " Section: " . $student_details['section'];

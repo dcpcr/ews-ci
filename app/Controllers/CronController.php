@@ -75,10 +75,10 @@ class CronController extends BaseController
     /**
      * @throws \ReflectionException
      */
-    private function sendSmsToAllNewStudents()
+    private function sendSms()
     {
         $student_model = new StudentModel();
-        $student_model->send_sms_to_all_new_students(1000);
+        $student_model->sendSmsToAllNewStudents(1000);
     }
 
     /**
@@ -88,8 +88,6 @@ class CronController extends BaseController
     {
         $cdac_sms_model = new CdacSmsModel();
         $cdac_sms_model->downloadSmsDeliveryReport();
-        $student_model = new StudentModel();
-        $student_model->updateSmsDeliveryStatusOfStudentsMobileNumbers();
     }
 
     /**
@@ -122,7 +120,7 @@ class CronController extends BaseController
             $begin = new \DateTimeImmutable();
             $end = $begin;
             if ($morning) {
-                $this->sendSmsToAllNewStudents();
+                $this->sendSms();
             } else {
                 $this->updateCaseData();
                 $this->fetchAndUpdateSmsDeliveryReport();

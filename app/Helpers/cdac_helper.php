@@ -1,8 +1,6 @@
 <?php
 
-use App\Models\CdacSmsStatusModel;
 use App\Models\CdacSmsModel;
-use App\Models\StudentModel;
 
 function get_cdac_username()
 {
@@ -47,7 +45,7 @@ function post_to_url_unicode($url, $data)
     foreach ($data as $key => $value) {
         $fields .= $key . '=' . urlencode($value) . '&';
     }
-    rtrim($fields, '&');
+    $fields = rtrim($fields, '&');
 
     $post = curl_init();
     //curl_setopt($post, CURLOPT_SSLVERSION, 5); // uncomment for systems supporting TLSv1.1 only
@@ -130,49 +128,34 @@ function submit_unicode_sms($message_unicode, $mobile_number, $template_id, $bul
     return post_to_url_unicode("https://msdgweb.mgov.gov.in/esms/sendsmsrequestDLT", $data); //calling post_to_url_unicode to send single unicode sms
 }
 
-/**
- * @throws ReflectionException
- */
-function fetch_sms_delivery_report($message_id, $batch_id)
+function fetch_sms_delivery_report($message_id)
 {
     $username = get_cdac_username();
     $password = get_cdac_password();
-    $sms_batch = new CdacSmsStatusModel();
     $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $message_id . "&pwd_encrypted=false";
     helper('general');
     $response = get_curl_response($url);
-    //$response = '917701891704,DELIVERED,2022-07-29 04:58:53 918758191659,DELIVERED,2022-07-29 04:58:52 919873177238,FAILEDBYTELCO,2022-07-29 04:58:49 917428194597,DELIVERED,2022-07-29 04:58:51 919818775784,DELIVERED,2022-07-29 04:59:09 917766863434,DELIVERED,2022-07-29 04:58:51 919667345583,DELIVERED,2022-07-29 04:58:51 919065414962,DELIVERED,2022-07-29 04:58:52 919818442421,DELIVERED,2022-07-29 04:58:52 919911814770,SUBMITTED,0000-00-00 00:00:00';
-    $response = preg_replace('/\s/', ',', $response);
-    $response_arr = explode(',', $response);
-    $j = 0;
-    $k = 1;
-    $report_data = [];
-    for ($i = 0; $i < count($response_arr) / 4; $i++) {
-        $report_data[] = array(
-            'batch_id' => $batch_id,
-            'mobile_number' => $response_arr["$j"],
-            'status' => $response_arr["$k"]
-        );
-        $j = $j + 4;
-        $k = $k + 4;
+    if ($response) {
+        log_message("info", "API call success, url - " . $url);
+    } else {
+        log_message("error", "The API call failed, url - " . $url);
     }
-
-    $sms_batch->insertMobileNumbersSmsBatch($report_data);
+    return $response;
 }
 
 /**
  * @throws ReflectionException
  */
+//TODO: Error handling
 function insert_response($response, string $template_id): void
 {
     $response = str_replace("\n", "", $response);
     $response_arr = explode(',', $response);
-    //TODO: Error handling
     $statusCode = $response_arr[0];
     $messageId = $response_arr[1];
     $sms_batch_model = new CdacSmsModel();
-    $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id);
-
+    $result = $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id);
+    log_message('info', "The Max id after inserting a new sms in the CdacSms Table is - " . $result);
 }
 
 /**
@@ -183,7 +166,6 @@ function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
     $response = submit_unicode_sms($message_unicode, $mobile_number, $template_id, false);
     insert_response($response, $template_id);
     return $response;
-
 }
 
 /**
@@ -191,12 +173,10 @@ function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
  */
 function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
 {
-
     $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
     $response = submit_unicode_sms($message_unicode, $final_mobile_number_string, $template_id, true);
     insert_response($response, $template_id);
     return $response;
-
 }
 
 

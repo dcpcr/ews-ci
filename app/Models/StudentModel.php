@@ -5,6 +5,7 @@ namespace App\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
 use CodeIgniter\Validation\ValidationInterface;
+use ReflectionException;
 
 class StudentModel extends Model
 {
@@ -60,88 +61,74 @@ class StudentModel extends Model
         }
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public function getMobileOfNewStudents($limit = '', $offset = '0'): array
     {
-        return $this->select(['mobile'])->where('sms_status is NULL', NULL, FALSE)->findAll("$limit", "$offset");
+        return $this->select(['mobile'])
+            ->distinct()
+            ->where('sms_status', NULL, FALSE)
+            ->findAll("$limit", "$offset");
     }
 
-    public function getMobileOfStudentsToUpdateDeliveryReport(): array
+    public function getMobileNumbersToUpdateStatus(): array
     {
-        return $this->select(['mobile'])->where("sms_status='SUBMITTED'")->findAll();
+        return $this->select(['mobile'])
+            ->distinct()
+            ->where("sms_status", 'SUBMITTED')
+            ->findAll();
     }
 
-    public function getTotalStudentCount()
+    public function getNewMobileCount()
     {
-        $count = $this->selectCount('id')->findAll();
-        return $count[0]['id'];
+        return $this->distinct('mobile')
+            ->where('sms_status', NULL, FALSE)
+            ->countAllResults();
     }
 
     public function getStudentDetailsFormStudentTable($student_id)
     {
-        return $this->select(['name', 'id', 'mobile', 'class', 'section'])->find("$student_id");
+        return $this->select(['name', 'id', 'mobile', 'class', 'section'])
+            ->find("$student_id");
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function updateSmsStatus($mobile_and_sms_status_data): bool
     {
         return $this->updateBatch($mobile_and_sms_status_data, 'mobile');
     }
 
-
-
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-
-    function send_sms_to_all_new_students($limit = '10000')
+    function sendSmsToAllNewStudents($limit = '10000')
     {
         helper('helpline_sms_template');
-        $offset = 0;
         $count = 0;
-        $total_student_count = $this->getTotalStudentCount();
-        while ($count < $total_student_count) {
-            if ($offset == 0) {
-                $student_mobile = $this->getMobileOfNewStudents("$limit", "$offset");
-                $offset++;
-                $offset = $offset + $limit;
-                $data = [];
-                foreach ($student_mobile as $row) {
-                    $data[] = [
-                        'mobile' => $row['mobile'],
-                        'sms_status' => 'SUBMITTED'
-                    ];
-                }
-                $this->updateSmsStatus($data);
-                bulk_helpline_promotion_sms($student_mobile);
-            }
-            $student_mobile = $this->getMobileOfNewStudents("$limit", "$offset");
+        $total_mobile_count = $this->getNewMobileCount();
+        while ($count < $total_mobile_count) {
+            $mobile_numbers = $this->getMobileOfNewStudents("$limit", "$count");
             $data = [];
-            foreach ($student_mobile as $row) {
+            foreach ($mobile_numbers as $row) {
                 $data[] = [
                     'mobile' => $row['mobile'],
                     'sms_status' => 'SUBMITTED'
                 ];
             }
+            bulk_helpline_promotion_sms($mobile_numbers);
             $this->updateSmsStatus($data);
-            bulk_helpline_promotion_sms($student_mobile);
-            $offset = $offset + $limit;
-            $count = $count + $limit;
+            $count += count($mobile_numbers);
         }
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    function updateSmsDeliveryStatusOfStudentsMobileNumbers()
+    function updateSmsStatusOfMobileNumbers()
     {
-        $mobile_numbers = $this->getMobileOfStudentsToUpdateDeliveryReport();
+        $mobile_numbers = $this->getMobileNumbersToUpdateStatus();
         $cdac_sms_status = new CdacSmsStatusModel();
-        $sms_delivery_status = $cdac_sms_status->fetchLatestSmsDeliveryReportOfMobileNumbers($mobile_numbers);
+        $sms_delivery_status = $cdac_sms_status->fetchLatestSmsStatusOf($mobile_numbers);
         if (!empty($sms_delivery_status)) {
             $sms_status_data = [];
             foreach ($sms_delivery_status as $row) {
@@ -150,9 +137,7 @@ class StudentModel extends Model
                     'sms_status' => $row['status']
                 ];
             }
-            var_dump($sms_delivery_status);
             $this->updateSmsStatus($sms_status_data);
         }
     }
-
 }
