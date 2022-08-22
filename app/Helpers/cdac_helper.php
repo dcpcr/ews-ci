@@ -155,7 +155,7 @@ function insert_response($response, string $template_id): void
     $messageId = $response_arr[1];
     $sms_batch_model = new CdacSmsModel();
     $result = $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id);
-    log_message('info', "The Max id after inserting a new sms in the CdacSms Table is - " . $result);
+    log_message('info', "The Max id after inserting a new sms in the CdacSms Table is - " . $result[0]['id']);
 }
 
 /**
