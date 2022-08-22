@@ -61,13 +61,13 @@ class StudentModel extends Model
         }
     }
 
-    public function getMobileOfNewStudents($limit = '', $offset = '0'): array
+    public function getMobileOfNewStudents($limit = ''): array
     {
         return $this->select(['mobile'])
             ->distinct()
             ->where('sms_status', NULL, FALSE)
             ->where('length(mobile)=', '10')
-            ->findAll("$limit", "$offset");
+            ->findAll("$limit");
     }
 
     public function getMobileNumbersToUpdateStatus(): array
@@ -108,7 +108,7 @@ class StudentModel extends Model
         $count = 0;
         $total_mobile_count = $this->getNewMobileCount();
         while ($count < $total_mobile_count) {
-            $mobile_numbers = $this->getMobileOfNewStudents("$limit", "$count");
+            $mobile_numbers = $this->getMobileOfNewStudents("$limit");
             $data = [];
             foreach ($mobile_numbers as $row) {
                 $data[] = [
