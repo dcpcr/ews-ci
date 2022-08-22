@@ -66,6 +66,7 @@ class StudentModel extends Model
         return $this->select(['mobile'])
             ->distinct()
             ->where('sms_status', NULL, FALSE)
+            ->where('length(mobile)=', '10')
             ->findAll("$limit", "$offset");
     }
 
