@@ -104,7 +104,7 @@ class StudentModel extends Model
      */
     function sendSmsToAllNewStudents($limit = '10000')
     {
-        helper('helpline_sms_template');
+        helper('ews_sms_template');
         $count = 0;
         $total_mobile_count = $this->getNewMobileCount();
         while ($count < $total_mobile_count) {
