@@ -55,7 +55,7 @@ class CdacSmsModel extends Model
                 $messageId = $messageIds[$i]['message_id'];
                 $batch_id = $messageIds[$i]['id'];
                 $response = fetch_sms_delivery_report($messageId);
-                if ($response) {
+                if (!empty($response)) {
                     $sms_batch = new CdacSmsStatusModel();
                     $sms_batch->insertSmsStatus($response, $batch_id);
                     $this->updateReportFetchFlag($batch_id);

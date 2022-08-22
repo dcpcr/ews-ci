@@ -135,12 +135,14 @@ function fetch_sms_delivery_report($message_id)
     $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $message_id . "&pwd_encrypted=false";
     helper('general');
     $response = get_curl_response($url);
-    if ($response) {
-        log_message("info", "API call success, url - " . $url);
+    if ($response != 'You don\'t have Access to this resource. Please contact MobileSeva team.' . "\n") {
+        log_message("info", "API call success, url - " . $url . " CDAC Server Message - " . $response);
+        return $response;
     } else {
-        log_message("error", "The API call failed, url - " . $url);
+        log_message("error", "The API call failed, url - " . " CDAC Server response - " . $response . $url);
+        return [];
     }
-    return $response;
+
 }
 
 /**
