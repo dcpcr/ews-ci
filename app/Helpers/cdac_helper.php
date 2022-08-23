@@ -60,8 +60,14 @@ function post_to_url_unicode($url, $data)
     curl_setopt($post, CURLOPT_HTTPHEADER, array("User-Agent:Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt)"));
     curl_setopt($post, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($post); //result from mobile seva server
+    $err = curl_error($post);
     curl_close($post);
-    return $result;
+    if ($err) {
+        log_message('error', "cURL Error in post_to_url_unicode#:" . $err);
+        return null;
+    } else {
+        return $result;
+    }
 }
 
 //function to convert unicode text in UTF-8 format

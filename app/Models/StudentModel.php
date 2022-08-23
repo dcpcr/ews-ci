@@ -116,9 +116,13 @@ class StudentModel extends Model
                     'sms_status' => 'SUBMITTED'
                 ];
             }
-            bulk_helpline_promotion_sms($mobile_numbers);
-            $this->updateSmsStatus($data);
-            $count += count($mobile_numbers);
+            if (bulk_helpline_promotion_sms($mobile_numbers) !== null) {
+                $this->updateSmsStatus($data);
+                $count += count($mobile_numbers);
+            } else {
+                log_message("error", "Could not send SMS.");
+                break;
+            }
         }
     }
 
