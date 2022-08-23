@@ -23,9 +23,15 @@ class ReasonSeeder extends Seeder
             array('id' => '7', 'name' => 'Infrastructure/ Resource-related', 'active' => '1'),
             array('id' => '8', 'name' => 'Sexual offence or sexually inappropriate behavior towards the student', 'active' => '1'),
             array('id' => '9', 'name' => 'Missing Child', 'active' => '1'),
-            array('id' => '10', 'name' => 'Peer pressure', 'active' => '1'),
+            array('id' => '10', 'name' => 'Peer Pressure', 'active' => '1'),
             array('id' => '11', 'name' => 'Incarceration', 'active' => '1'),
-            array('id' => '12', 'name' => 'Corporal punishment', 'active' => '1')
+            array('id' => '12', 'name' => 'Corporal Punishment', 'active' => '1'),
+            array('id' => '13', 'name' => 'Child Marriage', 'active' => '1'),
+            array('id' => '14', 'name' => 'Child Labour', 'active' => '1'),
+            array('id' => '15', 'name' => 'Respondent is Unaware of Absenteeism', 'active' => '1'),
+            array('id' => '16', 'name' => 'Respondent Denied Absenteeism', 'active' => '1'),
+            array('id' => '17', 'name' => 'Substance Abuse', 'active' => '1'),
+            array('id' => '18', 'name' => 'Mid-Day Meal', 'active' => '1')
 
         );
         foreach ($rows as $row) {
