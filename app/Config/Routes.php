@@ -34,11 +34,13 @@ $routes->setAutoRoute(true);
 $routes->get('operator', 'OperatorController::index', ['as' => 'operator']);
 $routes->get('dashboard/ajax/(:segment)', 'AdminController::ajax/$1', ['as' => 'dashboard.ajax']);
 $routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
-$routes->cli("cron/run", "CronController::runDaily");
+$routes->cli("cron/night", "CronController::runDailyAtNight");
+$routes->cli("cron/morning", "CronController::runDailyAtMorning");
 $routes->post('api_login', 'ApiController::login');
 $routes->get('api/case', 'ApiController::getCases');
 $routes->get('api/mitra', 'ApiController::getMitra');
 $routes->get('api/attendance', 'ApiController::getAttendance');
+$routes->get('api/send_sms', 'ApiController::ewsSms');
 
 // Myth:Auth routes file.
 $routes->group('', ['namespace' => 'Myth\Auth\Controllers'], static function ($routes) {

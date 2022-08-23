@@ -196,4 +196,64 @@ class ApiController extends ResourceController
                 ]
             );
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    //api/send_sms/?case_id=12&sms_type=case_closed
+    public function ewsSms(): \CodeIgniter\HTTP\Response
+    {
+        $rules = [
+            'case_id' => 'trim|required|numeric|greater_than[0]',
+            'sms_type' => 'trim|required|alpha_numeric_punct|in_list[new_case,call_connected,ticket_raised,unable_to_contact,incomplete_info,case_closed]',
+        ];
+        if (!$this->validateRequest($_GET, $rules)) {
+            return $this
+                ->getResponse(
+                    $this->validator->getErrors(),
+                    ResponseInterface::HTTP_BAD_REQUEST
+                );
+        }
+        $case_id = $_GET['case_id'];
+        $case_model = new CaseModel();
+        $student_details = $case_model->getStudentDetails($case_id);
+        $response = '';
+        if ($student_details) {
+            $student_id = $student_details['id'];
+            $student_name = "Name: " . $student_details['name'] . " Class: " . $student_details['class'] . " Section: " . $student_details['section'];
+            $mobile_number = $student_details['mobile'];
+            helper('ews_sms_template_helper');
+            switch ($_GET['sms_type']) {
+                case "new_case":
+                    $response = new_ews_detected_case_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "call_connected":
+                    $response = connected_call_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "ticket_raised":
+                    $response = connected_call_with_ticket_raised_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "unable_to_contact":
+                    $response = not_able_to_contact_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "incomplete_info":
+                    $response = incomplete_information_sms($mobile_number, $student_id, $student_name);
+                    break;
+                case "case_closed":
+                    $response = case_closed_sms($mobile_number, $student_id, $student_name);
+                    break;
+            }
+
+
+        } else {
+            $response = 'Record not found';
+        }
+
+        return $this
+            ->getResponse(
+                [
+                    'data' => $response,
+                ]
+            );
+    }
 }

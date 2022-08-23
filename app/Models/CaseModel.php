@@ -306,4 +306,19 @@ class CaseModel extends Model
         }
         return $count;
     }
+
+    public function getStudentDetails($case_id)
+    {
+        helper('general');
+        $res = $this->select(['student_id'])->find("$case_id");
+        if ($res != NULL) {
+            $student_model = new StudentModel();
+            $response = $student_model->getStudentDetailsFormStudentTable($res['student_id']);
+            if ($response != 'NULL') {
+                return $response;
+            }
+        } else {
+            return false;
+        }
+    }
 }
