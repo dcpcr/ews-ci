@@ -64,7 +64,10 @@ class CdacSmsModel extends Model
             }
             $student_model = new StudentModel();
             $student_model->updateSmsStatusOfMobileNumbers();
+        } else {
+            log_message('info', "No sms reports to fetch");
         }
+
     }
 
 

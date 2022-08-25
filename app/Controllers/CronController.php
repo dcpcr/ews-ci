@@ -20,6 +20,10 @@ class CronController extends BaseController
 
     protected function importSchoolData()
     {
+        if (getenv('cron.schooldata')=="0") {
+            log_message("info", "importSchoolData is not enabled. Skipping it");
+            return;
+        }
         $file_name = "schools.csv";
         $school_model = new SchoolModel();
         $school_model->updateSchools($file_name);
@@ -29,6 +33,10 @@ class CronController extends BaseController
 
     protected function importStudentData()
     {
+        if (getenv('cron.studentdata')=="0") {
+            log_message("info", "importStudentData is not enabled. Skipping it");
+            return;
+        }
         $file_name = "student.csv";
         $student_model = new StudentModel();
         $student_model->updateStudents($file_name);
@@ -36,6 +44,10 @@ class CronController extends BaseController
 
     protected function importAttendanceData($from_date, $to_date)
     {
+        if (getenv('cron.attendancedata')=="0") {
+            log_message("info", "importAttendanceData is not enabled. Skipping it");
+            return;
+        }
         $file_name = "attendance.csv";
         $attendance_model = new AttendanceModel();
         $attendance_model->downloadAttendance($file_name, $from_date, $to_date);
@@ -46,6 +58,10 @@ class CronController extends BaseController
      */
     protected function updateDetectedCases($from_date, $to_date)
     {
+        if (getenv('cron.detectedcases')=="0") {
+            log_message("info", "updateDetectedCases is not enabled. Skipping it");
+            return;
+        }
         $case_model = new CaseModel();
         $case_model->detectCases($from_date, $to_date);
     }
@@ -55,6 +71,10 @@ class CronController extends BaseController
      */
     private function updateCaseData()
     {
+        if (getenv('cron.casedata')=="0") {
+            log_message("info", "updateCaseData is not enabled. Skipping it");
+            return;
+        }
         helper('cyfuture');
         $cases = download_operator_form_data();
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
@@ -77,8 +97,13 @@ class CronController extends BaseController
      */
     private function sendSms()
     {
+        if (getenv('cron.sms')=="0") {
+            log_message("info", "sendSms is not enabled. Skipping it");
+            return;
+        }
         $student_model = new StudentModel();
         $student_model->sendSmsToAllNewStudents(1000);
+
     }
 
     /**
@@ -86,6 +111,10 @@ class CronController extends BaseController
      */
     private function fetchAndUpdateSmsDeliveryReport()
     {
+        if (getenv('cron.smsdeliveryreport')=="0") {
+            log_message("info", "fetchAndUpdateSmsDeliveryReport is not enabled. Skipping it");
+            return;
+        }
         $cdac_sms_model = new CdacSmsModel();
         $cdac_sms_model->downloadSmsDeliveryReport();
     }
