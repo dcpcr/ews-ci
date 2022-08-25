@@ -188,8 +188,10 @@ function check_if_error($response)
 function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
 {
     $response = submit_unicode_sms($message_unicode, $mobile_number, $template_id, false);
-    insert_response($response, $template_id);
-    return check_if_error($response);
+    if (check_if_error($response) !== null) {
+        insert_response($response, $template_id);
+    }
+    return $response;
 }
 
 /**
@@ -199,8 +201,10 @@ function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
 {
     $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
     $response = submit_unicode_sms($message_unicode, $final_mobile_number_string, $template_id, true);
-    insert_response($response, $template_id);
-    return check_if_error($response);
+    if (check_if_error($response) !== null) {
+        insert_response($response, $template_id);
+    }
+    return $response;
 }
 
 
