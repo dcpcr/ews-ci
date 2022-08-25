@@ -37,15 +37,16 @@ class CdacSmsStatusModel extends Model
         }
     }
 
-    public function fetchLatestSmsStatusOf($mobile_numbers)
+    public function fetchLatestSmsStatusOf($mobile_numbers): array
     {
+
         if (!empty($mobile_numbers)) {
             array_walk($mobile_numbers, function (&$item) {
-                $item = "91" . $item;
+                $item = "91" . $item['mobile'];
             });
             $sub_query = $this->select([
-                'mobile_number',
-                'max(`created_at`) as created_at',
+                'mobile_number as m',
+                'max(`created_at`) as c',
             ])
                 ->whereIn('mobile_number', $mobile_numbers)
                 ->groupBy('mobile_number')
@@ -58,7 +59,7 @@ class CdacSmsStatusModel extends Model
                 'status',
                 'created_at'
             ])
-                ->join('(' . $sub_query . ') `s1`', 'mobile_number = s1.mobile_number AND created_at = s1.created_at');
+                ->join('(' . $sub_query . ') `s1`', 'mobile_number = s1.m AND created_at = s1.c');
             $query = $builder->get();
             return $query->getResultArray();
         }

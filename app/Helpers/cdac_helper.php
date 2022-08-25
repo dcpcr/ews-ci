@@ -142,7 +142,7 @@ function fetch_sms_delivery_report($message_id)
     helper('general');
     $response = get_curl_response($url);
     if ($response != 'You don\'t have Access to this resource. Please contact MobileSeva team.' . "\n") {
-        log_message("info", "API call success, url - " . $url . " CDAC Server Message - " . $response);
+        log_message("info", "API call success, url - " . $url . " CDAC Server Message - ");
         return $response;
     } else {
         log_message("error", "The API call failed, url - " . " CDAC Server response - " . $response . $url);
