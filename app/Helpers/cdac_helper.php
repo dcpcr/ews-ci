@@ -166,6 +166,22 @@ function insert_response($response, string $template_id): void
     log_message('info', "The Max id after inserting a new sms in the CdacSms Table is - " . $result[0]['id']);
 }
 
+function check_if_error($response)
+{
+    switch ($response) {
+        case "442 : Invalid username parameter" . "\n":
+        case "443 : Invalid password parameter" . "\n":
+        case "Error 416 : Hash is not matching, please check your secure key" . "\n":
+        case "441 : Invalid senderId parameter" . "\n":
+            log_message('error', "CDAC server response: $response");
+            return null;
+
+        default:
+            return $response;
+
+    }
+}
+
 /**
  * @throws ReflectionException
  */
@@ -173,7 +189,7 @@ function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
 {
     $response = submit_unicode_sms($message_unicode, $mobile_number, $template_id, false);
     insert_response($response, $template_id);
-    return $response;
+    return check_if_error($response);
 }
 
 /**
@@ -184,7 +200,7 @@ function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
     $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
     $response = submit_unicode_sms($message_unicode, $final_mobile_number_string, $template_id, true);
     insert_response($response, $template_id);
-    return $response;
+    return check_if_error($response);
 }
 
 
