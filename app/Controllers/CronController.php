@@ -102,7 +102,7 @@ class CronController extends BaseController
             return;
         }
         $student_model = new StudentModel();
-        $student_model->sendSmsToAllNewStudents(1000);
+        $student_model->sendSmsToAllNewStudents(10000);
 
     }
 

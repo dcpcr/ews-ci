@@ -202,6 +202,7 @@ function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
     $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
     $response = submit_unicode_sms($message_unicode, $final_mobile_number_string, $template_id, true);
     if (check_if_error($response) !== null) {
+        log_message("info", "send_bulk_unicode_sms: Response is " . $response);
         insert_response($response, $template_id);
     }
     return $response;
