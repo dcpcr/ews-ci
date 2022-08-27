@@ -142,7 +142,7 @@ function fetch_sms_delivery_report($message_id)
     helper('general');
     $response = get_curl_response($url);
     if ($response != 'You don\'t have Access to this resource. Please contact MobileSeva team.' . "\n") {
-        log_message("info", "API call success, url - " . $url . " CDAC Server Message - ");
+        log_message("info", "API call success, url - " . $url . " CDAC Server Message - " . $response);
         return $response;
     } else {
         log_message("error", "The API call failed, url - " . " CDAC Server response - " . $response . $url);
@@ -177,6 +177,7 @@ function check_if_error($response)
             return null;
 
         default:
+            log_message('info', "CDAC server response: $response");
             return $response;
 
     }
@@ -189,6 +190,7 @@ function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
 {
     $response = submit_unicode_sms($message_unicode, $mobile_number, $template_id, false);
     if (check_if_error($response) !== null) {
+        log_message("info", "send_single_unicode_sms: Response is " . $response);
         insert_response($response, $template_id);
     }
     return $response;
