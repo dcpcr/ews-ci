@@ -173,6 +173,12 @@ function check_if_error($response)
         case "443 : Invalid password parameter" . "\n":
         case "Error 416 : Hash is not matching, please check your secure key" . "\n":
         case "441 : Invalid senderId parameter" . "\n":
+        case "446 : Missing bulkmobno parameter" . "\n":
+        case "446 : Missing mobileno parameter" . "\n":
+        case "447 : Missing key parameter" . "\n":
+        case "ERROR :: 431 SMS Service Type is NULL" . "\n":
+        case "445 : Missing templateid parameter" . "\n":
+        case $response==strrchr($response,"no"):
             log_message('error', "CDAC server response: $response");
             return null;
 
@@ -205,7 +211,7 @@ function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
     $response = submit_unicode_sms($message_unicode, $final_mobile_number_string, $template_id, true);
     if (check_if_error($response) !== null) {
         log_message("info", "send_bulk_unicode_sms: Response is " . $response);
-        insert_response($response, $template_id);
+        //insert_response($response, $template_id);
     }
     return $response;
 }
