@@ -61,15 +61,6 @@ class StudentModel extends Model
         }
     }
 
-    public function getMobileOfNewStudents($limit = ''): array
-    {
-        return $this->select(['mobile'])
-            ->distinct()
-            ->where('sms_status', NULL, FALSE)
-            ->where('length(mobile)=', '10')
-            ->findAll("$limit");
-    }
-
     public function getMobileNumbersToUpdateStatus(): array
     {
         return $this->select(['mobile'])
@@ -78,71 +69,27 @@ class StudentModel extends Model
             ->findAll();
     }
 
-    public function getNewMobileCount()
-    {
-        return $this->distinct('mobile')
-            ->where('sms_status', NULL, FALSE)
-            ->countAllResults();
-    }
-
     public function getStudentDetailsFormStudentTable($student_id)
     {
         return $this->select(['name', 'id', 'mobile', 'class', 'section'])
             ->find("$student_id");
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    public function updateSmsStatus($mobile_and_sms_status_data): bool
-    {
-        return $this->updateBatch($mobile_and_sms_status_data, 'mobile');
-    }
 
-    /**
-     * @throws ReflectionException
-     */
-    function sendSmsToAllNewStudents($limit = '10000')
+    public function fetchNewMobiles(array $mobiles): array
     {
-        helper('ews_sms_template');
-        $count = 0;
-        $total_mobile_count = $this->getNewMobileCount();
-        while ($count < $total_mobile_count) {
-            $mobile_numbers = $this->getMobileOfNewStudents("$limit");
-            $data = [];
-            foreach ($mobile_numbers as $row) {
-                $data[] = [
-                    'mobile' => $row['mobile'],
-                    'sms_status' => 'SUBMITTED'
-                ];
-            }
-            if (bulk_helpline_promotion_sms($mobile_numbers) !== null) {
-                $this->updateSmsStatus($data);
-                $count += count($mobile_numbers);
-            } else {
-                log_message("error", "Could not send SMS.");
-                break;
-            }
-        }
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    function updateSmsStatusOfMobileNumbers()
-    {
-        $mobile_numbers = $this->getMobileNumbersToUpdateStatus();
-        $cdac_sms_status = new CdacSmsStatusModel();
-        $sms_delivery_status = $cdac_sms_status->fetchLatestSmsStatusOf($mobile_numbers);
-        if (!empty($sms_delivery_status)) {
-            $sms_status_data = [];
-            foreach ($sms_delivery_status as $row) {
-                $sms_status_data[] = [
-                    'mobile' => $row['mobile'],
-                    'sms_status' => $row['status']
-                ];
-            }
-            $this->updateSmsStatus($sms_status_data);
+        $mobiles = array_column($mobiles, 'mobile');
+        if (empty($mobiles)) {
+            return $this->select([
+                'mobile'
+            ])->distinct()
+                ->findAll();
+        } else {
+            return $this->select([
+                'mobile'
+            ])->distinct()
+                ->whereNotIn('mobile', $mobiles)
+                ->findAll();
         }
     }
 }

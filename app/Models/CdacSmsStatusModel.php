@@ -39,7 +39,6 @@ class CdacSmsStatusModel extends Model
 
     public function fetchLatestSmsStatusOf($mobile_numbers): array
     {
-
         if (!empty($mobile_numbers)) {
             array_walk($mobile_numbers, function (&$item) {
                 $item = "91" . $item['mobile'];
