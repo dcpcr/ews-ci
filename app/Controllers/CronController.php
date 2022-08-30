@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Database\Migrations\MobileSmsStatus;
 use App\Models\AttendanceModel;
 use App\Models\BackToSchoolModel;
 use App\Models\CallDispositionModel;
@@ -10,6 +11,7 @@ use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
 use App\Models\HighRiskModel;
 use App\Models\HomeVisitModel;
+use App\Models\MobileSmsStatusModel;
 use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
@@ -31,6 +33,9 @@ class CronController extends BaseController
         $school_mapping_model->updateMappings();
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     protected function importStudentData()
     {
         if (getenv('cron.studentdata')=="0") {
@@ -38,8 +43,10 @@ class CronController extends BaseController
             return;
         }
         $file_name = "student.csv";
-        $student_model = new StudentModel();
+        /*$student_model = new StudentModel();
         $student_model->updateStudents($file_name);
+        */$mobile_sms_status_model = new MobileSmsStatusModel();
+        $mobile_sms_status_model->updateMobiles();
     }
 
     protected function importAttendanceData($from_date, $to_date)
