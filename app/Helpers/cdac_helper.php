@@ -141,14 +141,12 @@ function fetch_sms_delivery_report($message_id)
     $url = "https://msdgweb.mgov.gov.in/ReportAPI/csvreport?userid=" . $username . "&password=" . $password . "&msgid=" . $message_id . "&pwd_encrypted=false";
     helper('general');
     $response = get_curl_response($url);
-    if ($response != 'You don\'t have Access to this resource. Please contact MobileSeva team.' . "\n") {
-        log_message("info", "API call success, url - " . $url . " CDAC Server Message - " . $response);
-        return $response;
+    if (check_if_error($response) !== null) {
+        log_message("info", "fetch_sms_delivery_report: Response is " . $response);
     } else {
-        log_message("error", "The API call failed, url - " . " CDAC Server response - " . $response . $url);
-        return [];
+        log_message("error", "The API call failed, url - " . $url . " CDAC Server response - " . $response);
     }
-
+    return $response;
 }
 
 /**
@@ -169,6 +167,7 @@ function insert_response($response, string $template_id): void
 function check_if_error($response)
 {
     switch ($response) {
+        case "You don\'t have Access to this resource. Please contact MobileSeva team." . "\n":
         case "442 : Invalid username parameter" . "\n":
         case "443 : Invalid password parameter" . "\n":
         case "Error 416 : Hash is not matching, please check your secure key" . "\n":
@@ -178,7 +177,8 @@ function check_if_error($response)
         case "447 : Missing key parameter" . "\n":
         case "ERROR :: 431 SMS Service Type is NULL" . "\n":
         case "445 : Missing templateid parameter" . "\n":
-        case $response==strrchr($response,"no"):
+        case $response == strrchr($response, "try"):
+        case $response == strrchr($response, "no"):
             log_message('error', "CDAC server response: $response");
             return null;
 

@@ -19,11 +19,13 @@ class MobileSmsStatusModel extends Model
      */
     public function updateMobiles()
     {
-        $mobiles = $this->select([
-            'mobile'
-        ])->findAll();
+        $sub_query_mobile = $this->builder()->select('mobile');
         $student_model = new StudentModel();
-        $mobiles = $student_model->fetchNewMobiles($mobiles);
+        $mobiles = $student_model->select([
+            'mobile'
+        ])->distinct()
+            ->whereNotIn('mobile', $sub_query_mobile)
+            ->findAll();
         if (!empty($mobiles)) {
             $this->insertBatch($mobiles);
             $this->updateInvalidNumbers($mobiles);

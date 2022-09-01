@@ -5,7 +5,6 @@ namespace App\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
 use CodeIgniter\Validation\ValidationInterface;
-use ReflectionException;
 
 class StudentModel extends Model
 {
@@ -61,35 +60,10 @@ class StudentModel extends Model
         }
     }
 
-    public function getMobileNumbersToUpdateStatus(): array
-    {
-        return $this->select(['mobile'])
-            ->distinct()
-            ->where("sms_status", 'SUBMITTED')
-            ->findAll();
-    }
-
     public function getStudentDetailsFormStudentTable($student_id)
     {
         return $this->select(['name', 'id', 'mobile', 'class', 'section'])
             ->find("$student_id");
     }
 
-
-    public function fetchNewMobiles(array $mobiles): array
-    {
-        $mobiles = array_column($mobiles, 'mobile');
-        if (empty($mobiles)) {
-            return $this->select([
-                'mobile'
-            ])->distinct()
-                ->findAll();
-        } else {
-            return $this->select([
-                'mobile'
-            ])->distinct()
-                ->whereNotIn('mobile', $mobiles)
-                ->findAll();
-        }
-    }
 }
