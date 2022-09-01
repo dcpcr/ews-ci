@@ -19,18 +19,13 @@ class CdacSmsStatusModel extends Model
     public function insertSmsStatus($response, $batch_id)
     {
         $report_data = [];
-        $response = preg_replace('/\s/', ',', $response);
-        $response_arr = explode(',', $response);
-        $j = 0;
-        $k = 1;
-        for ($i = 0; $i < count($response_arr) / 4; $i++) {
+        foreach(preg_split("/((\r?\n)|(\r\n?))/", $response) as $line){
+            $line_arr = explode(',', $line);
             $report_data[] = array(
                 'batch_id' => $batch_id,
-                'mobile_number' => $response_arr["$j"],
-                'status' => $response_arr["$k"]
+                'mobile_number' => $line_arr[0],
+                'status' => $line_arr[1]
             );
-            $j = $j + 4;
-            $k = $k + 4;
         }
         if (!empty($report_data)) {
             $this->insertBatch($report_data);

@@ -60,7 +60,7 @@ class CdacSmsModel extends Model
                     $sms_batch->insertSmsStatus($response, $batch_id);
                     $this->updateReportFetchFlag($batch_id);
                 }
-                sleep(10);
+                sleep(1);
             }
         } else {
             log_message('info', "No sms reports to fetch");

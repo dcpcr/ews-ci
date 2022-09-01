@@ -142,7 +142,7 @@ function fetch_sms_delivery_report($message_id)
     helper('general');
     $response = get_curl_response($url);
     if (check_if_error($response) !== null) {
-        log_message("info", "fetch_sms_delivery_report: Response is " . $response);
+        log_message("info", "fetch_sms_delivery_report: Response is " . $response . " The url is - " . $url);
     } else {
         log_message("error", "The API call failed, url - " . $url . " CDAC Server response - " . $response);
     }
