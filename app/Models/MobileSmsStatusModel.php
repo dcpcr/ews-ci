@@ -112,12 +112,31 @@ class MobileSmsStatusModel extends Model
      */
     function updateSmsStatusOfMobileNumbers()
     {
-        $mobiles = $this->select([
-            'mobile'
-        ])->where("sms_status", "SUBMITTED")
-            ->findAll();
+        $mobile_to_be_update_builder = $this
+            ->builder()
+            ->select("concat('91',mobile)")
+            ->where("sms_status", "SUBMITTED");
+
         $cdac_sms_status = new CdacSmsStatusModel();
-        $sms_delivery_status = $cdac_sms_status->fetchLatestSmsStatusOf($mobiles);
+        $sub_query = $cdac_sms_status->select([
+            'mobile_number as m',
+            'max(`created_at`) as c',
+        ])
+            ->whereIn('mobile_number', $mobile_to_be_update_builder)
+            ->groupBy('mobile_number')
+            ->getCompiledSelect();
+
+        $builder = $cdac_sms_status->select([
+            'id',
+            'batch_id',
+            'SUBSTR(mobile_number, 3, 10) as mobile',
+            'status',
+            'created_at'
+        ])
+            ->join('(' . $sub_query . ') `s1`', 'mobile_number = s1.m AND created_at = s1.c');
+        $query = $builder->get();
+        $sms_delivery_status = $query->getResultArray();
+
         if (!empty($sms_delivery_status)) {
             $sms_status_data = [];
             foreach ($sms_delivery_status as $row) {

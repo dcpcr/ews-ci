@@ -31,32 +31,4 @@ class CdacSmsStatusModel extends Model
             $this->insertBatch($report_data);
         }
     }
-
-    public function fetchLatestSmsStatusOf($mobile_numbers): array
-    {
-        if (!empty($mobile_numbers)) {
-            array_walk($mobile_numbers, function (&$item) {
-                $item = "91" . $item['mobile'];
-            });
-            $sub_query = $this->select([
-                'mobile_number as m',
-                'max(`created_at`) as c',
-            ])
-                ->whereIn('mobile_number', $mobile_numbers)
-                ->groupBy('mobile_number')
-                ->getCompiledSelect();
-
-            $builder = $this->select([
-                'id',
-                'batch_id',
-                'SUBSTR(mobile_number, 3, 10) as mobile',
-                'status',
-                'created_at'
-            ])
-                ->join('(' . $sub_query . ') `s1`', 'mobile_number = s1.m AND created_at = s1.c');
-            $query = $builder->get();
-            return $query->getResultArray();
-        }
-        return [];
-    }
 }
