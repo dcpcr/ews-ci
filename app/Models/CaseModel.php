@@ -119,8 +119,12 @@ class CaseModel extends Model
                     log_message("error", "Case Update Failed! There were  " . $update_count . " cases that needed update. on date - " . $date->format("d/m/Y"));
                 }
             }
-            log_message('info', $insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
-            log_message('info', $update_count . " cases updated on date - " . $date->format("d/m/Y"));
+            helper('ews_sms_template');
+            $message=$insert_count = $insert_count . " new cases detected for date - " . $date->format("d/m/Y");
+            log_message('info', $insert_count);
+            $message.=$update_count = $update_count . " cases updated on date - " . $date->format("d/m/Y");
+            log_message('info', $update_count);
+            send_status_sms($message);
         }
     }
 
