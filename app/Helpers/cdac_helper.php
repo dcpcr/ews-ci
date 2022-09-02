@@ -177,7 +177,7 @@ function check_if_error($response)
         case "447 : Missing key parameter" . "\n":
         case "ERROR :: 431 SMS Service Type is NULL" . "\n":
         case "445 : Missing templateid parameter" . "\n":
-        case $response == strrchr($response, "try"):
+        case $response == strrchr($response, "Kindly"):
         case $response == strrchr($response, "no"):
             log_message('error', "CDAC server response: $response");
             return null;

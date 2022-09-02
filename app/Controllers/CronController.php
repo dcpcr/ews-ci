@@ -122,8 +122,6 @@ class CronController extends BaseController
         }
         $cdac_sms_model = new CdacSmsModel();
         $cdac_sms_model->downloadSmsDeliveryReport();
-        $mobile_model = new MobileSmsStatusModel();
-        $mobile_model->updateSmsStatusOfMobileNumbers();
     }
 
     /**

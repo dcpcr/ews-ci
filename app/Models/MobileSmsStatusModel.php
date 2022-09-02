@@ -107,48 +107,6 @@ class MobileSmsStatusModel extends Model
             $this->updateBatch($invalid_numbers, 'mobile');
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    function updateSmsStatusOfMobileNumbers()
-    {
-        $mobile_to_be_update_builder = $this
-            ->builder()
-            ->select("concat('91',mobile)")
-            ->where("sms_status", "SUBMITTED");
-
-        $cdac_sms_status = new CdacSmsStatusModel();
-        $sub_query = $cdac_sms_status->select([
-            'mobile_number as m',
-            'max(`created_at`) as c',
-        ])
-            ->whereIn('mobile_number', $mobile_to_be_update_builder)
-            ->groupBy('mobile_number')
-            ->getCompiledSelect();
-
-        $builder = $cdac_sms_status->select([
-            'id',
-            'batch_id',
-            'SUBSTR(mobile_number, 3, 10) as mobile',
-            'status',
-            'created_at'
-        ])
-            ->join('(' . $sub_query . ') `s1`', 'mobile_number = s1.m AND created_at = s1.c');
-        $query = $builder->get();
-        $sms_delivery_status = $query->getResultArray();
-
-        if (!empty($sms_delivery_status)) {
-            $sms_status_data = [];
-            foreach ($sms_delivery_status as $row) {
-                $sms_status_data[] = [
-                    'mobile' => $row['mobile'],
-                    'sms_status' => $row['status']
-                ];
-            }
-            $this->updateBatch($sms_status_data, 'mobile');
-        }
-    }
-
     public function fetchVerifiedStatus($mobile_number): bool
     {
         $verified = $this->select('sms_status')->find($mobile_number);
