@@ -30,15 +30,23 @@ class CdacSmsStatusModel extends Model
             );
             $mobile_report_data[] = array(
                 'mobile' => substr($line_arr[0], 2, 10),
-                'status' => $line_arr[1]
+                'sms_status' => $line_arr[1]
             );
         }
         if (!empty($cdac_report_data)) {
             $this->insertBatch($cdac_report_data);
+            log_message("info", "insertSmsStatus: inserted cdac_sms_status with " . count($cdac_report_data) . " records");
+        } else  {
+            log_message("error", "insertSmsStatus: No data to insert in cdac_sms_status");
         }
+
         if (!empty($mobile_report_data)) {
             $mobile_status_model = new MobileSmsStatusModel();
             $mobile_status_model->updateBatch($mobile_report_data, 'mobile');
+            log_message("info", "insertSmsStatus: updated MobileSmsStatus with " . count($mobile_report_data) . " records");
+        } else {
+            log_message("error", "insertSmsStatus: No data to update in MobileSmsStatus");
         }
+
     }
 }
