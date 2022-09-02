@@ -174,7 +174,7 @@ class CronController extends BaseController
         } catch (Exception $e) {
             $msg= $e->getMessage();
             helper('server_sms_template');
-            send_server_alert_sms($msg);
+            send_alert_sms($msg);
         }
     }
 }

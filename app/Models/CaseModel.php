@@ -121,10 +121,10 @@ class CaseModel extends Model
             }
             $insert_count = $insert_count . " new cases detected for date - " . $date->format("d/m/Y");
             log_message('info', $insert_count);
-            send_server_status_sms($insert_count);
+            send_status_sms($insert_count);
             $update_count = $update_count . " cases updated on date - " . $date->format("d/m/Y");
             log_message('info', $update_count);
-            send_server_status_sms($update_count);
+            send_status_sms($update_count);
         }
     }
 
