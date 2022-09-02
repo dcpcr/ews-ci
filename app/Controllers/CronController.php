@@ -148,27 +148,33 @@ class CronController extends BaseController
     private function runDaily($morning)
     {
         ini_set("memory_limit", "-1");
-        if ($this->request->isCLI()) {
-            log_message('info', "Cron request");
-            $start_time = microtime(true); //Find a better mechanism of logging time of execution
-            $begin = new \DateTimeImmutable();
-            $end = $begin;
-            if ($morning) {
-                $this->sendSms();
+        try {
+            if ($this->request->isCLI()) {
+                log_message('info', "Cron request");
+                $start_time = microtime(true); //Find a better mechanism of logging time of execution
+                $begin = new \DateTimeImmutable();
+                $end = $begin;
+                if ($morning) {
+                    $this->sendSms();
+                } else {
+                    $this->updateCaseData();
+                    $this->fetchAndUpdateSmsDeliveryReport();
+                    $this->importSchoolData();
+                    $this->importStudentData();
+                    $this->importAttendanceData($begin, $end);
+                    $this->updateDetectedCases($begin, $end);
+                }
+                // Calculate script execution time
+                $end_time = microtime(true);
+                $execution_time = ($end_time - $start_time);
+                log_message('info', "Execution time of script = " . $execution_time . " sec");
             } else {
-                $this->updateCaseData();
-                $this->fetchAndUpdateSmsDeliveryReport();
-                $this->importSchoolData();
-                $this->importStudentData();
-                $this->importAttendanceData($begin, $end);
-                $this->updateDetectedCases($begin, $end);
+                log_message('info', "Access to this functionally without CLI is not allowed");
             }
-            // Calculate script execution time
-            $end_time = microtime(true);
-            $execution_time = ($end_time - $start_time);
-            log_message('info', "Execution time of script = " . $execution_time . " sec");
-        } else {
-            log_message('info', "Access to this functionally without CLI is not allowed");
+        } catch (Exception $e) {
+            $msg= $e->getMessage();
+            helper('server_sms_template');
+            send_server_alert_sms($msg);
         }
     }
 }
