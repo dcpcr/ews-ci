@@ -66,32 +66,56 @@ class CronController extends BaseController
     /**
      * @throws Exception
      */
+    public function detect($function_no, $date)
+    {
+        ini_set("memory_limit", "-1");
+        if ($this->request->isCLI()) {
+            log_message('info', "in detect, function value = " . $function_no);
+            $case_model = new CaseModel();
+            $case_model->detectCases(new DateTimeImmutable($date), $function_no);
+        } else {
+            log_message('info', "Access to this functionally without CLI is not allowed");
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
     protected function updateDetectedCases($from_date, $to_date)
     {
         if (getenv('cron.detectedcases') == "0") {
             log_message("info", "updateDetectedCases is not enabled. Skipping it");
             return;
         }
-        for ($i = 1; $i <= 4; $i++) {
-            /*$result = exec(
-                "cd " . FCPATH . " && " .
-                "php "
-                . "index.php cron detect "
-                . $i
-                . " " . $from_date->format('Y-m-d')
-                . " " . $to_date->format('Y-m-d')
-                . " >/dev/null 2>/dev/null & "
-            );*/
-            exec("screen -dmS " . $i .
-                "cd " . FCPATH . " && " .
-                "php "
-                . "index.php cron detect "
-                . $i
-                . " " . $from_date->format('Y-m-d')
-                . " " . $to_date->format('Y-m-d')
-                . " >/dev/null 2>/dev/null & "
-            );
-            //log_message("info", "In updateDetectedCases. Result for function $i = ");
+
+        function isRunning($pid): bool
+        {
+            try {
+                $result = shell_exec(sprintf("ps %d", $pid));
+                if (count(preg_split("/\n/", $result)) > 2) {
+                    return true;
+                }
+            } catch (Exception $e) {
+            }
+            return false;
+        }
+
+        for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
+            exec("cd " . FCPATH);
+            $pids = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $pids [] = exec(
+                    "php index.php cron detect"
+                    . " " . $i
+                    . " " . $date->format('Y-m-d')
+                    . " > /dev/null 2>&1 & echo $!; ", $result
+                );
+            }
+            foreach ($pids as $pid) {
+                while (isRunning($pid)) {
+                    sleep(10);
+                }
+            }
         }
     }
 
@@ -156,24 +180,6 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws Exception
-     */
-    public function detect($function_no, $from_date, $to_date)
-    {
-        ini_set("memory_limit", "-1");
-        if ($this->request->isCLI()) {
-            log_message('info', "in detect, function value = " . $function_no);
-            $case_model = new CaseModel();
-            if ($function_no == 1) {
-                sleep(10);
-            }
-            $case_model->detectCases(new DateTimeImmutable($from_date), new DateTimeImmutable($to_date), $function_no);
-        } else {
-            log_message('info', "Access to this functionally without CLI is not allowed");
-        }
-    }
-
-    /**
      * @throws ReflectionException
      */
     public function runDailyAtMorning()
@@ -192,9 +198,8 @@ class CronController extends BaseController
         if ($this->request->isCLI()) {
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
-            $begin = new DateTimeImmutable('2022-07-09');
-            $end = new DateTimeImmutable('2022-07-10');
-            //$end = $begin;
+            $begin = new DateTimeImmutable();
+            $end = $begin;
             if ($morning) {
                 $this->sendSms();
             } else {

@@ -21,29 +21,27 @@ class CaseModel extends Model
     /**
      * @throws Exception
      */
-    public function detectCases(\DateTimeInterface $from_date, \DateTimeInterface $to_date, $function_no)
+    public function detectCases(\DateTimeInterface $date, $function_no)
     {
         $attendance_model = new AttendanceModel();
-        for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
-            $attendance_count = $attendance_model->select('student_id')
-                ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")
-                ->countAllResults();
-            $limit = ceil($attendance_count / 4);
-            $offset = $limit * ($function_no - 1) + 1;
-            $marked_students = $attendance_model->distinct()->select('student_id')
-                ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")
-                ->findAll($limit, $offset);
-            if (empty($marked_students)) {
-                log_message("info", "No students' attendance is marked for the day " . $date->format("d/m/Y"));
-            }
-            $open_cases = $this->distinct()->select('student_id')->where("status != 'Back To School'")
-                ->orderBy("student_id")->findAll();
-
-            list($insert_count, $update_count) = $this->detect($marked_students, $open_cases, $date);
-
-            log_message('info', $insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
-            log_message('info', $update_count . " cases updated on date - " . $date->format("d/m/Y"));
+        $attendance_count = $attendance_model->select('student_id')
+            ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")
+            ->countAllResults();
+        $limit = ceil($attendance_count / 4);
+        $offset = $limit * ($function_no - 1);
+        $marked_students = $attendance_model->distinct()->select('student_id')
+            ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")
+            ->findAll($limit, $offset);
+        if (empty($marked_students)) {
+            log_message("info", "No students' attendance is marked for the day " . $date->format("d/m/Y"));
         }
+        $open_cases = $this->distinct()->select('student_id')->where("status != 'Back To School'")
+            ->orderBy("student_id")->findAll();
+
+        list($insert_count, $update_count) = $this->detect($marked_students, $open_cases, $date);
+
+        log_message('info', $insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
+        log_message('info', $update_count . " cases updated on date - " . $date->format("d/m/Y"));
     }
 
     public function getCasesForIds($caseIds): array
