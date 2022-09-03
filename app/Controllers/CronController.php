@@ -15,6 +15,10 @@ use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
+use DateTimeImmutable;
+use Exception;
+use ReflectionException;
+
 
 class CronController extends BaseController
 {
@@ -33,7 +37,7 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function importStudentData()
     {
@@ -60,7 +64,7 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function updateDetectedCases($from_date, $to_date)
     {
@@ -68,17 +72,36 @@ class CronController extends BaseController
             log_message("info", "updateDetectedCases is not enabled. Skipping it");
             return;
         }
-        $case_model = new CaseModel();
-        $case_model->detectCases($from_date, $to_date);
+        for ($i = 1; $i <= 4; $i++) {
+            /*$result = exec(
+                "cd " . FCPATH . " && " .
+                "php "
+                . "index.php cron detect "
+                . $i
+                . " " . $from_date->format('Y-m-d')
+                . " " . $to_date->format('Y-m-d')
+                . " >/dev/null 2>/dev/null & "
+            );*/
+            exec("screen -dmS " . $i .
+                "cd " . FCPATH . " && " .
+                "php "
+                . "index.php cron detect "
+                . $i
+                . " " . $from_date->format('Y-m-d')
+                . " " . $to_date->format('Y-m-d')
+                . " >/dev/null 2>/dev/null & "
+            );
+            //log_message("info", "In updateDetectedCases. Result for function $i = ");
+        }
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function updateCaseData()
     {
         if (getenv('cron.casedata') == "0") {
-            log_message("info", "updateCaseData is not enabled. Skipping it");
+            log_message("info", "updateCaseData is not enabled . Skipping it");
             return;
         }
         helper('cyfuture');
@@ -99,12 +122,12 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function sendSms()
     {
         if (getenv('cron.sms') == "0") {
-            log_message("info", "sendSms is not enabled. Skipping it");
+            log_message("info", "sendSms is not enabled . Skipping it");
             return;
         }
         $mobile_model = new MobileSmsStatusModel();
@@ -112,12 +135,12 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function fetchAndUpdateSmsDeliveryReport()
     {
         if (getenv('cron.smsdeliveryreport') == "0") {
-            log_message("info", "fetchAndUpdateSmsDeliveryReport is not enabled. Skipping it");
+            log_message("info", "fetchAndUpdateSmsDeliveryReport is not enabled . Skipping it");
             return;
         }
         $cdac_sms_model = new CdacSmsModel();
@@ -125,7 +148,7 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function runDailyAtNight()
     {
@@ -133,7 +156,25 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws Exception
+     */
+    public function detect($function_no, $from_date, $to_date)
+    {
+        ini_set("memory_limit", "-1");
+        if ($this->request->isCLI()) {
+            log_message('info', "in detect, function value = " . $function_no);
+            $case_model = new CaseModel();
+            if ($function_no == 1) {
+                sleep(10);
+            }
+            $case_model->detectCases(new DateTimeImmutable($from_date), new DateTimeImmutable($to_date), $function_no);
+        } else {
+            log_message('info', "Access to this functionally without CLI is not allowed");
+        }
+    }
+
+    /**
+     * @throws ReflectionException
      */
     public function runDailyAtMorning()
     {
@@ -142,8 +183,8 @@ class CronController extends BaseController
 
 
     /**
-     * @throws \ReflectionException
-     * @throws \Exception
+     * @throws ReflectionException
+     * @throws Exception
      */
     private function runDaily($morning)
     {
@@ -151,8 +192,9 @@ class CronController extends BaseController
         if ($this->request->isCLI()) {
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
-            $begin = new \DateTimeImmutable();
-            $end = $begin;
+            $begin = new DateTimeImmutable('2022-07-09');
+            $end = new DateTimeImmutable('2022-07-10');
+            //$end = $begin;
             if ($morning) {
                 $this->sendSms();
             } else {
