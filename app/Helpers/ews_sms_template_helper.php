@@ -64,23 +64,15 @@ function case_closed_sms($mobile_number, $student_id, $student_name)
 /**
  * @throws ReflectionException
  */
-function send_alert_sms(string $message)
+function send_status_sms(string $message,$alert=false)
 {
     helper('cdac');
-    $mobile_number= getenv("alert_numbers");
-    $message_unicode = "Message from DCPCR Early Warning System\n" . $message;
-    $template_id = "1307166210199731733";
-    return send_single_unicode_sms($message_unicode, $mobile_number, $template_id);
-
-}
-
-/**
- * @throws ReflectionException
- */
-function send_status_sms(string $message)
-{
-    helper('cdac');
-    $mobile_number= getenv("success_numbers");
+    if($alert){
+        $mobile_number= getenv("alert_numbers");
+    }
+    else{
+        $mobile_number= getenv("success_numbers");
+    }
     $message_unicode = "Message from DCPCR Early Warning System\n" . $message;
     $template_id = "1307166210199731733";
     return send_single_unicode_sms($message_unicode, $mobile_number, $template_id);

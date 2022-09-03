@@ -171,10 +171,10 @@ class CronController extends BaseController
             } else {
                 log_message('info', "Access to this functionally without CLI is not allowed");
             }
-        } catch (Exception $e) {
-            $msg= $e->getMessage();
+        } catch (\ErrorException  $e) {
+            $msg = $e->getMessage();
             helper('ews_sms_template');
-            send_alert_sms($msg);
+            send_status_sms($msg,true);
         }
     }
 
