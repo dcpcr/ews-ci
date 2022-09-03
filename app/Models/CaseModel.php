@@ -39,8 +39,7 @@ class CaseModel extends Model
             $open_cases = $this->distinct()->select('student_id')->where("status != 'Back To School'")
                 ->orderBy("student_id")->findAll();
 
-            list($insert_count, $update_count) = $this->
-            detect($marked_students, $open_cases, $date);
+            list($insert_count, $update_count) = $this->detect($marked_students, $open_cases, $date);
 
             log_message('info', $insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
             log_message('info', $update_count . " cases updated on date - " . $date->format("d/m/Y"));
