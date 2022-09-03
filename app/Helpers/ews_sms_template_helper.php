@@ -75,7 +75,7 @@ function send_status_sms(string $message,$alert=false)
     }
     $message_unicode = "Message from DCPCR Early Warning System\n" . $message;
     $template_id = "1307166210199731733";
-    return send_single_unicode_sms($message_unicode, $mobile_number, $template_id);
+    send_single_sms($message_unicode, $mobile_number, $template_id);
 }
 
 /**

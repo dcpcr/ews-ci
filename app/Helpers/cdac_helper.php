@@ -107,7 +107,7 @@ function ordutf8($string, &$offset)
 
 
 //function to send single unicode sms
-function submit_unicode_sms($message_unicode, $mobile_number, $template_id, $bulk)
+function submit_sms($message_unicode, $mobile_number, $template_id, $bulk, $service_type='unicodemsg')
 {
     $username = get_cdac_username();
     $password = get_cdac_password();
@@ -125,7 +125,7 @@ function submit_unicode_sms($message_unicode, $mobile_number, $template_id, $bul
         "password" => trim($password),
         "senderid" => trim($sender_id),
         "content" => trim($final_message),
-        "smsservicetype" => "unicodemsg",
+        "smsservicetype" => $service_type,
         "$bulk_or_single" => trim($mobile_number),
         "key" => trim($key),
         "templateid" => trim($template_id)
@@ -190,11 +190,28 @@ function check_if_error($response)
 }
 
 /**
+ * @throws ReflectionException singlemsg
+ */
+function send_single_sms($message_unicode, $mobile_number, $template_id)
+{
+    $number_array=explode(',',$mobile_number);
+    foreach($number_array as $number)
+    {
+        $response = submit_sms($message_unicode, $number, $template_id, false,"singlemsg");
+        if (check_if_error($response) !== null) {
+            log_message("info", "send_single_unicode_sms: Response is " . $response);
+            insert_response($response, $template_id);
+        }
+    }
+
+}
+
+/**
  * @throws ReflectionException
  */
 function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
 {
-    $response = submit_unicode_sms($message_unicode, $mobile_number, $template_id, false);
+    $response = submit_sms($message_unicode, $mobile_number, $template_id, false);
     if (check_if_error($response) !== null) {
         log_message("info", "send_single_unicode_sms: Response is " . $response);
         insert_response($response, $template_id);
@@ -208,7 +225,7 @@ function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
 function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
 {
     $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
-    $response = submit_unicode_sms($message_unicode, $final_mobile_number_string, $template_id, true);
+    $response = submit_sms($message_unicode, $final_mobile_number_string, $template_id, true);
     if (check_if_error($response) !== null) {
         log_message("info", "send_bulk_unicode_sms: Response is " . $response);
         insert_response($response, $template_id);
