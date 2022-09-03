@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use ReflectionException;
 
 class CdacSmsStatusModel extends Model
 {
@@ -14,55 +15,38 @@ class CdacSmsStatusModel extends Model
     protected $allowedFields = ['batch_id', 'mobile_number', 'status'];
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function insertSmsStatus($response, $batch_id)
     {
-        $report_data = [];
-        $response = preg_replace('/\s/', ',', $response);
-        $response_arr = explode(',', $response);
-        $j = 0;
-        $k = 1;
-        for ($i = 0; $i < count($response_arr) / 4; $i++) {
-            $report_data[] = array(
+        $cdac_report_data = [];
+        $mobile_report_data = [];
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $response) as $line) {
+            $line_arr = explode(',', $line);
+            $cdac_report_data[] = array(
                 'batch_id' => $batch_id,
-                'mobile_number' => $response_arr["$j"],
-                'status' => $response_arr["$k"]
+                'mobile_number' => substr($line_arr[0], 2, 10),
+                'status' => $line_arr[1]
             );
-            $j = $j + 4;
-            $k = $k + 4;
+            $mobile_report_data[] = array(
+                'mobile' => substr($line_arr[0], 2, 10),
+                'sms_status' => $line_arr[1]
+            );
         }
-        if (!empty($report_data)) {
-            $this->insertBatch($report_data);
+        if (!empty($cdac_report_data)) {
+            $this->insertBatch($cdac_report_data);
+            log_message("info", "insertSmsStatus: inserted cdac_sms_status with " . count($cdac_report_data) . " records");
+        } else  {
+            log_message("error", "insertSmsStatus: No data to insert in cdac_sms_status");
         }
-    }
 
-    public function fetchLatestSmsStatusOf($mobile_numbers): array
-    {
-
-        if (!empty($mobile_numbers)) {
-            array_walk($mobile_numbers, function (&$item) {
-                $item = "91" . $item['mobile'];
-            });
-            $sub_query = $this->select([
-                'mobile_number as m',
-                'max(`created_at`) as c',
-            ])
-                ->whereIn('mobile_number', $mobile_numbers)
-                ->groupBy('mobile_number')
-                ->getCompiledSelect();
-
-            $builder = $this->select([
-                'id',
-                'batch_id',
-                'SUBSTR(mobile_number, 3, 10) as mobile',
-                'status',
-                'created_at'
-            ])
-                ->join('(' . $sub_query . ') `s1`', 'mobile_number = s1.m AND created_at = s1.c');
-            $query = $builder->get();
-            return $query->getResultArray();
+        if (!empty($mobile_report_data)) {
+            $mobile_status_model = new MobileSmsStatusModel();
+            $mobile_status_model->updateBatch($mobile_report_data, 'mobile');
+            log_message("info", "insertSmsStatus: updated MobileSmsStatus with " . count($mobile_report_data) . " records");
+        } else {
+            log_message("error", "insertSmsStatus: No data to update in MobileSmsStatus");
         }
-        return [];
+
     }
 }

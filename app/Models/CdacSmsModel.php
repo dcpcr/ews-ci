@@ -55,15 +55,13 @@ class CdacSmsModel extends Model
                 $messageId = $messageIds[$i]['message_id'];
                 $batch_id = $messageIds[$i]['id'];
                 $response = fetch_sms_delivery_report($messageId);
-                if (!empty($response)) {
+                if ($response !== null) {
                     $sms_batch = new CdacSmsStatusModel();
                     $sms_batch->insertSmsStatus($response, $batch_id);
                     $this->updateReportFetchFlag($batch_id);
                 }
-                sleep(3);
+                sleep(1);
             }
-            $student_model = new StudentModel();
-            $student_model->updateSmsStatusOfMobileNumbers();
         } else {
             log_message('info', "No sms reports to fetch");
         }

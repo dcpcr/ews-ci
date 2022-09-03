@@ -10,6 +10,7 @@ use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
 use App\Models\HighRiskModel;
 use App\Models\HomeVisitModel;
+use App\Models\MobileSmsStatusModel;
 use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
@@ -20,7 +21,7 @@ class CronController extends BaseController
 
     protected function importSchoolData()
     {
-        if (getenv('cron.schooldata')=="0") {
+        if (getenv('cron.schooldata') == "0") {
             log_message("info", "importSchoolData is not enabled. Skipping it");
             return;
         }
@@ -31,20 +32,25 @@ class CronController extends BaseController
         $school_mapping_model->updateMappings();
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     protected function importStudentData()
     {
-        if (getenv('cron.studentdata')=="0") {
+        if (getenv('cron.studentdata') == "0") {
             log_message("info", "importStudentData is not enabled. Skipping it");
             return;
         }
         $file_name = "student.csv";
         $student_model = new StudentModel();
         $student_model->updateStudents($file_name);
+        $mobile_sms_status_model = new MobileSmsStatusModel();
+        $mobile_sms_status_model->updateMobiles();
     }
 
     protected function importAttendanceData($from_date, $to_date)
     {
-        if (getenv('cron.attendancedata')=="0") {
+        if (getenv('cron.attendancedata') == "0") {
             log_message("info", "importAttendanceData is not enabled. Skipping it");
             return;
         }
@@ -58,7 +64,7 @@ class CronController extends BaseController
      */
     protected function updateDetectedCases($from_date, $to_date)
     {
-        if (getenv('cron.detectedcases')=="0") {
+        if (getenv('cron.detectedcases') == "0") {
             log_message("info", "updateDetectedCases is not enabled. Skipping it");
             return;
         }
@@ -71,7 +77,7 @@ class CronController extends BaseController
      */
     private function updateCaseData()
     {
-        if (getenv('cron.casedata')=="0") {
+        if (getenv('cron.casedata') == "0") {
             log_message("info", "updateCaseData is not enabled. Skipping it");
             return;
         }
@@ -97,13 +103,12 @@ class CronController extends BaseController
      */
     private function sendSms()
     {
-        if (getenv('cron.sms')=="0") {
+        if (getenv('cron.sms') == "0") {
             log_message("info", "sendSms is not enabled. Skipping it");
             return;
         }
-        $student_model = new StudentModel();
-        $student_model->sendSmsToAllNewStudents(10000);
-
+        $mobile_model = new MobileSmsStatusModel();
+        $mobile_model->sendSmsToAllNewNumbers(10000);
     }
 
     /**
@@ -111,7 +116,7 @@ class CronController extends BaseController
      */
     private function fetchAndUpdateSmsDeliveryReport()
     {
-        if (getenv('cron.smsdeliveryreport')=="0") {
+        if (getenv('cron.smsdeliveryreport') == "0") {
             log_message("info", "fetchAndUpdateSmsDeliveryReport is not enabled. Skipping it");
             return;
         }
