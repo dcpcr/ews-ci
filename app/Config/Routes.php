@@ -43,7 +43,6 @@ $routes->get('api/mitra', 'ApiController::getMitra');
 $routes->get('api/attendance', 'ApiController::getAttendance');
 $routes->get('api/send_sms', 'ApiController::ewsSms');
 
-
 // Myth:Auth routes file.
 $routes->group('', ['namespace' => 'Myth\Auth\Controllers'], static function ($routes) {
     // Login/out

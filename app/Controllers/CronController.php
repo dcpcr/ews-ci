@@ -19,7 +19,6 @@ use DateTimeImmutable;
 use Exception;
 use ReflectionException;
 
-
 class CronController extends BaseController
 {
 
@@ -151,7 +150,7 @@ class CronController extends BaseController
     private function sendSms()
     {
         if (getenv('cron.sms') == "0") {
-            log_message("info", "sendSms is not enabled . Skipping it");
+            log_message("info", "sendSms is not enabled. Skipping it");
             return;
         }
         $mobile_model = new MobileSmsStatusModel();
@@ -164,7 +163,7 @@ class CronController extends BaseController
     private function fetchAndUpdateSmsDeliveryReport()
     {
         if (getenv('cron.smsdeliveryreport') == "0") {
-            log_message("info", "fetchAndUpdateSmsDeliveryReport is not enabled . Skipping it");
+            log_message("info", "fetchAndUpdateSmsDeliveryReport is not enabled. Skipping it");
             return;
         }
         $cdac_sms_model = new CdacSmsModel();
