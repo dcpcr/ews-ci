@@ -15,6 +15,9 @@ use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
+use DateTimeImmutable;
+use Exception;
+use ReflectionException;
 
 class CronController extends BaseController
 {
@@ -33,7 +36,7 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function importStudentData()
     {
@@ -60,7 +63,22 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
+     */
+    public function detect($function_no, $date)
+    {
+        ini_set("memory_limit", "-1");
+        if ($this->request->isCLI()) {
+            log_message('info', "in detect, function value = " . $function_no);
+            $case_model = new CaseModel();
+            $case_model->detectCases(new DateTimeImmutable($date), $function_no);
+        } else {
+            log_message('info', "Access to this functionally without CLI is not allowed");
+        }
+    }
+
+    /**
+     * @throws Exception
      */
     protected function updateDetectedCases($from_date, $to_date)
     {
@@ -68,12 +86,40 @@ class CronController extends BaseController
             log_message("info", "updateDetectedCases is not enabled. Skipping it");
             return;
         }
-        $case_model = new CaseModel();
-        $case_model->detectCases($from_date, $to_date);
+
+        function isRunning($pid): bool
+        {
+            try {
+                $result = shell_exec(sprintf("ps %d", $pid));
+                if (count(preg_split("/\n/", $result)) > 2) {
+                    return true;
+                }
+            } catch (Exception $e) {
+            }
+            return false;
+        }
+
+        for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
+            exec("cd " . FCPATH);
+            $pids = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $pids [] = exec(
+                    "php index.php cron detect"
+                    . " " . $i
+                    . " " . $date->format('Y-m-d')
+                    . " > /dev/null 2>&1 & echo $!; ", $result
+                );
+            }
+            foreach ($pids as $pid) {
+                while (isRunning($pid)) {
+                    sleep(10);
+                }
+            }
+        }
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function updateCaseData()
     {
@@ -99,7 +145,7 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function sendSms()
     {
@@ -112,7 +158,7 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function fetchAndUpdateSmsDeliveryReport()
     {
@@ -125,7 +171,7 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function runDailyAtNight()
     {
@@ -133,7 +179,7 @@ class CronController extends BaseController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function runDailyAtMorning()
     {
@@ -142,8 +188,8 @@ class CronController extends BaseController
 
 
     /**
-     * @throws \ReflectionException
-     * @throws \Exception
+     * @throws ReflectionException
+     * @throws Exception
      */
     private function runDaily($morning)
     {
@@ -151,7 +197,7 @@ class CronController extends BaseController
         if ($this->request->isCLI()) {
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
-            $begin = new \DateTimeImmutable();
+            $begin = new DateTimeImmutable();
             $end = $begin;
             if ($morning) {
                 $this->sendSms();
