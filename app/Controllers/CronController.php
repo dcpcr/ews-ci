@@ -101,7 +101,7 @@ class CronController extends BaseController
     private function updateCaseData()
     {
         if (getenv('cron.casedata') == "0") {
-            log_message("info", "updateCaseData is not enabled . Skipping it");
+            log_message("info", "updateCaseData is not enabled. Skipping it");
             return;
         }
         helper('cyfuture');
