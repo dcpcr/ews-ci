@@ -147,6 +147,7 @@ class CronController extends BaseController
      */
     private function runDaily($morning)
     {
+        helper('ews_sms_template');
         ini_set("memory_limit", "-1");
         try {
             if ($this->request->isCLI()) {
@@ -156,6 +157,7 @@ class CronController extends BaseController
                 $end = $begin;
                 if ($morning) {
                     $this->sendSms();
+                    $msg = "Morning Cron Job Completed Successfully";
                 } else {
                     $this->updateCaseData();
                     $this->fetchAndUpdateSmsDeliveryReport();
@@ -163,18 +165,24 @@ class CronController extends BaseController
                     $this->importStudentData();
                     $this->importAttendanceData($begin, $end);
                     $this->updateDetectedCases($begin, $end);
+                    $msg = "Night Cron Job Completed Successfully";
                 }
                 // Calculate script execution time
                 $end_time = microtime(true);
+                send_status_sms("$msg", true);
                 $execution_time = ($end_time - $start_time);
                 log_message('info', "Execution time of script = " . $execution_time . " sec");
             } else {
                 log_message('info', "Access to this functionally without CLI is not allowed");
             }
         } catch (\ErrorException  $e) {
-            $msg = $e->getMessage();
-            helper('ews_sms_template');
-            send_status_sms($msg,true);
+            if ($morning) {
+                $msg = "Something Went Wrong in Morning Cron Job.\n Please check the log on the server";
+
+            } else {
+                $msg = "Something Went Wrong in Night Cron Job.\n Please check the log on the server";
+            }
+            send_status_sms($msg, true);
         }
     }
 

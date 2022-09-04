@@ -120,11 +120,9 @@ class CaseModel extends Model
                 }
             }
             helper('ews_sms_template');
-            $message=$insert_count = $insert_count . " new cases detected for date - " . $date->format("d/m/Y");
-            log_message('info', $insert_count);
-            $message.=$update_count = $update_count . " cases updated on date - " . $date->format("d/m/Y");
-            log_message('info', $update_count);
-            send_status_sms($message);
+            log_message('info', $insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
+            log_message('info', $update_count . " cases updated on date - " . $date->format("d/m/Y"));
+            send_status_sms($insert_count);
         }
     }
 
@@ -324,5 +322,10 @@ class CaseModel extends Model
         } else {
             return false;
         }
+    }
+
+    public function backgroundProcess()
+    {
+
     }
 }

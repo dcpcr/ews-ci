@@ -69,12 +69,18 @@ function send_status_sms(string $message,$alert=false)
     helper('cdac');
     if($alert){
         $mobile_number= getenv("alert_numbers");
+        echo $message_unicode = "DCPCR Early Warning System Cron Job Status:\n" . $message;
+        die();
+        $template_id = "";//not approved
+
     }
     else{
         $mobile_number= getenv("success_numbers");
+        $message_unicode = "DCPCR Early Warning System Daily Case Report:\nNew Detected Cases:" . $message;
+        $template_id = "";//not approved
+
     }
-    $message_unicode = "Message from DCPCR Early Warning System\n" . $message;
-    $template_id = "1307166210199731733";
+
     send_single_sms($message_unicode, $mobile_number, $template_id);
 }
 
