@@ -77,7 +77,7 @@ function bulk_helpline_promotion_sms($mobile_numbers)
  */
 function ews_daily_report_sms($data)
 {
-    if ($data !== null) {
+    if (!empty($data)) {
         $message_unicode = "DCPCR Early Warning System Daily Status Report: \n 1- Total New Case Detected: " . $data['Total_Case_Count'][0]['id'];
         for ($i = 0; $i < count($data['Priority_Wise_Count']); $i++) {
             $message_unicode .= " \n " . ($i + 2) . "- " . $data['Priority_Wise_Count'][$i]['priority'] . " Risk Cases: " . $data['Priority_Wise_Count'][$i]['count'];

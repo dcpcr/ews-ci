@@ -220,11 +220,12 @@ class CronController extends BaseController
                 $this->importStudentData();
                 $this->importAttendanceData($begin, $end);
                 $this->updateDetectedCases($begin, $end);
+                $this->sendStatusInfo($begin);
             }
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);
-            $this->sendStatusInfo($begin);
+
             log_message('info', "Execution time of script = " . $execution_time . " sec");
         } else {
             log_message('info', "Access to this functionally without CLI is not allowed");

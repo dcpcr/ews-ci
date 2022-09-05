@@ -4,6 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Exception;
 use SSP\SSP;
 
@@ -21,7 +22,7 @@ class CaseModel extends Model
     /**
      * @throws Exception
      */
-    public function detectCases(\DateTimeInterface $date, $function_no)
+    public function detectCases(DateTimeInterface $date, $function_no)
     {
         $attendance_model = new AttendanceModel();
         $attendance_count = $attendance_model->select('student_id')
@@ -244,7 +245,7 @@ class CaseModel extends Model
         }
     }
 
-    protected function detect(array $marked_students, array $open_cases, \DateTimeInterface $date): array
+    protected function detect(array $marked_students, array $open_cases, DateTimeInterface $date): array
     {
         $attendance_model = new AttendanceModel();
         $insert_count = 0;
@@ -336,10 +337,8 @@ class CaseModel extends Model
         return array($insert_count, $update_count);
     }
 
-    /**
-     * @throws \ReflectionException
-     */
-    public function getCaseReport(\DateTimeInterface $date): array
+
+    public function getCaseReport(DateTimeInterface $date): array
     {
         $total_case_count = $this->selectCount('id')->where('day', $date->format("Y-m-d"))->findAll();
         $count_priority_wise = $this->select(['priority', 'count(*) as count'])
