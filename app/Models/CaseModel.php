@@ -339,15 +339,14 @@ class CaseModel extends Model
     /**
      * @throws \ReflectionException
      */
-    public function getCaseReport(\DateTimeInterface $date)
+    public function getCaseReport(\DateTimeInterface $date): array
     {
-        $date="2022-08-29";
-        $total_case_count = $this->selectCount('id')->where('day', $date)->findAll();
+        $total_case_count = $this->selectCount('id')->where('day', $date->format("Y-m-d"))->findAll();
         $count_priority_wise = $this->select(['priority', 'count(*) as count'])
-            ->where('day', $date)
+            ->where('day', $date->format("Y-m-d"))
             ->groupBy('priority')->findAll();
-        if($total_case_count[0]['id']!=0){
-            return $data=['Total_Case_Count'=>$total_case_count,'Priority_Wise_Count'=>$count_priority_wise];
+        if ($total_case_count[0]['id'] != 0) {
+            return $data = ['Total_Case_Count' => $total_case_count, 'Priority_Wise_Count' => $count_priority_wise];
         }
         return [];
     }
