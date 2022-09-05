@@ -335,4 +335,21 @@ class CaseModel extends Model
         }
         return array($insert_count, $update_count);
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function getCaseReport(\DateTimeInterface $date)
+    {
+        $date="2022-08-29";
+        $total_case_count = $this->selectCount('id')->where('day', $date)->findAll();
+        $count_priority_wise = $this->select(['priority', 'count(*) as count'])
+            ->where('day', $date)
+            ->groupBy('priority')->findAll();
+        if($total_case_count[0]['id']!=0){
+            return $data=['Total_Case_Count'=>$total_case_count,'Priority_Wise_Count'=>$count_priority_wise];
+        }
+        return [];
+    }
+
 }

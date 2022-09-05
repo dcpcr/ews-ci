@@ -173,6 +173,18 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
+    private function sendStatusInfo($date)
+    {
+        $case_model = new CaseModel();
+        $response_data = $case_model->getCaseReport($date);
+        helper("ews_sms_template");
+        ews_daily_report_sms($response_data);
+    }
+
+
+    /**
+     * @throws ReflectionException
+     */
     public function runDailyAtNight()
     {
         $this->runDaily(false);
@@ -212,6 +224,7 @@ class CronController extends BaseController
             // Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);
+            $this->sendStatusInfo($begin);
             log_message('info', "Execution time of script = " . $execution_time . " sec");
         } else {
             log_message('info', "Access to this functionally without CLI is not allowed");

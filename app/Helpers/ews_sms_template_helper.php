@@ -71,3 +71,24 @@ function bulk_helpline_promotion_sms($mobile_numbers)
     $template_id = "1307162126864296262";
     return send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id);
 }
+
+/**
+ * @throws ReflectionException
+ */
+function ews_daily_report_sms($data)
+{
+    if ($data !== null) {
+        $message_unicode = "DCPCR Early Warning System Daily Status Report: \n 1- Total New Case Detected: " . $data['Total_Case_Count'][0]['id'];
+        for ($i = 0; $i < count($data['Priority_Wise_Count']); $i++) {
+            $message_unicode .= " \n " . ($i + 2) . "- " . $data['Priority_Wise_Count'][$i]['priority'] . " Risk Cases: " . $data['Priority_Wise_Count'][$i]['count'];
+        }
+        $template_id = "1307166231501132801";
+        $mobile_numbers = getenv("mobile_numbers.alert");
+        $response = submit_unicode_sms($message_unicode, $mobile_numbers, $template_id, true);
+        if (check_if_error($response) !== null) {
+            log_message("info", "send_bulk_unicode_sms: Response is " . $response);
+            insert_response($response, $template_id);
+        }
+    }
+
+}
