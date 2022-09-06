@@ -90,5 +90,24 @@ function ews_daily_report_sms($data)
             insert_response($response, $template_id);
         }
     }
+}
 
+/**
+ * @throws ReflectionException
+ */
+function ews_cron_error_sms($morning)
+{
+    $cron_name = "1- Night Cron:";
+    if ($morning) {
+        $cron_name = "2- Morning Cron:";
+    }
+    $date = date('Y/m/d h:i:s a', time());
+    $message_unicode = "DCPCR Early Warning System Cron Job Status: \n $cron_name Error, " . $date;
+    $template_id = "1307166231581570017";
+    $mobile_numbers = getenv("mobile_numbers.cron_alert");
+    $response = submit_unicode_sms($message_unicode, $mobile_numbers, $template_id, true);
+    if (check_if_error($response) !== null) {
+        log_message("info", "Daily Report SMS Sent: Response is " . $response);
+        insert_response($response, $template_id);
+    }
 }
