@@ -173,6 +173,32 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
+    private function sendCronStatusInfoSms($date)
+    {
+        if (getenv('cron.sendreport') == "0") {
+            log_message("info", "sendCronStatusInfoSms is not enabled. Skipping it");
+            return;
+        }
+        $case_model = new CaseModel();
+        $response_data = $case_model->getCaseReport($date);
+        helper("ews_sms_template");
+        ews_daily_report_sms($response_data);
+    }
+
+    private function sendCronErrorSms($morning)
+    {
+        if (getenv('cron.sendcronalert') == "0") {
+            log_message("info", "sendCronErrorSms is not enabled. Skipping it");
+            return;
+        }
+        helper("ews_sms_template");
+        ews_cron_error_sms($morning);
+    }
+
+
+    /**
+     * @throws ReflectionException
+     */
     public function runDailyAtNight()
     {
         $this->runDaily(false);
@@ -199,20 +225,26 @@ class CronController extends BaseController
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             $begin = new DateTimeImmutable();
             $end = $begin;
-            if ($morning) {
-                $this->sendSms();
-            } else {
-                $this->updateCaseData();
-                $this->fetchAndUpdateSmsDeliveryReport();
-                $this->importSchoolData();
-                $this->importStudentData();
-                $this->importAttendanceData($begin, $end);
-                $this->updateDetectedCases($begin, $end);
+            try {
+                if ($morning) {
+                    $this->sendSms();
+                } else {
+                    $this->updateCaseData();
+                    $this->fetchAndUpdateSmsDeliveryReport();
+                    $this->importSchoolData();
+                    $this->importStudentData();
+                    $this->importAttendanceData($begin, $end);
+                    $this->updateDetectedCases($begin, $end);
+                    $this->sendCronStatusInfoSms($begin);
+                }
+                // Calculate script execution time
+                $end_time = microtime(true);
+                $execution_time = ($end_time - $start_time);
+                log_message('info', "Execution time of script = " . $execution_time . " sec");
+            } catch (Exception $e) {
+                log_message('error', "Cron failed to finish. Error - " . $e->getMessage());
+                $this->sendCronErrorSms($morning);
             }
-            // Calculate script execution time
-            $end_time = microtime(true);
-            $execution_time = ($end_time - $start_time);
-            log_message('info', "Execution time of script = " . $execution_time . " sec");
         } else {
             log_message('info', "Access to this functionally without CLI is not allowed");
         }
