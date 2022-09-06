@@ -10,7 +10,7 @@ class AlterTableCdacSms extends Migration
     public function up()
     {
         $fields = [
-            'verify' => ['type' => 'INT', 'constraint' => 1, 'after' => 'report_fetched'],
+            'download_report' => ['type' => 'INT', 'constraint' => 1, 'after' => 'report_fetched'],
         ];
         $this->forge->addColumn('cdac_sms', $fields);
 

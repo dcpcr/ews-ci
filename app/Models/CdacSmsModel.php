@@ -19,7 +19,7 @@ class CdacSmsModel extends Model
     /**
      * @throws ReflectionException
      */
-    public function insertSmsBatchData($messageId, $statusCode, $templateId): array
+    public function insertSmsBatchData($messageId, $statusCode, $templateId, $download_report): array
     {
         $array = explode('=', $messageId);
         $finalMessageId = trim($array[1]);
@@ -27,6 +27,7 @@ class CdacSmsModel extends Model
             "message_id" => "$finalMessageId",
             "status_code" => "$statusCode",
             "sms_template_id" => "$templateId",
+            "download_report" => "$download_report",
         ];
         $this->insert($data);
         return $this->selectMax("id")->get()->getResultArray();
@@ -49,7 +50,7 @@ class CdacSmsModel extends Model
         helper('cdac');
         $messageIds = $this->select('id, message_id')
             ->where('report_fetched <', '4')
-            ->where('verify', '1')
+            ->where('download_report', '1')
             ->findAll();
         if (count($messageIds) > 0) {
             for ($i = 0; $i < count($messageIds); $i++) {
