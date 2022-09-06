@@ -49,6 +49,7 @@ $(function () {
             {data: 2, title: '20/30 Days', "searchable": false},
             {data: 3, title: 'Present Days After Detection', "searchable": false},
             {data: 4, title: 'Priority'},
+            {data: 21, title: 'Mobile Status', "searchable": false},
         ],
         columnDefs: [
             {"visible": false, "targets": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16]},

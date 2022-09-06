@@ -93,10 +93,12 @@ class CaseModel extends Model
             'school.id as school_id',
             'school.name as school_name',
             'school.district',
-            'school.zone'
+            'school.zone',
+            'sms.sms_status'
         ])
             ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->join($master_db . '.mobile_sms_status as sms', 'student.mobile = sms.mobile')
             ->whereIn('student.school_id', $school_ids)
             ->whereIn('student.class', $classes)
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
@@ -127,6 +129,7 @@ class CaseModel extends Model
             array('db' => 'school_name', 'dt' => 18),
             array('db' => 'district', 'dt' => 19),
             array('db' => 'zone', 'dt' => 20),
+            array('db' => 'sms_status', 'dt' => 21),
         );
 
         // SQL server connection information
@@ -164,10 +167,12 @@ class CaseModel extends Model
             'school.id as school_id',
             'school.name as school_name',
             'school.district',
-            'school.zone'
+            'school.zone',
+            'sms.sms_status'
         ])
             ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->join($master_db . '.mobile_sms_status as sms', 'student.mobile = sms.mobile')
             ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
             ->limit($no_of_records_per_page, $offset)
             ->find();
