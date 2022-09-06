@@ -7,6 +7,7 @@ use CodeIgniter\Database\Migration;
 class AlterTableCdacSms extends Migration
 {
     protected $DBGroup = 'master';
+
     public function up()
     {
         $fields = [

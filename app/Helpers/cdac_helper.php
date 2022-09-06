@@ -157,11 +157,11 @@ function insert_response($response, string $template_id, $api_request = false): 
 {
     $response = str_replace("\n", "", $response);
     $response_arr = explode(',', $response);
-    $download_report= ($api_request)?"0":"1";
+    $download_report = ($api_request) ? "0" : "1";
     $statusCode = $response_arr[0];
     $messageId = $response_arr[1];
     $sms_batch_model = new CdacSmsModel();
-    $result = $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id,$download_report);
+    $result = $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id, $download_report);
     log_message('info', "The Max id after inserting a new sms in the CdacSms Table is - " . $result[0]['id']);
 }
 
@@ -198,7 +198,7 @@ function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
     $response = submit_unicode_sms($message_unicode, $mobile_number, $template_id, false);
     if (check_if_error($response) !== null) {
         log_message("info", "send_single_unicode_sms: Response is " . $response);
-        insert_response($response, $template_id,true);
+        insert_response($response, $template_id, true);
     }
     return $response;
 }
