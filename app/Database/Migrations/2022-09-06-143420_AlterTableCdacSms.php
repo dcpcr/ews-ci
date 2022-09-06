@@ -11,11 +11,9 @@ class AlterTableCdacSms extends Migration
     public function up()
     {
         $fields = [
-            'download_report' => ['type' => 'INT', 'constraint' => 1, 'after' => 'report_fetched'],
+            'download_report' => ['type' => 'INT', 'constraint' => 1, 'after' => 'report_fetched', 'default' => 0],
         ];
         $this->forge->addColumn('cdac_sms', $fields);
-
-
     }
 
     public function down()
