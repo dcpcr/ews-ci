@@ -19,7 +19,7 @@ class CdacSmsModel extends Model
     /**
      * @throws ReflectionException
      */
-    public function insertSmsBatchData($messageId, $statusCode, $templateId, $download_report): array
+    public function insertSmsBatchData($messageId, $statusCode, $templateId, $sms_count, $download_report): array
     {
         $array = explode('=', $messageId);
         $finalMessageId = trim($array[1]);
@@ -28,6 +28,7 @@ class CdacSmsModel extends Model
             "status_code" => "$statusCode",
             "sms_template_id" => "$templateId",
             "download_report" => "$download_report",
+            "sms_count" => "$sms_count",
         ];
         $this->insert($data);
         return $this->selectMax("id")->get()->getResultArray();
