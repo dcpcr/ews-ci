@@ -34,7 +34,12 @@ class CdacSms extends Migration
                 'constraint' => '2',
                 'default' => '0',
             ],
-
+            'download_report' => [
+                'type' => 'INT',
+                'constraint' => 1,
+                'after' => 'report_fetched',
+                'default' => 0
+            ],
         ]);
         $this->forge->addField(
             [
