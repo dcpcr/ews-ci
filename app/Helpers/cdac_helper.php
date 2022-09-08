@@ -153,7 +153,7 @@ function fetch_sms_delivery_report($message_id)
  * @throws ReflectionException
  */
 //TODO: Error handling
-function insert_response($response, string $template_id, $api_request = false): void
+function insert_response($response, string $template_id, $sms_count = 1, $api_request = false): void
 {
     $response = str_replace("\n", "", $response);
     $response_arr = explode(',', $response);
@@ -161,8 +161,8 @@ function insert_response($response, string $template_id, $api_request = false): 
     $statusCode = $response_arr[0];
     $messageId = $response_arr[1];
     $sms_batch_model = new CdacSmsModel();
-    $result = $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id, $download_report);
-    log_message('info', "The Max id after inserting a new sms in the CdacSms Table is - " . $result[0]['id']);
+    $result = $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id, $sms_count, $download_report);
+    log_message('info', "The Max id " . $result[0]['id']."after inserting details of new sms batch of :(".$sms_count.")in CdacSms Table");
 }
 
 function check_if_error($response)
@@ -208,11 +208,12 @@ function send_single_unicode_sms($message_unicode, $mobile_number, $template_id)
  */
 function send_bulk_unicode_sms($message_unicode, $mobile_numbers, $template_id)
 {
+    $sms_count = count($mobile_numbers);
     $final_mobile_number_string = convert_mobile_array_to_comma_separated_string($mobile_numbers);
     $response = submit_unicode_sms($message_unicode, $final_mobile_number_string, $template_id, true);
     if (check_if_error($response) !== null) {
         log_message("info", "send_bulk_unicode_sms: Response is " . $response);
-        insert_response($response, $template_id);
+        insert_response($response, $template_id, $sms_count);
     }
     return $response;
 }
