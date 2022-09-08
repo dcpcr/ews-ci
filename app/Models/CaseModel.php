@@ -355,4 +355,81 @@ class CaseModel extends Model
         return [];
     }
 
+
+    public function backToSchoolCase(DateTimeInterface $date)
+    {
+        $bts_counter = 0;
+        $not_bts_counter = 0;
+        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+        $greater_than_thirty_days_cases = $this->select(['id', 'student_id'])
+            ->where("DATEDIFF(`day`,STR_TO_DATE('" . $date->format("d-m-Y") . "', '%d-%m-%Y'))", "-30")
+            //->where("status != 'Back To School'")
+            ->orderBy("student_id")
+            ->findAll();
+        if (!empty($greater_than_thirty_days_cases)) {
+            foreach ($greater_than_thirty_days_cases as $student) {
+                $student_id = $student['student_id'];
+                $seven_days_flag = $this->isPresentInSevenConsecutiveDays($student_id, $date);
+                $eleven_days_flag = $this->isPresentAtLeastElevenDaysInThirtyConsecutiveDays($student_id, $date);
+                $helpline_ticket_status_flag = $dcpcr_helpline_ticket_model->checkHelplineTicketStatus($student['id']);
+                if ($seven_days_flag && $eleven_days_flag) {
+                    //if ($seven_days_flag && $eleven_days_flag && $helpline_ticket_status_flag) {
+                    //if ($seven_days_flag && $eleven_days_flag) {
+                    $this->markStudentAsBackToSchool($student_id);
+                    $bts_counter++;
+                } else {
+                    log_message("info", "Student is not marked as BTS:" . $student_id);
+                    $not_bts_counter++;
+                }
+            }
+        }
+        log_message("info", "Total Student is not marked as BTS:" . $not_bts_counter);
+        log_message("info", "Total Student is marked as BTS:" . $bts_counter);
+    }
+
+    private function isPresentInSevenConsecutiveDays($student_id, $date): bool
+    {
+        $attendance_model = new AttendanceModel();
+        $student_attendance = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, $date, 7);
+        $present_count = 0;
+        foreach ($student_attendance as $row) {
+
+            $attendance_status = $row['attendance_status'];
+            if ($attendance_status == 'p') {
+                $present_count++;
+            }
+
+        }
+        if ($present_count >= 1) {
+            return true;
+        }
+        return false;
+
+    }
+
+    private function isPresentAtLeastElevenDaysInThirtyConsecutiveDays($student_id, $date): bool
+    {
+        $attendance_model = new AttendanceModel();
+        $student_attendance = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, $date, 11);
+        $present_count = 0;
+        foreach ($student_attendance as $row) {
+            $attendance_status = $row['attendance_status'];
+            if ($attendance_status == 'p') {
+                $present_count++;
+            }
+        }
+        if ($present_count > 10) {
+            return true;
+        }
+        return false;
+    }
+
+    private function markStudentAsBackToSchool($student_id)
+    {
+
+        log_message("info", "Student is masrked as BTS:" . $student_id);
+
+
+    }
+
 }
