@@ -253,7 +253,7 @@ class ApiController extends ResourceController
         } else {
             $response = 'Record not found';
         }
-
+        log_message("info", "SMS API Request for Case Id:" . $case_id . "-" . $response);
         return $this
             ->getResponse(
                 [
