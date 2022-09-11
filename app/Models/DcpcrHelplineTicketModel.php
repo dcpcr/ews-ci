@@ -37,13 +37,14 @@ class DcpcrHelplineTicketModel extends Model
 
     public function checkHelplineTicketStatus($case_id): bool
     {
-        $ticket_raised = $this->select()->where("ticket_number!=''")->find("$case_id");
-        if(!empty($ticket_raised)) {
-            if ($ticket_raised[0]['status'] == "Closed") {
+        $ticket_raised = $this->select(['case_id', 'status'])->where("ticket_number!=''")->find("$case_id");
+        if (!empty($ticket_raised)) {
+            if ($ticket_raised['status'] == "Closed") {
                 return true;
+            } else {
+                return false;
             }
         }
-        return false;
-
+        return true;
     }
 }

@@ -356,29 +356,35 @@ class CaseModel extends Model
     }
 
 
+    /**
+     * @throws \ReflectionException
+     */
     public function backToSchoolCase(DateTimeInterface $date)
     {
         $bts_counter = 0;
         $not_bts_counter = 0;
         $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
         $greater_than_thirty_days_cases = $this->select(['id', 'student_id'])
-            ->where("DATEDIFF(`day`,STR_TO_DATE('" . $date->format("d-m-Y") . "', '%d-%m-%Y'))", "-30")
-            //->where("status != 'Back To School'")
+            ->where("DATEDIFF(`day`,STR_TO_DATE('" . $date->format("d-m-Y") . "', '%d-%m-%Y'))<=", "-30")
+            ->where("status != 'Back To School'")
             ->orderBy("student_id")
             ->findAll();
         if (!empty($greater_than_thirty_days_cases)) {
             foreach ($greater_than_thirty_days_cases as $student) {
+                $eleven_days_flag = $helpline_ticket_status_flag = false;
                 $student_id = $student['student_id'];
+                $case_id = $student['id'];
                 $seven_days_flag = $this->isPresentInSevenConsecutiveDays($student_id, $date);
-                $eleven_days_flag = $this->isPresentAtLeastElevenDaysInThirtyConsecutiveDays($student_id, $date);
-                $helpline_ticket_status_flag = $dcpcr_helpline_ticket_model->checkHelplineTicketStatus($student['id']);
-                if ($seven_days_flag && $eleven_days_flag) {
-                    //if ($seven_days_flag && $eleven_days_flag && $helpline_ticket_status_flag) {
-                    //if ($seven_days_flag && $eleven_days_flag) {
-                    $this->markStudentAsBackToSchool($student_id);
+                if ($seven_days_flag) {
+                    $eleven_days_flag = $this->isPresentAtLeastElevenDaysInThirtyConsecutiveDays($student_id, $date);
+                    if ($eleven_days_flag) {
+                        $helpline_ticket_status_flag = $dcpcr_helpline_ticket_model->checkHelplineTicketStatus($case_id);
+                    }
+                }
+                if ($seven_days_flag && $eleven_days_flag && $helpline_ticket_status_flag) {
+                    $this->markStudentAsBackToSchool($case_id);
                     $bts_counter++;
                 } else {
-                    log_message("info", "Student is not marked as BTS:" . $student_id);
                     $not_bts_counter++;
                 }
             }
@@ -424,12 +430,9 @@ class CaseModel extends Model
         return false;
     }
 
-    private function markStudentAsBackToSchool($student_id)
+    private function markStudentAsBackToSchool($case_id)
     {
-
-        log_message("info", "Student is masrked as BTS:" . $student_id);
-
-
+        $this->builder->set('status', 'Back To School')->where('id', "$case_id")->update();
     }
 
 }

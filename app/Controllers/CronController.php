@@ -144,10 +144,15 @@ class CronController extends BaseController
 
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function updateBackToSchool($date)
     {
-        $date = new DateTimeImmutable();
-        $date = $date->modify('-5 day');//for testing only
+        if (getenv('cron.backtoschool') == "0") {
+            log_message("info", "updateBackToSchool is not enabled. Skipping it");
+            return;
+        }
         $case_model = new CaseModel();
         $case_model->backToSchoolCase($date);
     }
@@ -232,12 +237,10 @@ class CronController extends BaseController
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             $begin = new DateTimeImmutable();
-            $begin = $begin->modify('-5 day');
             $end = $begin;
             try {
                 if ($morning) {
                     $this->sendSms();
-                    $this->updateBackToSchool($begin);
                 } else {
                     $this->updateCaseData();
                     $this->fetchAndUpdateSmsDeliveryReport();
@@ -246,6 +249,7 @@ class CronController extends BaseController
                     $this->importAttendanceData($begin, $end);
                     $this->updateDetectedCases($begin, $end);
                     $this->sendCronStatusInfoSms($begin);
+                    $this->updateBackToSchool($begin);
                 }
                 // Calculate script execution time
                 $end_time = microtime(true);
