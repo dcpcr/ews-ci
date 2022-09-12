@@ -418,11 +418,12 @@ class CaseModel extends Model
             $attendance_status = $row['attendance_status'];
             if ($attendance_status == 'p') {
                 $present_count++;
+                if ($present_count > 10) {
+                    return true;
+                }
             }
         }
-        if ($present_count > 10) {
-            return true;
-        }
+
         return false;
     }
 
