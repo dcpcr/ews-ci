@@ -355,10 +355,6 @@ class CaseModel extends Model
         return [];
     }
 
-
-    /**
-     * @throws \ReflectionException
-     */
     public function backToSchoolCase(DateTimeInterface $date)
     {
         $bts_counter = 0;
