@@ -75,14 +75,15 @@ function bulk_helpline_promotion_sms($mobile_numbers)
 /**
  * @throws ReflectionException
  */
-function ews_daily_report_sms($data)
+function ews_daily_report_sms($data,$date)
 {
+
     if (!empty($data)) {
-        $message_unicode = "DCPCR Early Warning System Daily Status Report: \n 1- Total New Case Detected: " . $data['Total_Case_Count'][0]['id'];
+        $message_unicode = "DCPCR Early Warning System Student at Risk Report Date:" . $date->format('Y-m-d') . " Total:" . $data['Total_Case_Count'][0]['id'];
         for ($i = 0; $i < count($data['Priority_Wise_Count']); $i++) {
-            $message_unicode .= " \n " . ($i + 2) . "- " . $data['Priority_Wise_Count'][$i]['priority'] . " Risk Cases: " . $data['Priority_Wise_Count'][$i]['count'];
+            $message_unicode .= " \n " . $data['Priority_Wise_Count'][$i]['priority']  .": ". $data['Priority_Wise_Count'][$i]['count'];
         }
-        $template_id = "1307166231501132801";
+        $template_id = "1307166324420073994";
         $mobile_numbers = getenv("mobile_numbers.daily_report");
         $response = submit_unicode_sms($message_unicode, $mobile_numbers, $template_id, true);
         if (check_if_error($response) !== null) {
