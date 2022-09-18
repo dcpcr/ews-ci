@@ -195,9 +195,12 @@ class CronController extends BaseController
         $case_model = new CaseModel();
         $response_data = $case_model->getCaseReport($date);
         helper("ews_sms_template");
-        ews_daily_report_sms($response_data);
+        ews_daily_report_sms($response_data,$date);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function sendCronErrorSms($morning)
     {
         if (getenv('cron.sendcronalert') == "0") {

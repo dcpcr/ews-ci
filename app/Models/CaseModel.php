@@ -348,7 +348,9 @@ class CaseModel extends Model
         $total_case_count = $this->selectCount('id')->where('day', $date->format("Y-m-d"))->findAll();
         $count_priority_wise = $this->select(['priority', 'count(*) as count'])
             ->where('day', $date->format("Y-m-d"))
-            ->groupBy('priority')->findAll();
+            ->groupBy('priority')
+            ->orderBy('priority','desc')
+            ->findAll();
         if ($total_case_count[0]['id'] != 0) {
             return $data = ['Total_Case_Count' => $total_case_count, 'Priority_Wise_Count' => $count_priority_wise];
         }
