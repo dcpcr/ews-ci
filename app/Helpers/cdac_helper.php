@@ -197,7 +197,7 @@ function modify_cdac_default_server_response($response): string
         return "SMS Sent";
     } else {
         log_message('error', "Cyfuture SMS API request SMS Not Sent: $response");
-        return "error";
+        return "error in sending SMS";
     }
 }
 
