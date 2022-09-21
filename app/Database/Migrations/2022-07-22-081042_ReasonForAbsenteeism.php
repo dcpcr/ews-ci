@@ -16,12 +16,12 @@ class ReasonForAbsenteeism extends Migration
             ],
             'reason' => [
                 'type' => 'char',
-                'constraint' => '25',
+                'constraint' => '2',
                 'default' => '',
             ],
             'other_reason' => [
-                'type' => 'char',
-                'constraint' => '25',
+                'type' => 'varchar',
+                'constraint' => '500',
                 'default' => '',
             ],
             ]);
