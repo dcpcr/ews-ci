@@ -34,7 +34,7 @@ function get_array_from_dom_table($table, $has_header): array
     return $response_array;
 }
 
-function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '', $token = '')
+function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '',$page_number='', $token = '')
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -47,7 +47,7 @@ function get_curl_response($url, $username = '', $password = '', $method = 'GET'
         CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "$method",
-        CURLOPT_POSTFIELDS => array('from_date' => "$from_date", 'to_date' => "$to_date"),
+        CURLOPT_POSTFIELDS => array('from_date' => "$from_date", 'to_date' => "$to_date",'pageno'=>$page_number),
         CURLOPT_HTTPHEADER => array(
             "Authorization: $token",
             "username: $username",
