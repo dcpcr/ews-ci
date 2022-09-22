@@ -1,7 +1,9 @@
 <?php
-$total_count = $male_count = $female_count = $transgender_count = 0;
-if (count($response) > 0) {
-    foreach ($response as $row) {
+$high_risk_transgender_count=$high_risk_male_count=$high_risk_female_count=$high_risk_total_count=$total_count = $male_count = $female_count = $transgender_count = 0;
+$case_data=$response['detected_case_count'];
+$high_risk=$response['high_risk_count'];
+if (count($case_data) > 0) {
+    foreach ($case_data as $row) {
         if (isset($row['gender'])) {
             if ($row['gender'] == 'Male') {
                 $male_count = $row['count'];
@@ -18,6 +20,24 @@ if (count($response) > 0) {
         }
     }
 }
+if (count($high_risk) > 0) {
+    foreach ($high_risk as $row) {
+        if (isset($row['gender'])) {
+            if ($row['gender'] == 'Male') {
+                $high_risk_male_count = $row['count'];
+            }
+            if ($row['gender'] == 'Female') {
+                $high_risk_female_count = $row['count'];
+            }
+            if ($row['gender'] == "Transgender") {
+                $high_risk_transgender_count = $row['count'];
+            }
+            if ($row['gender'] == "Total") {
+                $high_risk_total_count = $row['count'];
+            }
+        }
+    }
+}
 ?>
 <div class="row">
     <div class="col-12">
@@ -26,7 +46,7 @@ if (count($response) > 0) {
             <div class="card-header d-flex p-0">
                 <h4 class="p-3">Summary</h4>
             </div><!-- /.card-header -->
-            <div class="card-body px-5 py-5">
+            <div class="card-body px-6 py-6">
 
                 <div class="row text-center">
                     <div class="col mx-1">
@@ -56,18 +76,20 @@ if (count($response) > 0) {
                             <span class="fa fa-info-circle" data-toggle="tooltip" data-placement="right"
                                   title="Students in need of urgent intervention, typically includes cases- Parental death, Parental Incarceration, Parent(s)' or Student's severe sickness or disability , Child labour, Child marriage, Children victim of sexual violence, Substance abuse, Children in conflict with law or any other such adversity for children not listed here."></span>
                         </div>
-                        <input disabled id="highrisk" type="text" class="knob" value="0" data-skin="tron"
+                        <input disabled id="highrisk" type="text" class="knob" value="<?=$high_risk_total_count?>" data-skin="tron"
                                data-thickness="0.2" data-width="100"
                                data-height="100" data-fgColor="#cd4949" data-readonly="true">
 
-                        <div class="knob-label-bottom text-center">Male - <span class="number">0</span>
-                            (0%)
+                        <div class="knob-label-bottom text-center">Male - <span class="number"><?= $high_risk_male_count ?></span>
+                            (<?= ($high_risk_total_count > 0) ? floor($high_risk_male_count / $high_risk_total_count * 100) : 0; ?>%)
                         </div>
-                        <div class="knob-label-bottom text-center">Female - <span class="number">0</span>
-                            (0%)
+                        <div class="knob-label-bottom text-center">Female - <span
+                                    class="number"><?= $high_risk_female_count ?></span>
+                            (<?= ($high_risk_total_count > 0) ? floor($high_risk_female_count / $high_risk_total_count * 100) : "0"; ?>%)
                         </div>
-                        <div class="knob-label-bottom text-center">Transgender - <span class="number">0</span>
-                            (0%)
+                        <div class="knob-label-bottom text-center">Transgender - <span
+                                    class="number"><?= $high_risk_transgender_count ?></span>
+                            (<?= ($high_risk_total_count > 0) ? floor($high_risk_transgender_count / $high_risk_total_count * 100) : "0"; ?>%)
                         </div>
                     </div>
                     <div class="col mx-1">
