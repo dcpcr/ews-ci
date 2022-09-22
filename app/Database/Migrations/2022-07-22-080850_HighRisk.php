@@ -17,13 +17,14 @@ class HighRisk extends Migration
             'status' => [
                 'type' => 'int',
                 'constraint' => '3',
+                'default' => null,
             ],]);
         $this->forge->addField(
             [
                 'created_at timestamp not null default current_timestamp',
                 'updated_at timestamp not null default current_timestamp on update current_timestamp',
             ]);
-        $this->forge->addKey('case_id');
+        $this->forge->addPrimaryKey('case_id');
         $this->forge->createTable('high_risk');
     }
 

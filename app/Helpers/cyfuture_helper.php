@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\BackToSchoolModel;
+use App\Models\CallDispositionModel;
+use App\Models\DcpcrHelplineTicketModel;
+use App\Models\HighRiskModel;
+use App\Models\HomeVisitModel;
 use App\Models\ReasonForAbsenteeismModel;
 
 function get_cyfuture_ewsrecord_url()
@@ -49,7 +54,7 @@ function get_cyfuture_token()
 /**
  * @throws ReflectionException
  */
-function download_operator_form_data()
+function download_and_save_operator_form_data()
 {
     $token = get_cyfuture_Token();
     if (!empty($token)) {
@@ -70,6 +75,17 @@ function download_operator_form_data()
                 $record_count = $record_count + count($cases);
                 $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
                 $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
+                $call_disposition_model = new CallDispositionModel();
+                $call_disposition_model->insertUpdateCallDisposition($cases);
+                $high_risk_model = new HighRiskModel();
+                $high_risk_model->insertUpdateHighRisk($cases);
+                $back_to_school = new BackToSchoolModel();
+                $back_to_school->insertUpdateBackToSchool($cases);
+                $home_visit = new HomeVisitModel();
+                $home_visit->insertUpdateHomeVisit($cases);
+                /*$dcpcr_ticket = new DcpcrHelplineTicketModel;
+                $dcpcr_ticket->insertUpdateDcpcrTicketDetails($cases);*/
+                //not receiving data related to ticket
                 log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
             } else {
                 log_message("error", "The Cyfuture EWS record API call failed, Page -" . $page_number . "url - " . $url);

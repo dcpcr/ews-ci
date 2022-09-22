@@ -28,8 +28,10 @@ class HomeVisitModel extends Model
                 "is_home_visit_required" => "status"
             );
             $tableData = prepare_data_for_table($highRiskData, $keyMapping);
-            $this->ignore(true)->insertBatch($tableData);
-            $this->updateBatch($tableData, 'case_id');
+            $count = $this->ignore()->insertBatch($tableData,null,2000);
+            log_message("info", "$count New Records inserted in home_visit table.");
+            $count = $this->updateBatch($tableData, 'case_id', 2000);
+            log_message("info", "$count Records updated in home_visit table.");
         }
     }
 }
