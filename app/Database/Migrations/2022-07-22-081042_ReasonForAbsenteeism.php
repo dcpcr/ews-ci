@@ -14,15 +14,15 @@ class ReasonForAbsenteeism extends Migration
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
-            'reason' => [
+            'reason_id' => [
                 'type' => 'char',
                 'constraint' => '2',
-                'default' => '',
+                'default' => null
             ],
             'other_reason' => [
                 'type' => 'varchar',
-                'constraint' => '500',
-                'default' => '',
+                'constraint' => '1000',
+                'default' => null,
             ],
             ]);
         $this->forge->addField(
