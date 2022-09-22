@@ -35,4 +35,23 @@ class HighRiskModel extends Model
            log_message("info", "$count Records updated in high_risk table.");
        }
    }
+
+    public function getHighRiskCasesCountGenderWise(array $school_ids, $classes, $start, $end): array
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        return $this->select([
+            'count(*) as count',
+            'student.gender as gender',
+        ])
+            ->join('detected_case as case', 'case.id = ' . $this->table . '.case_id')
+            ->join($master_db . '.student as student', 'student.id = case.student_id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->where($this->table.'.status','1')
+            ->groupBy('gender')
+            ->findAll();
+    }
 }

@@ -38,7 +38,7 @@ class CallDispositionModel extends Model
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
-        return $this->select(['name', 'count(*) as count'])
+        return $this->select(['call_disposition_master.name as name', 'count(*) as count'])
             ->join('detected_case', 'detected_case.id=call_disposition.case_id')
             ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')

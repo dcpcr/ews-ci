@@ -6,6 +6,8 @@ use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\CaseReasonModel;
 use App\Models\DistrictModel;
+use App\Models\HighRiskModel;
+use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\ZoneModel;
@@ -135,20 +137,32 @@ class AdminController extends AuthController
         $this->view_data['page_title'] = 'Case Status';
 
         $school_ids = array_keys($this->schools);
-        $case_model = new CaseModel();
-        $this->view_data['response'] = $case_model
+        $high_risk_model = new HighRiskModel();
+        $this->view_data['high_risk_count'] = $high_risk_model
+            ->getHighRiskCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+              $case_model = new CaseModel();
+        $this->view_data['detected_case_count'] = $case_model
             ->getDetectedCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        $this->view_data['response'][] = [
-            'count' => array_sum(array_column($this->view_data['response'], "count")),
-            'gender' => 'Total',
+        $this->view_data['detected_case_count'][] = [
+            'count' => array_sum(array_column($this->view_data['detected_case_count'], "count")),
+            'gender' => 'Total'
         ];
+        $this->view_data['high_risk_count'][] =[
+            'count'=>array_sum(array_column($this->view_data['high_risk_count'], "count")),
+            'gender'=>'Total'
+        ];
+        $this->view_data['response'] = [
+            'detected_case_count' => $this->view_data['detected_case_count'],
+            'high_risk_count' => $this->view_data['high_risk_count'],
+        ];
+
         $this->view_name = 'dashboard/case';
     }
 
     private function getGenderWiseReasonsCount(string $gender): array
     {
         $school_ids = array_keys($this->schools);
-        $case_reason_model = new CaseReasonModel();
+        $case_reason_model = new ReasonForAbsenteeismModel();
         return $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], $gender);
     }
 
