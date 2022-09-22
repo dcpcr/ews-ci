@@ -128,20 +128,7 @@ class CronController extends BaseController
             return;
         }
         helper('cyfuture');
-        $cases = download_operator_form_data();
-        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
-        $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
-        $call_disposition_model = new CallDispositionModel();
-        $call_disposition_model->insertUpdateCallDisposition($cases);
-        $high_risk_model = new HighRiskModel();
-        $high_risk_model->insertUpdateHighRisk($cases);
-        $back_to_school = new BackToSchoolModel();
-        $back_to_school->insertUpdateBackToSchool($cases);
-        $home_visit = new HomeVisitModel();
-        $home_visit->insertUpdateHomeVisit($cases);
-        $dcpcr_ticket = new DcpcrHelplineTicketModel;
-        $dcpcr_ticket->insertUpdateDcpcrTicketDetails($cases);
-
+        download_and_save_operator_form_data();
     }
 
     /**

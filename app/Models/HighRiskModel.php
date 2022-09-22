@@ -15,7 +15,7 @@ class HighRiskModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = ['case_id','status'];
-
+//if status=1 then ticket raised
 
     /**
      * @throws \ReflectionException
@@ -29,8 +29,10 @@ class HighRiskModel extends Model
                "raised_ticket" => "status"
            );
            $tableData = prepare_data_for_table($highRiskData, $keyMapping);
-           $this->ignore(true)->insertBatch($tableData);
-           $this->updateBatch($tableData, 'case_id');
+           $count = $this->ignore()->insertBatch($tableData,null,2000);
+           log_message("info", "$count New Records inserted in high_risk table.");
+           $count = $this->updateBatch($tableData, 'case_id', 2000);
+           log_message("info", "$count Records updated in high_risk table.");
        }
    }
 }
