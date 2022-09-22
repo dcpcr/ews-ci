@@ -14,7 +14,7 @@ class ReasonForAbsenteeismModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = false;
-    protected $allowedFields = ['case_id', 'reason', 'other_reason'];
+    protected $allowedFields = ['case_id', 'reason_id', 'other_reason'];
 
 
     /**
@@ -26,12 +26,14 @@ class ReasonForAbsenteeismModel extends Model
         if ($cases) {
             $reasonData = extract_reason_data_from_cases($cases);
             $keyMapping = array(
-                "reason_of_absense" => "reason",
+                "reason_of_absense" => "reason_id",
                 "other_reason_of_absense" => "other_reason"
             );
             $tableData = prepare_data_for_table($reasonData, $keyMapping);
-            $this->ignore(true)->insertBatch($tableData);
-            $this->updateBatch($tableData, 'case_id');
+            $count = $this->ignore()->insertBatch($tableData,null,2000);
+            log_message("info", "$count New Records inserted in reason_for_absenteeism table.");
+            $count = $this->updateBatch($tableData, 'case_id', 2000);
+            log_message("info", "$count Records updated in reason_for_absenteeism table.");
         }
     }
 }
