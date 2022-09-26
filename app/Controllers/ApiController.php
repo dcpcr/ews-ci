@@ -247,7 +247,7 @@ class ApiController extends ResourceController
                         $response = case_closed_sms($mobile_number, $student_id, $student_name);
                         break;
                 }
-                $response=modify_cdac_default_server_response($response);
+                $response = modify_cdac_default_server_response($response);
             } else {
                 $response = 'The number for this student is not verified';
             }
