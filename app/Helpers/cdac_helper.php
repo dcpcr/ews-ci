@@ -162,7 +162,7 @@ function insert_response($response, string $template_id, $sms_count = 1, $api_re
     $messageId = $response_arr[1];
     $sms_batch_model = new CdacSmsModel();
     $result = $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id, $sms_count, $download_report);
-    log_message('info', "The Max id " . $result[0]['id']."after inserting details of new sms batch of :(".$sms_count.")in CdacSms Table");
+    log_message('info', "The Max id " . $result[0]['id'] . "after inserting details of new sms batch of :(" . $sms_count . ")in CdacSms Table");
 }
 
 function check_if_error($response)
@@ -187,6 +187,17 @@ function check_if_error($response)
             log_message('info', "CDAC server response: $response");
             return $response;
 
+    }
+}
+
+function modify_cdac_default_server_response($response): string
+{
+    if ("DCPCR" == substr($response, -6, 5)) {
+        log_message('info', "Cyfuture SMS API request SMS Sent: $response");
+        return "SMS Sent";
+    } else {
+        log_message('error', "Cyfuture SMS API request SMS Not Sent: $response");
+        return "error in sending SMS";
     }
 }
 
