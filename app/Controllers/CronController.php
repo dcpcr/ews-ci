@@ -129,6 +129,9 @@ class CronController extends BaseController
         }
         helper('cyfuture');
         download_and_save_operator_form_data();
+        download_and_save_operator_form_data(true);
+        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+        $dcpcr_helpline_ticket_model->updateDcpcrTicketDetails();
     }
 
     /**
@@ -182,7 +185,7 @@ class CronController extends BaseController
         $case_model = new CaseModel();
         $response_data = $case_model->getCaseReport($date);
         helper("ews_sms_template");
-        ews_daily_report_sms($response_data,$date);
+        ews_daily_report_sms($response_data, $date);
     }
 
     /**
