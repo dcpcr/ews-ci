@@ -14,9 +14,14 @@ class DcpcrHelplineTicket extends Migration
                 'type' => 'BIGINT',
                 'unsigned' => true,
             ],
+            'ticket_id' => [
+                'type' => 'int',
+                'constraint' => '15',
+                'default' => '0',
+            ],
             'ticket_number' => [
                 'type' => 'varchar',
-                'constraint' => '25',
+                'constraint' => '20',
                 'default' => '',
             ],
             'status' => [
@@ -50,7 +55,7 @@ class DcpcrHelplineTicket extends Migration
                 'created_at timestamp not null default current_timestamp',
                 'updated_at timestamp not null default current_timestamp on update current_timestamp',
             ]);
-        $this->forge->addPrimaryKey('case_id');
+        $this->forge->addPrimaryKey('ticket_number');
         $this->forge->createTable('dcpcr_helpline_ticket');
     }
 
