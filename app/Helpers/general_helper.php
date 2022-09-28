@@ -34,7 +34,7 @@ function get_array_from_dom_table($table, $has_header): array
     return $response_array;
 }
 
-function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '',$page_number='', $token = '')
+function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '',$page_number='', $token = '',$nsb_api_token='')
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -49,6 +49,7 @@ function get_curl_response($url, $username = '', $password = '', $method = 'GET'
         CURLOPT_CUSTOMREQUEST => "$method",
         CURLOPT_POSTFIELDS => array('from_date' => "$from_date", 'to_date' => "$to_date",'pageno'=>$page_number),
         CURLOPT_HTTPHEADER => array(
+            "tspltoken: $nsb_api_token",
             "Authorization: $token",
             "username: $username",
             "password: $password",

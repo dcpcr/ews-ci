@@ -12,6 +12,11 @@ function get_cyfuture_ewsrecord_url()
     return getenv('cyfuture_ewsrecord_url');
 }
 
+function get_cyfuture_helpline_ticket_url()
+{
+    return getenv('cyfuture_helpline_ticket_url');
+}
+
 function get_cyfuture_token_url()
 {
     return getenv('cyfuture_token_url');
@@ -54,39 +59,45 @@ function get_cyfuture_token()
 /**
  * @throws ReflectionException
  */
-function download_and_save_operator_form_data()
+function download_and_save_operator_form_data($ticket_details=false)
 {
     $token = get_cyfuture_Token();
     if (!empty($token)) {
         $url = get_cyfuture_ewsrecord_url();
-        $username = get_cyfuture_username();
-        $password = get_cyfuture_password();
+        if($ticket_details){
+            $url = get_cyfuture_helpline_ticket_url();
+        }
         $method = get_cyfuture_method();
-        $from_date = '2022-07-01';
+        $from_date = '2022-01-01';
         $to_date = date("Y-m-d");
         $page_number = 1;
         $record_count = 0;
         do {
-            $response = get_curl_response($url, $username, $password, $method, $from_date, $to_date, $page_number, $token);
+            $response = get_curl_response($url,"","","$method", $from_date, $to_date, $page_number, $token);
             $decoded_json = json_decode($response, true);
             $total_pages = $decoded_json['total_pages'];
             if ($response) {
-                $cases = $decoded_json['data'];
-                $record_count = $record_count + count($cases);
-                $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
-                $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
-                $call_disposition_model = new CallDispositionModel();
-                $call_disposition_model->insertUpdateCallDisposition($cases);
-                $high_risk_model = new HighRiskModel();
-                $high_risk_model->insertUpdateHighRisk($cases);
-                $back_to_school = new BackToSchoolModel();
-                $back_to_school->insertUpdateBackToSchool($cases);
-                $home_visit = new HomeVisitModel();
-                $home_visit->insertUpdateHomeVisit($cases);
-                /*$dcpcr_ticket = new DcpcrHelplineTicketModel;
-                $dcpcr_ticket->insertUpdateDcpcrTicketDetails($cases);*/
-                //not receiving data related to ticket
-                log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
+                if($ticket_details){
+                    $tickets=$decoded_json['data'];
+                    $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+                    $dcpcr_helpline_ticket_model ->insertDcpcrTicketDetails($tickets);
+                }
+                else{
+                    $cases = $decoded_json['data'];
+                    $record_count = $record_count + count($cases);
+                    $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+                    $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
+                    $call_disposition_model = new CallDispositionModel();
+                    $call_disposition_model->insertUpdateCallDisposition($cases);
+                    $high_risk_model = new HighRiskModel();
+                    $high_risk_model->insertUpdateHighRisk($cases);
+                    $back_to_school = new BackToSchoolModel();
+                    $back_to_school->insertUpdateBackToSchool($cases);
+                    $home_visit = new HomeVisitModel();
+                    $home_visit->insertUpdateHomeVisit($cases);
+                    log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
+
+                }
             } else {
                 log_message("error", "The Cyfuture EWS record API call failed, Page -" . $page_number . "url - " . $url);
             }
@@ -130,10 +141,10 @@ function extract_home_visit_data_from_cases($cases): array
     return extract_values_from_objects($cases, $keys);
 }
 
-function extract_dcpcr_helpline_ticket_data_from_cases($cases): array
+function extract_dcpcr_helpline_ticket_data_from_cases($ticket_details): array
 {
-    $keys = ['case_id', 'name_division', 'sub_name_division', 'nature_case',];
-    return extract_values_from_objects($cases, $keys);
+    $keys = ['case_id', 'ticket_id', 'ticket_num', 'created_at',];
+    return extract_values_from_objects($ticket_details, $keys);
 }
 
 

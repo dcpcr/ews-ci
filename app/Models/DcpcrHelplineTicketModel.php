@@ -8,32 +8,63 @@ class DcpcrHelplineTicketModel extends Model
 {
     protected $DBGroup = 'default';
     protected $table = 'dcpcr_helpline_ticket';
-    protected $primaryKey = 'case_id';
+    protected $primaryKey = 'ticket_number';
     protected $useAutoIncrement = true;
     protected $insertID = 0;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
-    protected $allowedFields = ['case_id', 'status', 'sub_status', 'division', 'sub_division', 'nature'];
+    protected $allowedFields = ['case_id', 'ticket_id', 'ticket_number', 'status', 'sub_status', 'division', 'sub_division', 'nature'];
 
     /**
      * @throws \ReflectionException
      */
-    function insertUpdateDcpcrTicketDetails($cases)
+    function insertDcpcrTicketDetails($cases)
     {
         helper('cyfuture');
         if ($cases) {
-            $highRiskData = extract_dcpcr_helpline_ticket_data_from_cases($cases);
+            $ticketData = extract_dcpcr_helpline_ticket_data_from_cases($cases);
             $keyMapping = array(
-                "name_division" => "division",
-                "sub_name_division" => "sub_division",
-                "nature_case" => "nature",
+                "ticket_num" => "ticket_number",
             );
-            $tableData = prepare_data_for_table($highRiskData, $keyMapping);
-            $count = $this->ignore()->insertBatch($tableData,null,2000);
+
+            $tableData = prepare_data_for_table($ticketData, $keyMapping);
+            $count = $this->ignore()->insertBatch($tableData, null, 2000);
             log_message("info", "$count New Records inserted in dcpcr_helpline_ticket table.");
-            $count = $this->updateBatch($tableData, 'case_id', 2000);
-            log_message("info", "$count Records updated in dcpcr_helpline_ticket table.");
         }
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    function updateDcpcrTicketDetails()
+    {
+        helper('nsbbpo');
+        $ticket_numbers = $this->select('ticket_number')->where('status!=', '')->orderBy('ticket_number')->findAll();
+        $counter = 1;
+        $data = [];
+        foreach ($ticket_numbers as $ticket) {
+            $response = download_ticket_details($ticket['ticket_number']);
+            $json_decoded = json_decode($response);
+            $ticket = $json_decoded[0]->TicketNo;
+            $status = $json_decoded[0]->Status;
+            $data [] = [
+                "ticket_number" => $json_decoded[0]->TicketNo,
+                "status" => $json_decoded[0]->Status,
+                "sub_status" => $json_decoded[0]->Substatus,
+                "division" => $json_decoded[0]->Division,
+                "sub_division" => $json_decoded[0]->SubDivision
+            ];
+            $counter++;
+            if ($counter == 90) {
+                $response = $this->updateBatch($data, "ticket_number");
+                log_message('info', "Total $response Tickets details has been updated");
+                sleep('1800');
+                $data = [];
+            }
+            log_message('info', "$counter - status of Ticket Number'.$ticket.'is->'.$status");
+        }
+
+    }
+
 }
