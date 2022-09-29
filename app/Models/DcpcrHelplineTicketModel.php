@@ -67,4 +67,16 @@ class DcpcrHelplineTicketModel extends Model
 
     }
 
+    public function checkHelplineTicketStatus($case_id): bool
+    {
+        $tickets_status = $this->select(['ticket_number', 'if(status="closed" ,1, 0 ) as status'])->where("case_id", $case_id)->findAll();
+        $flag = 1;
+        if (!empty($tickets_status)) {
+            foreach ($tickets_status as $row) {
+                $flag = $flag * $row['status'];
+            }
+        }
+        return $flag;
+    }
+
 }
