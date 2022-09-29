@@ -59,12 +59,12 @@ function get_cyfuture_token()
 /**
  * @throws ReflectionException
  */
-function download_and_save_operator_form_data($ticket_details=false)
+function download_and_save_operator_form_data($ticket_details = false)
 {
     $token = get_cyfuture_Token();
     if (!empty($token)) {
         $url = get_cyfuture_ewsrecord_url();
-        if($ticket_details){
+        if ($ticket_details) {
             $url = get_cyfuture_helpline_ticket_url();
         }
         $method = get_cyfuture_method();
@@ -73,16 +73,15 @@ function download_and_save_operator_form_data($ticket_details=false)
         $page_number = 1;
         $record_count = 0;
         do {
-            $response = get_curl_response($url,"","","$method", $from_date, $to_date, $page_number, $token);
+            $response = get_curl_response($url, "", "", "$method", $from_date, $to_date, $page_number, $token);
             $decoded_json = json_decode($response, true);
             $total_pages = $decoded_json['total_pages'];
             if ($response) {
-                if($ticket_details){
-                    $tickets=$decoded_json['data'];
+                if ($ticket_details) {
+                    $tickets = $decoded_json['data'];
                     $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
-                    $dcpcr_helpline_ticket_model ->insertDcpcrTicketDetails($tickets);
-                }
-                else{
+                    $dcpcr_helpline_ticket_model->insertDcpcrTicketDetails($tickets);
+                } else {
                     $cases = $decoded_json['data'];
                     $record_count = $record_count + count($cases);
                     $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
@@ -96,7 +95,6 @@ function download_and_save_operator_form_data($ticket_details=false)
                     $home_visit = new HomeVisitModel();
                     $home_visit->insertUpdateHomeVisit($cases);
                     log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
-
                 }
             } else {
                 log_message("error", "The Cyfuture EWS record API call failed, Page -" . $page_number . "url - " . $url);

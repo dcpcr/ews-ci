@@ -129,14 +129,24 @@ class CronController extends BaseController
         }
         helper('cyfuture');
         download_and_save_operator_form_data();
-        download_and_save_operator_form_data(true);
-        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
-        $dcpcr_helpline_ticket_model->updateDcpcrTicketDetails();
     }
 
     /**
      * @throws ReflectionException
      */
+    private function updateTicketData()
+    {
+        if (getenv('cron.ticketdata') == "0") {
+            log_message("info", "updateTicketData is not enabled. Skipping it");
+            return;
+        }
+        helper('cyfuture');
+        download_and_save_operator_form_data(true);
+        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+        $dcpcr_helpline_ticket_model->updateDcpcrTicketDetails();
+    }
+
+
     public function updateBackToSchool($date)
     {
         if (getenv('cron.backtoschool') == "0") {
@@ -236,6 +246,7 @@ class CronController extends BaseController
                     $this->sendSms();
                 } else {
                     $this->updateCaseData();
+                    $this->updateTicketData();
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();
                     $this->importStudentData();

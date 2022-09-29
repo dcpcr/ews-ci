@@ -40,7 +40,9 @@ class DcpcrHelplineTicketModel extends Model
     function updateDcpcrTicketDetails()
     {
         helper('nsbbpo');
-        $ticket_numbers = $this->select('ticket_number')->where('status!=', '')->orderBy('ticket_number')->findAll();
+        $ticket_numbers = $this->select('ticket_number')
+            ->orderBy('ticket_number')
+            ->findAll();
         $counter = 1;
         $data = [];
         foreach ($ticket_numbers as $ticket) {
@@ -56,16 +58,13 @@ class DcpcrHelplineTicketModel extends Model
                 "sub_division" => $json_decoded[0]->SubDivision
             ];
             $counter++;
-            if ($counter == 90) {
-                $response = $this->updateBatch($data, "ticket_number");
-                log_message('info', "Total $response Tickets details has been updated");
-                sleep('1800');
-                $data = [];
-            }
-            log_message('info', "$counter - status of Ticket Number'.$ticket.'is->'.$status");
+            $response = $this->update("ticket_number", $data);
+            log_message('info', "Total $response Tickets details has been updated");
+
         }
 
     }
+
 
     public function checkHelplineTicketStatus($case_id): bool
     {
