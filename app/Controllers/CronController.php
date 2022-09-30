@@ -3,15 +3,10 @@
 namespace App\Controllers;
 
 use App\Models\AttendanceModel;
-use App\Models\BackToSchoolModel;
-use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
-use App\Models\HighRiskModel;
-use App\Models\HomeVisitModel;
 use App\Models\MobileSmsStatusModel;
-use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
@@ -127,8 +122,8 @@ class CronController extends BaseController
             log_message("info", "updateCaseData is not enabled. Skipping it");
             return;
         }
-        helper('cyfuture');
-        download_and_save_operator_form_data();
+        $case_model = new CaseModel();
+        $case_model->download_and_save_operator_form_data();
     }
 
     /**
@@ -140,8 +135,8 @@ class CronController extends BaseController
             log_message("info", "updateTicketData is not enabled. Skipping it");
             return;
         }
-        helper('cyfuture');
-        download_and_save_operator_form_data(true);
+        $case_model = new CaseModel();
+        $case_model->download_and_save_operator_form_data(true);
         $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
         $dcpcr_helpline_ticket_model->updateDcpcrTicketDetails();
     }
