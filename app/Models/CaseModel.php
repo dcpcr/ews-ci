@@ -371,7 +371,7 @@ class CaseModel extends Model
             ->findAll();
     }
 
-    public function detectAndMarkBackToSchoolCases(\DateTimeInterface $from_date, \DateTimeInterface $to_date)
+    public function detectAndMarkBackToSchoolCases(DateTimeInterface $from_date, DateTimeInterface $to_date)
     {
         for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
             $bts_counter = 0;
@@ -437,54 +437,52 @@ class CaseModel extends Model
     /**
      * @throws ReflectionException
      */
-    function download_and_save_operator_form_data($ticket_details = false)
+    public function updateTicketDetails(DateTimeInterface $from_date, DateTimeInterface $to_date)
     {
         helper('cyfuture');
-        $token = get_cyfuture_Token();
-        if (!empty($token)) {
-            $url = get_cyfuture_ewsrecord_url();
-            if ($ticket_details) {
-                $url = get_cyfuture_helpline_ticket_url();
+        $url = get_cyfuture_helpline_ticket_url();
+        $record_count = download_and_process_cyfuture_api_data(
+            $url, $from_date->format("Y-m-d"),
+            $to_date->format("Y-m-d"), function ($records, $page_number) use ($url) {
+            if ($records) {
+                $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+                $dcpcr_helpline_ticket_model->insertDcpcrTicketDetails($records);
+                log_message("info", "The Cyfuture Ticket API call success, for Page - " . $page_number);
+            } else {
+                log_message("error", "The Cyfuture Ticket API call failed, Page -" . $page_number . "url - " . $url);
             }
-            $method = get_cyfuture_method();
-            $from_date = '2022-01-01';
-            $to_date = date("Y-m-d");
-            $page_number = 1;
-            $record_count = 0;
-            do {
-                $response = get_curl_response($url, "", "", "$method", $from_date, $to_date, $page_number, $token);
-                $decoded_json = json_decode($response, true);
-                $total_pages = $decoded_json['total_pages'];
-                if ($response) {
-                    if ($ticket_details) {
-                        $tickets = $decoded_json['data'];
-                        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
-                        $dcpcr_helpline_ticket_model->insertDcpcrTicketDetails($tickets);
-                    } else {
-                        $cases = $decoded_json['data'];
-                        $record_count = $record_count + count($cases);
-                        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
-                        $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
-                        $call_disposition_model = new CallDispositionModel();
-                        $call_disposition_model->insertUpdateCallDisposition($cases);
-                        $high_risk_model = new HighRiskModel();
-                        $high_risk_model->insertUpdateHighRisk($cases);
-                        $back_to_school = new BackToSchoolModel();
-                        $back_to_school->insertUpdateBackToSchool($cases);
-                        $home_visit = new HomeVisitModel();
-                        $home_visit->insertUpdateHomeVisit($cases);
-                        log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
-                    }
+        }
+        );
+        log_message("info", "Total Records fetched from Cyfuture Ticket API, ->" . $record_count);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function updateOperatorFormData(DateTimeInterface $from_date, DateTimeInterface $to_date)
+    {
+        helper('cyfuture');
+        $url = get_cyfuture_ewsrecord_url();
+        $record_count = download_and_process_cyfuture_api_data($url, $from_date->format("Y-m-d"),
+            $to_date->format("Y-m-d"), function ($records, $page_number) use ($url) {
+                if ($records) {
+                    $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+                    $reason_for_absenteeism_model->insertUpdateCaseReason($records);
+                    $call_disposition_model = new CallDispositionModel();
+                    $call_disposition_model->insertUpdateCallDisposition($records);
+                    $high_risk_model = new HighRiskModel();
+                    $high_risk_model->insertUpdateHighRisk($records);
+                    $back_to_school = new BackToSchoolModel();
+                    $back_to_school->insertUpdateBackToSchool($records);
+                    $home_visit = new HomeVisitModel();
+                    $home_visit->insertUpdateHomeVisit($records);
+                    log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
                 } else {
                     log_message("error", "The Cyfuture EWS record API call failed, Page -" . $page_number . "url - " . $url);
                 }
-                $page_number++;
-            } while ($page_number <= $total_pages);
-            log_message("info", "Total Records fetched from Cyfuture EWS record API, ->" . $record_count);
-        } else {
-            log_message("error", "Cyfuture EWS token API failed.");
-        }
-
+            }
+        );
+        log_message("info", "Total Records fetched from Cyfuture EWS record API, ->" . $record_count);
     }
 
 }

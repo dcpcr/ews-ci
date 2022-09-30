@@ -87,5 +87,27 @@ function extract_dcpcr_helpline_ticket_data_from_cases($ticket_details): array
     return extract_values_from_objects($ticket_details, $keys);
 }
 
+function download_and_process_cyfuture_api_data($url, $from_date, $to_date, $func): int
+{
+    $token = get_cyfuture_Token();
+    $record_count = 0;
+    if (!empty($token)) {
+        $method = get_cyfuture_method();
+        $page_number = 1;
+        do {
+            $response = get_curl_response($url, "", "", "$method", $from_date, $to_date, $page_number, $token);
+            $decoded_json = json_decode($response, true);
+            $total_pages = $decoded_json['total_pages'];
+            if ($response) {
+                $func($decoded_json['data'], $page_number);
+            }
+            $page_number++;
+        } while ($page_number <= $total_pages);
+    } else {
+        log_message("error", "Cyfuture token API failed for URL:" . $url);
+    }
+    return $record_count;
+}
+
 
 

@@ -116,31 +116,30 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
-    private function updateCaseData()
+    private function updateCaseData($begin, $end)
     {
         if (getenv('cron.casedata') == "0") {
             log_message("info", "updateCaseData is not enabled. Skipping it");
             return;
         }
         $case_model = new CaseModel();
-        $case_model->download_and_save_operator_form_data();
+        $case_model->updateOperatorFormData($begin, $end);
     }
 
     /**
      * @throws ReflectionException
      */
-    private function updateTicketData()
+    private function updateTicketData($begin, $end)
     {
         if (getenv('cron.ticketdata') == "0") {
             log_message("info", "updateTicketData is not enabled. Skipping it");
             return;
         }
         $case_model = new CaseModel();
-        $case_model->download_and_save_operator_form_data(true);
+        $case_model->updateTicketDetails($begin, $end);
         $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
         $dcpcr_helpline_ticket_model->updateDcpcrTicketDetails();
     }
-
 
     public function updateBackToSchool($from_date, $to_date)
     {
@@ -240,8 +239,8 @@ class CronController extends BaseController
                 if ($morning) {
                     $this->sendSms();
                 } else {
-                    $this->updateCaseData();
-                    $this->updateTicketData();
+                    $this->updateCaseData($begin, $end);
+                    $this->updateTicketData($begin, $end);
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();
                     $this->importStudentData();
