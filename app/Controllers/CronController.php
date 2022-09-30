@@ -147,14 +147,14 @@ class CronController extends BaseController
     }
 
 
-    public function updateBackToSchool($date)
+    public function updateBackToSchool($from_date, $to_date)
     {
         if (getenv('cron.backtoschool') == "0") {
             log_message("info", "updateBackToSchool is not enabled. Skipping it");
             return;
         }
         $case_model = new CaseModel();
-        $case_model->backToSchoolCase($date);
+        $case_model->detectAndMarkBackToSchoolCases($from_date, $to_date);
     }
 
     /**
@@ -252,8 +252,8 @@ class CronController extends BaseController
                     $this->importStudentData();
                     $this->importAttendanceData($begin, $end);
                     $this->updateDetectedCases($begin, $end);
+                    $this->updateBackToSchool($begin, $end);
                     $this->sendCronStatusInfoSms($begin);
-                    $this->updateBackToSchool($begin);
                 }
                 // Calculate script execution time
                 $end_time = microtime(true);

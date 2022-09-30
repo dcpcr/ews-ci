@@ -6,6 +6,7 @@ use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
 use CodeIgniter\Validation\ValidationInterface;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Exception;
 
 class AttendanceModel extends Model
@@ -24,7 +25,7 @@ class AttendanceModel extends Model
         helper('edutel');
     }
 
-    public function downloadAttendance(string $file_name, \DateTimeInterface $from_date, \DateTimeInterface $to_date)
+    public function downloadAttendance(string $file_name, DateTimeInterface $from_date, DateTimeInterface $to_date)
     {
         $school_ids = get_school_ids();
         $count = 0;

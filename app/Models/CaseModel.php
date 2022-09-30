@@ -250,6 +250,9 @@ class CaseModel extends Model
         }
     }
 
+    /**
+     * @throws Exception
+     */
     protected function detect(array $marked_students, array $open_cases, DateTimeInterface $date): array
     {
         $attendance_model = new AttendanceModel();
@@ -349,7 +352,7 @@ class CaseModel extends Model
         $count_priority_wise = $this->select(['priority', 'count(*) as count'])
             ->where('day', $date->format("Y-m-d"))
             ->groupBy('priority')
-            ->orderBy('priority','desc')
+            ->orderBy('priority', 'desc')
             ->findAll();
         if ($total_case_count[0]['id'] != 0) {
             return $data = ['Total_Case_Count' => $total_case_count, 'Priority_Wise_Count' => $count_priority_wise];
@@ -357,81 +360,77 @@ class CaseModel extends Model
         return [];
     }
 
-    public function backToSchoolCase(DateTimeInterface $date)
+    //TODO: Add more statuses which may be considered as closed cases. e.g, untraceable.
+    protected function getUnclosedCasesOlderThanNDays(DateTimeInterface $date, $n): array
     {
-        $bts_counter = 0;
-        $not_bts_counter = 0;
-        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
-        $greater_than_thirty_days_cases = $this->select(['id', 'student_id'])
-            ->where("DATEDIFF(`day`,STR_TO_DATE('" . $date->format("d-m-Y") . "', '%d-%m-%Y'))<=", "-30")
+        return $this->select(['id', 'student_id'])
+            ->where("DATEDIFF(`day`,STR_TO_DATE('" . $date->format("d-m-Y") . "', '%d-%m-%Y'))<=", "-$n")
             ->where("status != 'Back To School'")
             ->orderBy("student_id")
             ->findAll();
-        if (!empty($greater_than_thirty_days_cases)) {
-            foreach ($greater_than_thirty_days_cases as $student) {
-                $eleven_days_flag = $helpline_ticket_status_flag = false;
-                $student_id = $student['student_id'];
-                $case_id = $student['id'];
-                $seven_days_flag = $this->isPresentInSevenConsecutiveDays($student_id, $date);
-                if ($seven_days_flag) {
-                    $eleven_days_flag = $this->isPresentAtLeastElevenDaysInThirtyConsecutiveDays($student_id, $date);
-                    if ($eleven_days_flag) {
-                        $helpline_ticket_status_flag = $dcpcr_helpline_ticket_model->checkHelplineTicketStatus($case_id);
+    }
+
+    public function detectAndMarkBackToSchoolCases(\DateTimeInterface $from_date, \DateTimeInterface $to_date)
+    {
+        for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
+            $bts_counter = 0;
+            $not_bts_counter = 0;
+            $potential_cases = $this->getUnclosedCasesOlderThanNDays($date, 30);
+            if (!empty($potential_cases)) {
+                $ticket_model = new DcpcrHelplineTicketModel();
+                foreach ($potential_cases as $case) {
+                    $student_id = $case['student_id'];
+                    $case_id = $case['id'];
+                    if ($this->isStudentPresentInLastSevenDays($student_id, $date) &&
+                        $this->isStudentPresentAtLeastNDaysInLast30Days($student_id, $date, 10) &&
+                        $ticket_model->isTicketNotOpen($case_id)) {
+                        $this->markStudentAsBackToSchool($case_id);
+                        $bts_counter++;
+                    } else {
+                        $not_bts_counter++;
                     }
                 }
-                if ($seven_days_flag && $eleven_days_flag && $helpline_ticket_status_flag) {
-                    $this->markStudentAsBackToSchool($case_id);
-                    $bts_counter++;
-                } else {
-                    $not_bts_counter++;
-                }
             }
+            log_message("info", "Total No of Students not marked as BTS for date: " . $date->format("d/m/Y") . " is " . $not_bts_counter);
+            log_message("info", "Total No of Students marked as BTS for date: " . $date->format("d/m/Y") . " is " . $bts_counter);
         }
-        log_message("info", "Total Student is not marked as BTS:" . $not_bts_counter);
-        log_message("info", "Total Student is marked as BTS:" . $bts_counter);
     }
 
-    private function isPresentInSevenConsecutiveDays($student_id, $date): bool
+    protected function isStudentPresentInLastSevenDays($student_id, $date): bool
     {
-        $attendance_model = new AttendanceModel();
-        $student_attendance = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, $date, 7);
-        $present_count = 0;
-        foreach ($student_attendance as $row) {
-
-            $attendance_status = $row['attendance_status'];
-            if ($attendance_status == 'p') {
-                $present_count++;
-            }
-
-        }
-        if ($present_count >= 1) {
-            return true;
-        }
-        return false;
-
+        return $this->isStudentPresentForAtLeastNDaysInLastMDays($student_id, $date, 1, 7);
     }
 
-    private function isPresentAtLeastElevenDaysInThirtyConsecutiveDays($student_id, $date): bool
+    protected function isStudentPresentAtLeastNDaysInLast30Days($student_id, $date, $n): bool
     {
+        return $this->isStudentPresentForAtLeastNDaysInLastMDays($student_id, $date, $n, 30);
+    }
+
+    protected function isStudentPresentForAtLeastNDaysInLastMDays($student_id, $date, $n, $m): bool
+    {
+        if ($n > $m) {
+            return false;
+        }
         $attendance_model = new AttendanceModel();
-        $student_attendance = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, $date, 11);
+        $student_attendance = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, $date, $m);
         $present_count = 0;
         foreach ($student_attendance as $row) {
             $attendance_status = $row['attendance_status'];
             if ($attendance_status == 'p') {
                 $present_count++;
-                if ($present_count > 10) {
+                if ($present_count >= $n) {
                     return true;
                 }
             }
         }
-
         return false;
     }
 
-    private function markStudentAsBackToSchool($case_id)
+    protected function markStudentAsBackToSchool($case_id)
     {
-        $this->builder->set('status', 'Back To School')->where('id', "$case_id")->update();
+        $this->builder->set('status', 'Back To School')
+            ->where('id', "$case_id")
+            ->update();
     }
 
 }
