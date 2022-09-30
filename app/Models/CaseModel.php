@@ -6,6 +6,7 @@ use CodeIgniter\Model;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use ReflectionException;
 use SSP\SSP;
 
 class CaseModel extends Model
@@ -330,7 +331,7 @@ class CaseModel extends Model
         if ($insert_count > 0) {
             try {
                 $this->insertBatch($insert_data_array);
-            } catch (\ReflectionException $e) {
+            } catch (ReflectionException $e) {
                 log_message("error", "Case Insert Failed! There were " . $insert_count . " cases detected. on date - " . $date->format("d/m/Y"));
             }
         }
@@ -338,7 +339,7 @@ class CaseModel extends Model
         if ($update_count > 0) {
             try {
                 $this->updateBatch($update_data_array, 'id');
-            } catch (\ReflectionException $e) {
+            } catch (ReflectionException $e) {
                 log_message("error", "Case Update Failed! There were  " . $update_count . " cases that needed update. on date - " . $date->format("d/m/Y"));
             }
         }
@@ -432,7 +433,10 @@ class CaseModel extends Model
             ->where('id', "$case_id")
             ->update();
     }
-    
+
+    /**
+     * @throws ReflectionException
+     */
     function download_and_save_operator_form_data($ticket_details = false)
     {
         helper('cyfuture');
