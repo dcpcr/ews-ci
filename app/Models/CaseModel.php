@@ -437,7 +437,7 @@ class CaseModel extends Model
     /**
      * @throws ReflectionException
      */
-    public function updateTicketDetails(DateTimeInterface $from_date, DateTimeInterface $to_date)
+    public function downloadAndSaveTicketDetails(DateTimeInterface $from_date, DateTimeInterface $to_date)
     {
         helper('cyfuture');
         $url = get_cyfuture_helpline_ticket_url();

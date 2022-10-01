@@ -34,35 +34,44 @@ class DcpcrHelplineTicketModel extends Model
         }
     }
 
+    private function getTicketNumbers()
+    {
+        return $this->select('ticket_number')
+            ->orderBy('ticket_number')
+            ->findAll();
+
+    }
+
     /**
      * @throws \ReflectionException
      */
-    function updateDcpcrTicketDetails()
+    public function updateTicketDetails()
     {
+        $ticket_numbers = $this->getTicketNumbers();
         helper('nsbbpo');
-        $ticket_numbers = $this->select('ticket_number')
-            ->orderBy('ticket_number')
-            ->findAll();
         $counter = 1;
         $data = [];
         foreach ($ticket_numbers as $ticket) {
             $response = download_ticket_details($ticket['ticket_number']);
-            $json_decoded = json_decode($response);
-            $ticket = $json_decoded[0]->TicketNo;
-            $status = $json_decoded[0]->Status;
-            $data [] = [
-                "ticket_number" => $json_decoded[0]->TicketNo,
-                "status" => $json_decoded[0]->Status,
-                "sub_status" => $json_decoded[0]->Substatus,
-                "division" => $json_decoded[0]->Division,
-                "sub_division" => $json_decoded[0]->SubDivision
-            ];
-            $counter++;
-            $response = $this->update("ticket_number", $data);
-            log_message('info', "Total $response Tickets details has been updated");
-
+            if (!empty($response)) {
+                $ticket_number = $response->TicketNo;
+                $data [] = [
+                    "ticket_number" => $response->TicketNo,
+                    "status" => $response->Status,
+                    "sub_status" => $response->Substatus,
+                    "division" => $response->Division,
+                    "sub_division" => $response->SubDivision
+                ];
+                $counter++;
+                log_message('info', "Ticket Number $ticket_number details has been fetched");
+                sleep(1);
+            } else {
+                log_message('notice', "Ticket Number " . $ticket['ticket_number'] . " details not fetched");
+            }
         }
-
+        $batchSize = count($data);
+        $response = $this->updateBatch($data, "ticket_number", $batchSize);
+        log_message('info', "Total $response Tickets details has been updated");
     }
 
     //This function checks is there is any open ticket for the case in the system

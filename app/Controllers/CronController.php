@@ -136,9 +136,9 @@ class CronController extends BaseController
             return;
         }
         $case_model = new CaseModel();
-        $case_model->updateTicketDetails($begin, $end);
+        $case_model->downloadAndSaveTicketDetails($begin, $end);
         $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
-        $dcpcr_helpline_ticket_model->updateDcpcrTicketDetails();
+        $dcpcr_helpline_ticket_model->updateTicketDetails();
     }
 
     public function updateBackToSchool($from_date, $to_date)
