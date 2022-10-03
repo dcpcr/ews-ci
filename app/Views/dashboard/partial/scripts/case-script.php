@@ -1,6 +1,6 @@
 <?= $this->include('dashboard/partial/scripts/data-table-script'); ?>
 <?php
-$case_data=$response['detected_case_count'];
+$case_data = $response['detected_case_count'];
 ?>
 <script>
     let max = <?= count($case_data) > 0 ?

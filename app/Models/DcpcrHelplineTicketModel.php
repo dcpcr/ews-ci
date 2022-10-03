@@ -30,6 +30,7 @@ class DcpcrHelplineTicketModel extends CaseDetailsModel
     private function getTicketNumbers(): array
     {
         return $this->select('ticket_number')
+            ->where("status!=", "closed")
             ->orderBy('ticket_number')
             ->findAll();
     }
@@ -37,7 +38,7 @@ class DcpcrHelplineTicketModel extends CaseDetailsModel
     /**
      * @throws \ReflectionException
      */
-    public function updateTicketDetails()
+    public function updateOpenTicketFromNsbbpo()
     {
         $ticket_numbers = $this->getTicketNumbers();
         helper('nsbbpo');
