@@ -446,7 +446,7 @@ class CaseModel extends Model
             $to_date->format("Y-m-d"), function ($records, $page_number) use ($url) {
             if ($records) {
                 $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
-                $dcpcr_helpline_ticket_model->insertDcpcrTicketDetails($records);
+                $dcpcr_helpline_ticket_model->updateCaseDetails($records);
                 log_message("info", "The Cyfuture Ticket API call success, for Page - " . $page_number);
             } else {
                 log_message("error", "The Cyfuture Ticket API call failed, Page -" . $page_number . "url - " . $url);
@@ -467,15 +467,15 @@ class CaseModel extends Model
             $to_date->format("Y-m-d"), function ($records, $page_number) use ($url) {
                 if ($records) {
                     $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
-                    $reason_for_absenteeism_model->insertUpdateCaseReason($records);
+                    $reason_for_absenteeism_model->updateCaseDetails($records);
                     $call_disposition_model = new CallDispositionModel();
-                    $call_disposition_model->insertUpdateCallDisposition($records);
+                    $call_disposition_model->updateCaseDetails($records);
                     $high_risk_model = new HighRiskModel();
-                    $high_risk_model->insertUpdateHighRisk($records);
+                    $high_risk_model->updateCaseDetails($records);
                     $back_to_school = new BackToSchoolModel();
-                    $back_to_school->insertUpdateBackToSchool($records);
+                    $back_to_school->updateCaseDetails($records);
                     $home_visit = new HomeVisitModel();
-                    $home_visit->insertUpdateHomeVisit($records);
+                    $home_visit->updateCaseDetails($records);
                     log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
                 } else {
                     log_message("error", "The Cyfuture EWS record API call failed, Page -" . $page_number . "url - " . $url);

@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use CodeIgniter\Model;
-
-class ReasonForAbsenteeismModel extends Model
+class ReasonForAbsenteeismModel extends CaseDetailsModel
 {
     protected $DBGroup = 'default';
     protected $table = 'reason_for_absenteeism';
@@ -16,26 +14,19 @@ class ReasonForAbsenteeismModel extends Model
     protected $protectFields = false;
     protected $allowedFields = ['case_id', 'reason_id', 'other_reason'];
 
-
-    /**
-     * @throws \ReflectionException
-     */
-    function insertUpdateCaseReason($cases)
+    protected function getKeys(): array
     {
-        helper('cyfuture');
-        if ($cases) {
-            $reasonData = extract_reason_data_from_cases($cases);
-            $keyMapping = array(
-                "reason_of_absense" => "reason_id",
-                "other_reason_of_absense" => "other_reason"
-            );
-            $tableData = prepare_data_for_table($reasonData, $keyMapping);
-            $count = $this->ignore()->insertBatch($tableData,null,2000);
-            log_message("info", "$count New Records inserted in reason_for_absenteeism table.");
-            $count = $this->updateBatch($tableData, 'case_id', 2000);
-            log_message("info", "$count Records updated in reason_for_absenteeism table.");
-        }
+        return array('case_id', 'reason_of_absense', 'other_reason_of_absense');
     }
+
+    protected function getKeyMappings(): array
+    {
+        return array(
+            "reason_of_absense" => "reason_id",
+            "other_reason_of_absense" => "other_reason"
+        );
+    }
+
     function getReasonsCount(array $school_ids, $classes, $start, $end, $gender): array
     {
         helper('general');
@@ -49,7 +40,8 @@ class ReasonForAbsenteeismModel extends Model
             ->whereIn('student.class', $classes)
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" . $end . "', '%m/%d/%Y') and master.student.gender='$gender'")
             ->groupBy('reason_name')
-            ->orderBy('count','desc')
+            ->orderBy('count', 'desc')
             ->findAll();
     }
+
 }

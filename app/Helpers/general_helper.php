@@ -34,7 +34,7 @@ function get_array_from_dom_table($table, $has_header): array
     return $response_array;
 }
 
-function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '',$page_number='', $token = '',$nsb_api_token='')
+function get_curl_response($url, $username = '', $password = '', $method = 'GET', $from_date = '', $to_date = '', $page_number = '', $token = '', $nsb_api_token = '')
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -47,7 +47,7 @@ function get_curl_response($url, $username = '', $password = '', $method = 'GET'
         CURLOPT_CONNECTTIMEOUT => 20,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "$method",
-        CURLOPT_POSTFIELDS => array('from_date' => "$from_date", 'to_date' => "$to_date",'pageno'=>$page_number),
+        CURLOPT_POSTFIELDS => array('from_date' => "$from_date", 'to_date' => "$to_date", 'pageno' => $page_number),
         CURLOPT_HTTPHEADER => array(
             "tspltoken: $nsb_api_token",
             "Authorization: $token",
@@ -153,9 +153,9 @@ function new_key($column_name, $replaces)
     return $column_name;
 }
 
-function prepare_data_for_table($data_table, $key_mapping):array
+function prepare_data_for_table($table_data, $key_mapping): array
 {
     /*    eg. New Mapping Key array sample ['oldkey1'=>'newkey1','oldkey2'=>'newkey2','oldkey3'=>'newkey3',]*/
-    replace_key($data_table, $key_mapping);
-    return $data_table;
+    replace_key($table_data, $key_mapping);
+    return $table_data;
 }

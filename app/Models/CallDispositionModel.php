@@ -2,38 +2,31 @@
 
 namespace App\Models;
 
-use CodeIgniter\Model;
-
-class CallDispositionModel extends Model
+class CallDispositionModel extends CaseDetailsModel
 {
-    protected $DBGroup          = 'default';
-    protected $table            = 'call_disposition';
-    protected $primaryKey       = 'case_id';
+    protected $DBGroup = 'default';
+    protected $table = 'call_disposition';
+    protected $primaryKey = 'case_id';
     protected $useAutoIncrement = true;
-    protected $insertID         = 0;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = ['case_id','call_disposition_id'];
+    protected $insertID = 0;
+    protected $returnType = 'array';
+    protected $useSoftDeletes = false;
+    protected $protectFields = true;
+    protected $allowedFields = ['case_id', 'call_disposition_id'];
 
-    /**
-     * @throws \ReflectionException
-     */
-    function insertUpdateCallDisposition($cases)
-   {
-       helper('cyfuture');
-       if ($cases) {
-           $reasonData = extract_call_disposition_data_from_cases($cases);
-           $keyMapping = array(
-               "call_dis" => "call_disposition_id"
-           );
-           $tableData = prepare_data_for_table($reasonData, $keyMapping);
-           $count = $this->ignore()->insertBatch($tableData,null,2000);
-           log_message("info", "$count New Records inserted in call_disposition table.");
-           $count = $this->updateBatch($tableData, 'case_id', 2000);
-           log_message("info", "$count Records updated in call_disposition table.");
-       }
-   }
+
+    protected function getKeys(): array
+    {
+        return array('case_id', 'call_dis');
+    }
+
+    protected function getKeyMappings(): array
+    {
+        return array(
+            "call_dis" => "call_disposition_id"
+        );
+    }
+
     function getCallDisposition(array $school_ids, $classes, $start, $end): array
     {
         helper('general');
@@ -49,4 +42,5 @@ class CallDispositionModel extends Model
             ->groupBy('name')
             ->findAll();
     }
+
 }

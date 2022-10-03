@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\CaseDetailsModel;
+
 function get_cyfuture_ewsrecord_url()
 {
     return getenv('cyfuture_ews_record_url');
@@ -49,42 +51,21 @@ function get_cyfuture_token()
     return [];
 }
 
-
-function extract_reason_data_from_cases($cases): array
+/**
+ * @throws ReflectionException
+ */
+function insert_update_case_details($cases, $keys, $key_mappings, CaseDetailsModel $model)
 {
-    $keys = ['case_id', 'reason_of_absense', 'other_reason_of_absense'];
-    return extract_values_from_objects($cases, $keys);
-}
-
-function extract_call_disposition_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'call_dis'];
-    return extract_values_from_objects($cases, $keys);
-}
-
-//raised_ticket
-function extract_high_risk_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'raised_ticket'];
-    return extract_values_from_objects($cases, $keys);
-}
-
-function extract_back_to_school_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'will_student_be_able_to_join_school'];
-    return extract_values_from_objects($cases, $keys);
-}
-
-function extract_home_visit_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'is_home_visit_required'];
-    return extract_values_from_objects($cases, $keys);
-}
-
-function extract_dcpcr_helpline_ticket_data_from_cases($ticket_details): array
-{
-    $keys = ['case_id', 'ticket_id', 'ticket_num', 'created_at',];
-    return extract_values_from_objects($ticket_details, $keys);
+    helper('cyfuture');
+    if ($cases) {
+        $reason_data = extract_values_from_objects($cases, $keys);
+        $table_data = prepare_data_for_table($reason_data, $key_mappings);
+        $count = $model->ignore()->insertBatch($table_data, null, 2000);
+        $table_name = $model->getTableName();
+        log_message("info", "$count New Records $table_name inserted in  table.");
+        $count = $model->updateBatch($table_data, 'case_id', 2000);
+        log_message("info", "$count Records updated in $table_name table.");
+    }
 }
 
 function download_and_process_cyfuture_api_data($url, $from_date, $to_date, $func): int

@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use CodeIgniter\Model;
-
-class DcpcrHelplineTicketModel extends Model
+class DcpcrHelplineTicketModel extends CaseDetailsModel
 {
     protected $DBGroup = 'default';
     protected $table = 'dcpcr_helpline_ticket';
@@ -16,30 +14,24 @@ class DcpcrHelplineTicketModel extends Model
     protected $protectFields = true;
     protected $allowedFields = ['case_id', 'ticket_id', 'ticket_number', 'status', 'sub_status', 'division', 'sub_division', 'nature'];
 
-    /**
-     * @throws \ReflectionException
-     */
-    function insertDcpcrTicketDetails($cases)
-    {
-        helper('cyfuture');
-        if ($cases) {
-            $ticketData = extract_dcpcr_helpline_ticket_data_from_cases($cases);
-            $keyMapping = array(
-                "ticket_num" => "ticket_number",
-            );
 
-            $tableData = prepare_data_for_table($ticketData, $keyMapping);
-            $count = $this->ignore()->insertBatch($tableData, null, 2000);
-            log_message("info", "$count New Records inserted in dcpcr_helpline_ticket table.");
-        }
+    protected function getKeys(): array
+    {
+        return array('case_id', 'ticket_id', 'ticket_num', 'created_at',);
     }
 
-    private function getTicketNumbers()
+    protected function getKeyMappings(): array
+    {
+        return array(
+            "ticket_num" => "ticket_number",
+        );
+    }
+
+    private function getTicketNumbers(): array
     {
         return $this->select('ticket_number')
             ->orderBy('ticket_number')
             ->findAll();
-
     }
 
     /**
