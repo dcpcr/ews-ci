@@ -129,14 +129,25 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
-    private function updateTicketData($begin, $end)
+    private function fetchTickets($begin, $end)
     {
-        if (getenv('cron.ticketdata') == "0") {
-            log_message("info", "updateTicketData is not enabled. Skipping it");
+        if (getenv('cron.fetch_ticket_number') == "0") {
+            log_message("info", "fetchTicketNumber is not enabled. Skipping it");
             return;
         }
         $case_model = new CaseModel();
         $case_model->downloadAndSaveTicketDetails($begin, $end);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function updateTicketDetails()
+    {
+        if (getenv('cron.update_ticket_details') == "0") {
+            log_message("info", "updateTicketData is not enabled. Skipping it");
+            return;
+        }
         $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
         $dcpcr_helpline_ticket_model->updateOpenTicketFromNsbbpo();
     }
@@ -233,14 +244,22 @@ class CronController extends BaseController
         if ($this->request->isCLI()) {
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
-            $begin = new DateTimeImmutable();
-            $end = $begin;
+            $key = getenv('cron.run_cron_from_custom_date');
+            if (getenv('cron.run_cron_from_custom_date') == "1") {
+                $begin = getenv('cron.from_date');
+                $end = new DateTimeImmutable();
+                log_message("info", "The cron is running from date: $begin to " . $end->format('Y/m/d') . " date.");
+            } else {
+                $begin = new DateTimeImmutable();
+                $end = $begin;
+            }
             try {
                 if ($morning) {
                     $this->sendSms();
                 } else {
                     $this->updateCaseData($begin, $end);
-                    $this->updateTicketData($begin, $end);
+                    $this->fetchTickets($begin, $end);
+                    $this->updateTicketDetails();
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();
                     $this->importStudentData();
