@@ -57,7 +57,7 @@ class DcpcrHelplineTicketModel extends CaseDetailsModel
                 ];
                 $counter++;
                 log_message('info', "Ticket Number $ticket_number details has been fetched");
-                sleep(1);
+                sleep(8);
             } else {
                 log_message('notice', "Ticket Number " . $ticket['ticket_number'] . " details not fetched");
             }
