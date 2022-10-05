@@ -452,7 +452,7 @@ class CaseModel extends Model
                 $dcpcr_helpline_ticket_model->updateCaseDetails($records);
                 log_message("info", "The Cyfuture Ticket API call success, for Page - " . $page_number);
             } else {
-                log_message("error", "The Cyfuture Ticket API call failed, Page -" . $page_number . "url - " . $url);
+                log_message("error", "The Cyfuture Ticket API call failed, Page - " . $page_number . "url - " . $url);
             }
         }
         );
