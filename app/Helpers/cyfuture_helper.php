@@ -79,7 +79,8 @@ function download_and_process_cyfuture_api_data($url, $from_date, $to_date, $fun
             $response = get_curl_response($url, "", "", "$method", $from_date, $to_date, $page_number, $token);
             $decoded_json = json_decode($response, true);
             $total_pages = $decoded_json['total_pages'];
-            if ($response) {
+            $record_count = $decoded_json['total_records'];
+            if ($response && $record_count > 0) {
                 $func($decoded_json['data'], $page_number);
             }
             $page_number++;
