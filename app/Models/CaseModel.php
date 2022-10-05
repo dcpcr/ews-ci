@@ -364,11 +364,14 @@ class CaseModel extends Model
     //TODO: Add more statuses which may be considered as closed cases. e.g, untraceable.
     protected function getUnclosedCasesOlderThanNDays(DateTimeInterface $date, $n): array
     {
-        return $this->select(['id', 'student_id'])
+        $response = $this->select(['id', 'student_id'])
             ->where("DATEDIFF(`day`,STR_TO_DATE('" . $date->format("d-m-Y") . "', '%d-%m-%Y'))<=", "-$n")
             ->where("status != 'Back To School'")
             ->orderBy("student_id")
             ->findAll();
+        $response_count = count($response);
+        log_message("info", "Total $n Days old Detected Cases: $response_count from date: " . $date->format("d-m-Y"));
+        return $response;
     }
 
     public function detectAndMarkBackToSchoolCases(DateTimeInterface $from_date, DateTimeInterface $to_date)
