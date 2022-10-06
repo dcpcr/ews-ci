@@ -1,7 +1,15 @@
 <?php
+
+use App\Models\CaseDetailsModel;
+
 function get_cyfuture_ewsrecord_url()
 {
-    return getenv('cyfuture_ewsrecord_url');
+    return getenv('cyfuture_ews_record_url');
+}
+
+function get_cyfuture_helpline_ticket_url()
+{
+    return getenv('cyfuture_helpline_ticket_url');
 }
 
 function get_cyfuture_token_url()
@@ -40,63 +48,47 @@ function get_cyfuture_token()
         log_message("error", "The API call failed, url - " . $url);
 
     }
+    return [];
 }
 
-function download_operator_form_data()
+/**
+ * @throws ReflectionException
+ */
+function insert_update_case_details($cases, $keys, $key_mappings, CaseDetailsModel $model)
 {
-
-    $token = get_cyfuture_Token();
-    $url = get_cyfuture_ewsrecord_url();
-    $username = get_cyfuture_username();
-    $password = get_cyfuture_password();
-    $method = get_cyfuture_method();
-    $from_date = '2022-07-01';
-    $to_date = date("Y-m-d");
-    $response = get_curl_response($url, $username, $password, $method, $from_date, $to_date, $token);
-    if ($response) {
-        log_message("info", "The Cyfuture EWS record API call success, url - " . $url);
-        $decoded_json = json_decode($response, true);
-        return $decoded_json['data'];
-    } else {
-        log_message("error", "The Cyfuture EWS record API call failed, url - " . $url);
-
+    helper('cyfuture');
+    if ($cases) {
+        $reason_data = extract_values_from_objects($cases, $keys);
+        $table_data = prepare_data_for_table($reason_data, $key_mappings);
+        $count = $model->ignore()->insertBatch($table_data, null, 2000);
+        $table_name = $model->getTableName();
+        log_message("info", "$count New Records $table_name inserted in  table.");
+        $count = $model->updateBatch($table_data, 'case_id', 2000);
+        log_message("info", "$count Records updated in $table_name table.");
     }
-
-}
-function extract_reason_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'reason_of_absense','other_reason_of_absense'];
-    return extract_values_from_objects($cases, $keys);
 }
 
-function extract_call_disposition_data_from_cases($cases): array
+function download_and_process_cyfuture_api_data($url, $from_date, $to_date, $func): int
 {
-    $keys = ['case_id', 'call_dis'];
-    return extract_values_from_objects($cases, $keys);
-}
-//raised_ticket
-function extract_high_risk_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'raised_ticket'];
-    return extract_values_from_objects($cases, $keys);
-}
-
-function extract_back_to_school_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'will_student_be_able_to_join_school'];
-    return extract_values_from_objects($cases, $keys);
-}
-
-function extract_home_visit_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'is_home_visit_required'];
-    return extract_values_from_objects($cases, $keys);
-}
-
-function extract_dcpcr_helpline_ticket_data_from_cases($cases): array
-{
-    $keys = ['case_id', 'name_division','sub_name_division','nature_case',];
-    return extract_values_from_objects($cases, $keys);
+    $token = get_cyfuture_Token();
+    $record_count = 0;
+    if (!empty($token)) {
+        $method = get_cyfuture_method();
+        $page_number = 1;
+        do {
+            $response = get_curl_response($url, "", "", "$method", $from_date, $to_date, $page_number, $token);
+            $decoded_json = json_decode($response, true);
+            $total_pages = $decoded_json['total_pages'];
+            $record_count = $decoded_json['total_records'];
+            if ($response && $record_count > 0) {
+                $func($decoded_json['data'], $page_number);
+            }
+            $page_number++;
+        } while ($page_number <= $total_pages);
+    } else {
+        log_message("error", "Cyfuture token API failed for URL:" . $url);
+    }
+    return $record_count;
 }
 
 

@@ -17,14 +17,14 @@ class CallDisposition extends Migration
             'call_disposition_id' => [
                 'type' => 'INT',
                 'constraint' => '2',
-                'NOT NULL' => true,
+                'default' => null,
             ],]);
         $this->forge->addField(
             [
                 'created_at timestamp not null default current_timestamp',
                 'updated_at timestamp not null default current_timestamp on update current_timestamp',
             ]);
-        $this->forge->addKey('case_id');
+        $this->forge->addPrimaryKey('case_id');
         $this->forge->createTable('call_disposition');
     }
 

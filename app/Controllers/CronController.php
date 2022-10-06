@@ -3,15 +3,10 @@
 namespace App\Controllers;
 
 use App\Models\AttendanceModel;
-use App\Models\BackToSchoolModel;
-use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
-use App\Models\HighRiskModel;
-use App\Models\HomeVisitModel;
 use App\Models\MobileSmsStatusModel;
-use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
@@ -121,27 +116,50 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
-    private function updateCaseData()
+    private function updateCaseData($begin, $end)
     {
         if (getenv('cron.casedata') == "0") {
             log_message("info", "updateCaseData is not enabled. Skipping it");
             return;
         }
-        helper('cyfuture');
-        $cases = download_operator_form_data();
-        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
-        $reason_for_absenteeism_model->insertUpdateCaseReason($cases);
-        $call_disposition_model = new CallDispositionModel();
-        $call_disposition_model->insertUpdateCallDisposition($cases);
-        $high_risk_model = new HighRiskModel();
-        $high_risk_model->insertUpdateHighRisk($cases);
-        $back_to_school = new BackToSchoolModel();
-        $back_to_school->insertUpdateBackToSchool($cases);
-        $home_visit = new HomeVisitModel();
-        $home_visit->insertUpdateHomeVisit($cases);
-        $dcpcr_ticket = new DcpcrHelplineTicketModel;
-        $dcpcr_ticket->insertUpdateDcpcrTicketDetails($cases);
+        $case_model = new CaseModel();
+        $case_model->updateOperatorFormData($begin, $end);
+    }
 
+    /**
+     * @throws ReflectionException
+     */
+    private function fetchTickets($begin, $end)
+    {
+        if (getenv('cron.fetch_ticket_number') == "0") {
+            log_message("info", "fetchTicketNumber is not enabled. Skipping it");
+            return;
+        }
+        $case_model = new CaseModel();
+        $case_model->downloadAndSaveTicketDetails($begin, $end);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function updateTicketDetails()
+    {
+        if (getenv('cron.update_ticket_details') == "0") {
+            log_message("info", "updateTicketData is not enabled. Skipping it");
+            return;
+        }
+        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+        $dcpcr_helpline_ticket_model->updateOpenTicketFromNsbbpo();
+    }
+
+    public function updateBackToSchool($from_date, $to_date)
+    {
+        if (getenv('cron.backtoschool') == "0") {
+            log_message("info", "updateBackToSchool is not enabled. Skipping it");
+            return;
+        }
+        $case_model = new CaseModel();
+        $case_model->detectAndMarkBackToSchoolCases($from_date, $to_date);
     }
 
     /**
@@ -182,7 +200,7 @@ class CronController extends BaseController
         $case_model = new CaseModel();
         $response_data = $case_model->getCaseReport($date);
         helper("ews_sms_template");
-        ews_daily_report_sms($response_data,$date);
+        ews_daily_report_sms($response_data, $date);
     }
 
     /**
@@ -226,18 +244,27 @@ class CronController extends BaseController
         if ($this->request->isCLI()) {
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
-            $begin = new DateTimeImmutable();
-            $end = $begin;
+            if (getenv('cron.run_cron_from_previous_date') == "1") {
+                $begin = getenv('cron.from_date');
+                $end = getenv('cron.to_date');
+                log_message("info", "The cron is running from date: $begin to $end");
+            } else {
+                $begin = new DateTimeImmutable();
+                $end = $begin;
+            }
             try {
                 if ($morning) {
                     $this->sendSms();
                 } else {
-                    $this->updateCaseData();
+                    $this->updateCaseData($begin, $end);
+                    $this->fetchTickets($begin, $end);
+                    $this->updateTicketDetails();
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();
                     $this->importStudentData();
                     $this->importAttendanceData($begin, $end);
                     $this->updateDetectedCases($begin, $end);
+                    $this->updateBackToSchool($begin, $end);
                     $this->sendCronStatusInfoSms($begin);
                 }
                 // Calculate script execution time

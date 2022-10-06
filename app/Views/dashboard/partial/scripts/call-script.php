@@ -1,7 +1,7 @@
 <?= $this->include('dashboard/partial/scripts/data-table-script');
 $lable = $data = '';
 foreach ($response as $row) {
-    $lable .= "'" . $row['disposition_type'] . "',";
+    $lable .= "'" . $row['name'] . "-" . $row['count'] . "',";
     $data .= "'" . $row['count'] . "',";
 }
 $lable = substr_replace($lable, "", -1) . "";

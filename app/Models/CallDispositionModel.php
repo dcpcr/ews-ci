@@ -2,41 +2,36 @@
 
 namespace App\Models;
 
-use CodeIgniter\Model;
-
-class CallDispositionModel extends Model
+class CallDispositionModel extends CaseDetailsModel
 {
-    protected $DBGroup          = 'default';
-    protected $table            = 'call_disposition';
-    protected $primaryKey       = 'case_id';
+    protected $DBGroup = 'default';
+    protected $table = 'call_disposition';
+    protected $primaryKey = 'case_id';
     protected $useAutoIncrement = true;
-    protected $insertID         = 0;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = ['case_id','call_disposition_id'];
+    protected $insertID = 0;
+    protected $returnType = 'array';
+    protected $useSoftDeletes = false;
+    protected $protectFields = true;
+    protected $allowedFields = ['case_id', 'call_disposition_id'];
 
-    /**
-     * @throws \ReflectionException
-     */
-    function insertUpdateCallDisposition($cases)
-   {
-       helper('cyfuture');
-       if ($cases) {
-           $reasonData = extract_call_disposition_data_from_cases($cases);
-           $keyMapping = array(
-               "call_dis" => "call_disposition_id"
-           );
-           $tableData = prepare_data_for_table($reasonData, $keyMapping);
-           $this->ignore(true)->insertBatch($tableData);
-           $this->updateBatch($tableData, 'case_id');
-       }
-   }
+
+    protected function getKeys(): array
+    {
+        return array('case_id', 'call_dis');
+    }
+
+    protected function getKeyMappings(): array
+    {
+        return array(
+            "call_dis" => "call_disposition_id"
+        );
+    }
+
     function getCallDisposition(array $school_ids, $classes, $start, $end): array
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
-        return $this->select(['name', 'count(*) as count'])
+        return $this->select(['call_disposition_master.name as name', 'count(*) as count'])
             ->join('detected_case', 'detected_case.id=call_disposition.case_id')
             ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')
@@ -47,4 +42,5 @@ class CallDispositionModel extends Model
             ->groupBy('name')
             ->findAll();
     }
+
 }

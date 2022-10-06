@@ -6,6 +6,7 @@ use CodeIgniter\Model;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use ReflectionException;
 use SSP\SSP;
 
 class CaseModel extends Model
@@ -250,6 +251,9 @@ class CaseModel extends Model
         }
     }
 
+    /**
+     * @throws Exception
+     */
     protected function detect(array $marked_students, array $open_cases, DateTimeInterface $date): array
     {
         $attendance_model = new AttendanceModel();
@@ -327,7 +331,7 @@ class CaseModel extends Model
         if ($insert_count > 0) {
             try {
                 $this->insertBatch($insert_data_array);
-            } catch (\ReflectionException $e) {
+            } catch (ReflectionException $e) {
                 log_message("error", "Case Insert Failed! There were " . $insert_count . " cases detected. on date - " . $date->format("d/m/Y"));
             }
         }
@@ -335,7 +339,7 @@ class CaseModel extends Model
         if ($update_count > 0) {
             try {
                 $this->updateBatch($update_data_array, 'id');
-            } catch (\ReflectionException $e) {
+            } catch (ReflectionException $e) {
                 log_message("error", "Case Update Failed! There were  " . $update_count . " cases that needed update. on date - " . $date->format("d/m/Y"));
             }
         }
@@ -349,12 +353,139 @@ class CaseModel extends Model
         $count_priority_wise = $this->select(['priority', 'count(*) as count'])
             ->where('day', $date->format("Y-m-d"))
             ->groupBy('priority')
-            ->orderBy('priority','desc')
+            ->orderBy('priority', 'desc')
             ->findAll();
         if ($total_case_count[0]['id'] != 0) {
             return $data = ['Total_Case_Count' => $total_case_count, 'Priority_Wise_Count' => $count_priority_wise];
         }
         return [];
+    }
+
+    //TODO: Add more statuses which may be considered as closed cases. e.g, untraceable.
+    protected function getUnclosedCasesOlderThanNDays(DateTimeInterface $date, $n): array
+    {
+        $response = $this->select(['id', 'student_id'])
+            ->where("DATEDIFF(`day`,STR_TO_DATE('" . $date->format("d-m-Y") . "', '%d-%m-%Y'))<=", "-$n")
+            ->where("status != 'Back To School'")
+            ->orderBy("student_id")
+            ->findAll();
+        $response_count = count($response);
+        log_message("info", "Total $n Days old Detected Cases: $response_count from date: " . $date->format("d-m-Y"));
+        return $response;
+    }
+
+    public function detectAndMarkBackToSchoolCases(DateTimeInterface $from_date, DateTimeInterface $to_date)
+    {
+        for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
+            $bts_counter = 0;
+            $not_bts_counter = 0;
+            $potential_cases = $this->getUnclosedCasesOlderThanNDays($date, 30);
+            if (!empty($potential_cases)) {
+                $ticket_model = new DcpcrHelplineTicketModel();
+                foreach ($potential_cases as $case) {
+                    $student_id = $case['student_id'];
+                    $case_id = $case['id'];
+                    if ($this->isStudentPresentInLastSevenDays($student_id, $date) &&
+                        $this->isStudentPresentAtLeastNDaysInLast30Days($student_id, $date, 10) &&
+                        $ticket_model->isTicketNotOpen($case_id)) {
+                        $this->markStudentAsBackToSchool($case_id);
+                        $bts_counter++;
+                    } else {
+                        $not_bts_counter++;
+                    }
+                }
+            }
+            log_message("info", "Total No of Students not marked as BTS for date: " . $date->format("d/m/Y") . " is " . $not_bts_counter);
+            log_message("info", "Total No of Students marked as BTS for date: " . $date->format("d/m/Y") . " is " . $bts_counter);
+        }
+    }
+
+    protected function isStudentPresentInLastSevenDays($student_id, $date): bool
+    {
+        return $this->isStudentPresentForAtLeastNDaysInLastMDays($student_id, $date, 1, 7);
+    }
+
+    protected function isStudentPresentAtLeastNDaysInLast30Days($student_id, $date, $n): bool
+    {
+        return $this->isStudentPresentForAtLeastNDaysInLastMDays($student_id, $date, $n, 30);
+    }
+
+    protected function isStudentPresentForAtLeastNDaysInLastMDays($student_id, $date, $n, $m): bool
+    {
+        if ($n > $m) {
+            return false;
+        }
+        $attendance_model = new AttendanceModel();
+        $student_attendance = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, $date, $m);
+        $present_count = 0;
+        foreach ($student_attendance as $row) {
+            $attendance_status = $row['attendance_status'];
+            if ($attendance_status == 'p') {
+                $present_count++;
+                if ($present_count >= $n) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected function markStudentAsBackToSchool($case_id)
+    {
+        $this->builder->set('status', 'Back To School')
+            ->where('id', "$case_id")
+            ->update();
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function downloadAndSaveTicketDetails(DateTimeInterface $from_date, DateTimeInterface $to_date)
+    {
+        helper('cyfuture');
+        $url = get_cyfuture_helpline_ticket_url();
+        $record_count = download_and_process_cyfuture_api_data(
+            $url, $from_date->format("Y-m-d"),
+            $to_date->format("Y-m-d"), function ($records, $page_number) use ($url) {
+            if ($records) {
+                $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+                $dcpcr_helpline_ticket_model->updateCaseDetails($records);
+                log_message("info", "The Cyfuture Ticket API call success, for Page - " . $page_number);
+            } else {
+                log_message("error", "The Cyfuture Ticket API call failed, Page - " . $page_number . "url - " . $url);
+            }
+        }
+        );
+        log_message("info", "Total Records fetched from Cyfuture Ticket API, ->" . $record_count);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function updateOperatorFormData(DateTimeInterface $from_date, DateTimeInterface $to_date)
+    {
+        helper('cyfuture');
+        $url = get_cyfuture_ewsrecord_url();
+        $record_count = download_and_process_cyfuture_api_data($url, $from_date->format("Y-m-d"),
+            $to_date->format("Y-m-d"), function ($records, $page_number) use ($url) {
+                if ($records) {
+                    $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+                    $reason_for_absenteeism_model->updateCaseDetails($records);
+                    $call_disposition_model = new CallDispositionModel();
+                    $call_disposition_model->updateCaseDetails($records);
+                    $high_risk_model = new HighRiskModel();
+                    $high_risk_model->updateCaseDetails($records);
+                    $back_to_school = new BackToSchoolModel();
+                    $back_to_school->updateCaseDetails($records);
+                    $home_visit = new HomeVisitModel();
+                    $home_visit->updateCaseDetails($records);
+                    log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
+                } else {
+                    log_message("error", "The Cyfuture EWS record API call failed, Page -" . $page_number . "url - " . $url);
+                }
+            }
+        );
+        log_message("info", "Total Records fetched from Cyfuture EWS record API, ->" . $record_count);
     }
 
 }
