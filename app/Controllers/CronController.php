@@ -246,8 +246,8 @@ class CronController extends BaseController
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             if (getenv('cron.run_cron_from_previous_date') == "1") {
                 $begin = getenv('cron.from_date');
-                $end = new DateTimeImmutable();
-                log_message("info", "The cron is running from date: $begin to " . $end->format('Y/m/d') . " date.");
+                $end = getenv('cron.to_date');
+                log_message("info", "The cron is running from date: $begin to " . $end);
             } else {
                 $begin = new DateTimeImmutable();
                 $end = $begin;
