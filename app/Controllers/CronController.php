@@ -10,6 +10,8 @@ use App\Models\MobileSmsStatusModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
+use CodeIgniter\I18n\Time;
+use DateTime;
 use DateTimeImmutable;
 use Exception;
 use ReflectionException;
@@ -245,9 +247,9 @@ class CronController extends BaseController
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution
             if (getenv('cron.run_cron_from_previous_date') == "1") {
-                $begin = getenv('cron.from_date');
-                $end = getenv('cron.to_date');
-                log_message("info", "The cron is running from date: $begin to $end");
+                $begin = Time::createFromFormat('Y-m-d', getenv('cron.from_date'));
+                $end = Time::createFromFormat('Y-m-d', getenv('cron.to_date'));
+                log_message("info", "The cron is running from date: " . $begin->format('Y-m-d') . " to date" . $end->format('Y-m-d'));
             } else {
                 $begin = new DateTimeImmutable();
                 $end = $begin;
