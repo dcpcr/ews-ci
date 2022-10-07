@@ -19,13 +19,13 @@ abstract class CaseDetailsModel extends Model
     /**
      * @throws \ReflectionException
      */
-    public function updateCaseDetails(array $cases)
+    public function updateCaseDetails(array $cases, bool $only_insert = false)
     {
         helper('cyfuture');
         if ($cases) {
             $keys = $this->getKeys();
             $key_mappings = $this->getKeyMappings();
-            insert_update_case_details($cases, $keys, $key_mappings, $this);
+            insert_update_case_details($cases, $keys, $key_mappings, $this, $only_insert);
         }
     }
 }

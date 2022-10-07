@@ -54,7 +54,7 @@ function get_cyfuture_token()
 /**
  * @throws ReflectionException
  */
-function insert_update_case_details($cases, $keys, $key_mappings, CaseDetailsModel $model)
+function insert_update_case_details($cases, $keys, $key_mappings, CaseDetailsModel $model, bool $only_insert)
 {
     helper('cyfuture');
     if ($cases) {
@@ -63,8 +63,10 @@ function insert_update_case_details($cases, $keys, $key_mappings, CaseDetailsMod
         $count = $model->ignore()->insertBatch($table_data, null, 2000);
         $table_name = $model->getTableName();
         log_message("info", "$count New Records $table_name inserted in  table.");
-        $count = $model->updateBatch($table_data, 'case_id', 2000);
-        log_message("info", "$count Records updated in $table_name table.");
+        if (!$only_insert) {
+            $count = $model->updateBatch($table_data, 'case_id', 2000);
+            log_message("info", "$count Records updated in $table_name table.");
+        }
     }
 }
 
