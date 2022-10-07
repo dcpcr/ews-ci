@@ -449,7 +449,7 @@ class CaseModel extends Model
             $to_date->format("Y-m-d"), function ($records, $page_number) use ($url) {
             if ($records) {
                 $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
-                $dcpcr_helpline_ticket_model->updateCaseDetails($records);
+                $dcpcr_helpline_ticket_model->updateCaseDetails($records, true);
                 log_message("info", "The Cyfuture Ticket API call success, for Page - " . $page_number);
             } else {
                 log_message("error", "The Cyfuture Ticket API call failed, Page - " . $page_number . "url - " . $url);
