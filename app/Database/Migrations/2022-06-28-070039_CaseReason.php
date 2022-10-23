@@ -26,6 +26,7 @@ class CaseReason extends Migration
             ],
             'created_at datetime default current_timestamp',
         ]);
+        $this->forge->addPrimaryKey('case_id');
         $this->forge->createTable('case_reason');
     }
 

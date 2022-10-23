@@ -21,16 +21,16 @@ class CallDispositionMaster extends Migration
             ],
             'active' => [
                 'type' => 'INT',
-                'constrain'=>'2',
+                'constrain' => '2',
                 'NOT NULL' => true,
             ],
-            ]);
+        ]);
         $this->forge->addField(
             [
                 'created_at timestamp not null default current_timestamp',
                 'updated_at timestamp not null default current_timestamp on update current_timestamp',
             ]);
-        $this->forge->addKey('id');
+        $this->forge->addPrimaryKey('id');
         $this->forge->createTable('call_disposition_master');
     }
 
