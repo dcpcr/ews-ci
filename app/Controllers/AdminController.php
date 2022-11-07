@@ -2,16 +2,22 @@
 
 namespace App\Controllers;
 
+use App\Database\Migrations\DetectedCase;
+use App\Models\AttendanceModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\CaseReasonModel;
+use App\Models\DcpcrHelplineTicketModel;
 use App\Models\DistrictModel;
 use App\Models\HighRiskModel;
+use App\Models\HomeVisitModel;
 use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
+use App\Models\StudentModel;
 use App\Models\ZoneModel;
 use DateTime;
+use DateTimeImmutable;
 
 class AdminController extends AuthController
 {
@@ -94,6 +100,9 @@ class AdminController extends AuthController
                 case 'case':
                     $this->prepareCaseData();
                     break;
+                case 'case-status':
+                    $this->prepareCaseStatusData();
+                    break;
                 case 'absenteeism':
                     $this->prepareAbsenteeismData();
                     break;
@@ -109,6 +118,11 @@ class AdminController extends AuthController
                 case 'homevisits':
                     $this->homeVisitsReport();
                     break;
+                case 'onlineattendance':
+                    $this->onlineAttendance();
+                    break;
+                case 'frequentabsenteeism':
+                    $this->frequentAbsenteeism();
             }
             $this->view_data['user_name'] = user()->username;
             return view($this->view_name, $this->view_data);
@@ -140,16 +154,16 @@ class AdminController extends AuthController
         $high_risk_model = new HighRiskModel();
         $this->view_data['high_risk_count'] = $high_risk_model
             ->getHighRiskCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-              $case_model = new CaseModel();
+        $case_model = new CaseModel();
         $this->view_data['detected_case_count'] = $case_model
             ->getDetectedCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $this->view_data['detected_case_count'][] = [
             'count' => array_sum(array_column($this->view_data['detected_case_count'], "count")),
             'gender' => 'Total'
         ];
-        $this->view_data['high_risk_count'][] =[
-            'count'=>array_sum(array_column($this->view_data['high_risk_count'], "count")),
-            'gender'=>'Total'
+        $this->view_data['high_risk_count'][] = [
+            'count' => array_sum(array_column($this->view_data['high_risk_count'], "count")),
+            'gender' => 'Total'
         ];
         $this->view_data['response'] = [
             'detected_case_count' => $this->view_data['detected_case_count'],
@@ -159,7 +173,7 @@ class AdminController extends AuthController
         $this->view_name = 'dashboard/case';
     }
 
-    private function getGenderWiseReasonsCount(string $gender): array
+    private function getGenderWiseReasonsCount(array $gender): array
     {
         $school_ids = array_keys($this->schools);
         $case_reason_model = new ReasonForAbsenteeismModel();
@@ -172,13 +186,24 @@ class AdminController extends AuthController
             long absenteeism among students. The following report shows the distribution of such reasons, including the 
             frequency of cases detected across genders.";
         $this->view_data['page_title'] = 'Reasons of Absenteeism';
-        $maleCount = $this->getGenderWiseReasonsCount('Male');
-        $femaleCount = $this->getGenderWiseReasonsCount('Female');
-        $transgenderCount = $this->getGenderWiseReasonsCount('Transgender');
+        $school_ids = array_keys($this->schools);
+        $maleCount = $this->getGenderWiseReasonsCount(['Male']);
+        $femaleCount = $this->getGenderWiseReasonsCount(['Female']);
+        $transgenderCount = $this->getGenderWiseReasonsCount(['Transgender']);
+        $reason_wise_case_count = $this->getGenderWiseReasonsCount(['Female', 'Transgender', 'Male']);
+        $detected_case_model = new CaseModel();
+        $total_detected_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
+        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+        $sub_division_wise_total_dcpcr_helpline_case_count = $dcpcr_helpline_ticket_model->getDcpcrHelplineCaseDetails($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["New", "Closed", 'Open'], "total_ticket_count");
+        $sub_division_wise_in_total_progress_dcpcr_helpline_case_count = $dcpcr_helpline_ticket_model->getDcpcrHelplineCaseDetails($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["New", 'Open'], "total_in_progress_ticket_count");
         $this->view_data['response'] = [
             'reason_male_count' => $maleCount,
             'reason_female_count' => $femaleCount,
-            'reason_transgender_count' => $transgenderCount
+            'reason_transgender_count' => $transgenderCount,
+            'reason_wise_case_count' => $reason_wise_case_count,
+            'total_detected_cases' => $total_detected_cases,
+            'sub_division_wise_total_dcpcr_helpline_case_count' => $sub_division_wise_total_dcpcr_helpline_case_count,
+            'sub_division_wise_in_total_progress_dcpcr_helpline_case_count' => $sub_division_wise_in_total_progress_dcpcr_helpline_case_count,
         ];
         $this->view_name = 'dashboard/absenteeism';
     }
@@ -211,9 +236,7 @@ class AdminController extends AuthController
             that the schools must mark attendance daily, and across classes. The following reports show the performance 
             of schools vis-a-vis marking students’ attendance.";
         $this->view_data['page_title'] = 'Attendance Report';
-
         $school_ids = array_keys($this->schools);
-
         $school_wise_student_count = $this->school_model
             ->getSchoolWiseStudentCount($school_ids, $this->classes);
         $marked_attendance_count = $this->school_model
@@ -289,14 +312,11 @@ class AdminController extends AuthController
         $class_get = $this->request->getGet('class');
         $this->classes = (empty($class_get) || ($class_get == ['All']))
             ? $this->initializeClasses() : $this->request->getGet('class');
-
         $duration_get = $this->request->getGet('duration');
         $this->duration = $this->initializeDuration($duration_get);
-
         $user_jurisdiction_data['filter_permissions'] = $this->filters;
         $user_jurisdiction_data['selected_classes'] = empty($class_get) ? ['All'] : $class_get;
         $user_jurisdiction_data['selected_duration'] = $this->getSelectedDuration();
-
         $this->view_data = $user_jurisdiction_data;
 
     }
@@ -456,5 +476,126 @@ class AdminController extends AuthController
             }
         }
     }
+
+    private function onlineAttendance()
+    {
+        $this->view_data['details'] = "To help us identify children at risk and bring them back to school, please ensure 100% marking of online attendance.";
+        $this->view_data['page_title'] = 'Online Attendance Report';
+        $school_ids = array_keys($this->schools);
+        $current_date = new DateTimeImmutable();
+        $attendance_model = new AttendanceModel();
+        //TODO: Attendance Count Recheck its not matching
+        $attendance_data_day_wise = $attendance_model->prepareAttendanceFormLastNDays("30", $school_ids, $this->classes, $current_date);
+        $attendance_data_class_wise = $attendance_model->getLastDayMarkedStudentAttendanceCount($school_ids, $this->classes, "class");
+        $student_model = new StudentModel();
+        $total_student_data_class_wise = $student_model->getTotalStudent($school_ids, $this->classes, "class");
+        $total_student_data_school_wise = $student_model->getTotalStudent($school_ids, $this->classes, "school_id");
+        $marked_attendance_count = $attendance_model
+            ->getClassWiseMarkedAttendance($school_ids, $this->classes);
+        $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate($school_ids);
+        $attendance_data = $this->prepareClassWiseAttendanceData($total_student_data_class_wise, $marked_attendance_count);
+        $this->view_data['response'] = [
+            "attendance_data_day_wise" => $attendance_data_day_wise,
+            "attendance_data_class_wise" => $attendance_data_class_wise,
+            'marked_attendance_data' => $attendance_data,
+            'latest_marked_attendance_date' => $latest_marked_attendance_date,
+            'total_student_data_school_wise' => $total_student_data_school_wise,
+        ];
+        $this->view_name = 'dashboard/onlineattendance';
+    }
+
+    private function prepareCaseStatusData()
+    {
+        $this->view_data['details'] = "Students with frequent absenteeism are at a high risk of danger and compromised well-being. These are students who, without prior information, are absent for more than 20 days in a month or are absent for 7 consecutive days.";
+        $this->view_data['page_title'] = 'Case Status';
+
+        $school_ids = array_keys($this->schools);
+        $detected_case_model = new CaseModel();
+        $total_detected_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
+        $total_fresh_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Fresh"]);
+        $total_bts_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
+        $total_yet_to_be_contacted_cases = $detected_case_model->getYetToBeContactedCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+        $total_moved_out_of_village_count = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
+        $total_denial_of_admission_registration_name_struck_out = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
+        $home_visit_model = new HomeVisitModel();
+        $home_visit_count = $home_visit_model->getHomeVisitCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], "");
+        $detected_case_male_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Male', ["Back to school", "Fresh"]);
+        $detected_case_female_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Female', ["Back to school", "Fresh"]);
+        $detected_case_transgender_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Transgender', ["Back to school", "Fresh"]);
+        $detected_case_class_wise_count_array = $detected_case_model->getCaseCountGroupBy("class", $school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
+        $bts_case_male_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Male', ["Back to school"]);
+        $bts_case_female_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Female', ["Back to school"]);
+        $bts_case_transgender_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Transgender', ["Back to school"]);
+        $bts_case_class_wise_count_array = $detected_case_model->getCaseCountGroupBy("class", $school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
+        $this->view_data['response'] = [
+            'total_detected_case_count' => $total_detected_cases,
+            'total_bts_case_count' => $total_bts_cases,
+            'total_moved_out_of_village_count' => $total_moved_out_of_village_count,
+            'dropped_out_and_in_contact_to_bring_them_school' => $total_denial_of_admission_registration_name_struck_out,
+            'home_visit_count' => $home_visit_count,
+            'enrolled_and_in_contact_to_bring_them_back_to' => $total_fresh_cases - $total_moved_out_of_village_count - $total_denial_of_admission_registration_name_struck_out - $total_yet_to_be_contacted_cases,
+            'yet_to_be_contacted_cases' => $total_yet_to_be_contacted_cases,
+            'detected_case_male_count' => $detected_case_male_count,
+            'detected_case_female_count' => $detected_case_female_count,
+            'detected_case_transgender_count' => $detected_case_transgender_count,
+            'detected_case_class_wise_count_array' => $detected_case_class_wise_count_array,
+            'bts_case_male_count' => $bts_case_male_count,
+            'bts_case_female_count' => $bts_case_female_count,
+            'bts_case_transgender_count' => $bts_case_transgender_count,
+            'bts_case_class_wise_count_array' => $bts_case_class_wise_count_array];
+        $this->view_name = 'dashboard/case-status';
+    }
+
+    public function frequentAbsenteeism()
+    {
+        $this->view_data['details'] = "List of students with frequent absenteeism.";
+        $this->view_data['page_title'] = 'Frequent Absenteeism';
+        $school_ids = array_keys($this->schools);
+        $case_model = new CaseModel();
+        $frequent_detected_case_list = $case_model->getFrequentDetectedCases($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_data['response'] = [
+            "frequent_detected_cases" => $frequent_detected_case_list,
+        ];
+        $this->view_name = 'dashboard/frequent-absenteeism.php';
+
+    }
+
+    /**
+     * @param $schoolWiseStudentCount
+     * @param $markedAttendanceCount
+     * @return array
+     */
+    private function prepareClassWiseAttendanceData($schoolWiseStudentCount, $markedAttendanceCount): array
+    {
+        $school_data = [];
+        foreach ($schoolWiseStudentCount as $school) {
+
+            $school_data [$school['class']] ['class'] = $school['class'];
+            $school_data [$school['class']] ['student_count'] = is_null($school['count_total']) ? 0 : $school['count_total'];
+
+        }
+        foreach ($markedAttendanceCount as $school) {
+
+            $school_data [$school['class']] ['class'] = $school['class'];
+            $school_data [$school['class']] ['attendance_count'] = is_null($school['count_att']) ? 0 : $school['count_att'];
+        }
+
+        $table_data = [];
+        $count = 1;
+        foreach ($school_data as $classes => $class) {
+
+            $table_data [] = [
+                "Serial_no" => $count++,
+                "Class" => $class['class'],
+                "Attendance_Marked" => (isset($class['attendance_count'])) ? $class['attendance_count'] : 0,
+                "Attendance_Marked_Percent" => (isset($class['attendance_count'])) ? floor($class['attendance_count'] / $class['student_count'] * 100) : 0,
+                "Total_Students" => (isset($class['student_count'])) ? $class['student_count'] : 0,
+            ];
+
+        }
+        return $table_data;
+    }
+
 
 }

@@ -66,4 +66,30 @@ class StudentModel extends Model
             ->find("$student_id");
     }
 
+    public function getClassWiseStudentCount($school_id): array
+    {
+        return $this->distinct()
+            ->select(["school_id", "class", "count(*) as count"])
+            ->whereIn("school_id", $school_id)
+            ->groupBy("class")
+            ->findAll();
+    }
+
+    public function getTotalStudent(array $school_ids, array $classes, string $group_by): array
+    {
+        return $this->select([
+            'count(distinct(student.id)) as count_total',
+            "$group_by"
+        ])
+            ->whereIn('school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->groupBy("$group_by")
+            ->findAll();
+    }
+
+    public function getSchoolIds()
+    {
+    }
+
+
 }

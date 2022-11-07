@@ -488,4 +488,96 @@ class CaseModel extends Model
         log_message("info", "Total Records fetched from Cyfuture EWS record API, ->" . $record_count);
     }
 
+    public function getCaseCount(array $school_ids, array $classes, $start, $end, array $where_status_is)
+    {
+
+        return $this->select(['detected_case.id'])
+            ->join("master.student as student", "student.id=student_id")
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->whereIn("status", $where_status_is)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->countAllResults();
+    }
+
+    public function getYetToBeContactedCaseCount(array $school_ids, array $classes, $start, $end)
+    {
+        $call_disposition_model = new CallDispositionModel();
+        $contacted_case_count = $call_disposition_model->getCallDispositionCaseCount($school_ids, $classes, $start, $end);
+        $case_count = $this->select(['detected_case.id'])
+            ->join("master.student as student", "student.id=student_id")
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->countAllResults();
+        return $case_count - $contacted_case_count[0]['count'];
+
+    }
+
+    public function getGenderWiseCaseCount($school_ids, $classes, $start, $end, $gender, $where_status_is)
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        return $this->select(['detected_case.id'])
+            ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
+            ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->whereIn("status", $where_status_is)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" . $end . "', '%m/%d/%Y') and master.student.gender='$gender'")
+            ->countAllResults();
+
+    }
+
+    public function getCaseCountGroupBy(string $group_by, array $school_ids, array $classes, $start, $end, $where_status_is): array
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        return $this->select(['class', 'count(detected_case.id) as count'])
+            ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
+            ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->whereIn("status", $where_status_is)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" . $end . "', '%m/%d/%Y')")
+            ->groupBy("$group_by")
+            ->findAll();
+
+    }
+
+    public function getFrequentDetectedCases($school_ids, $classes, $start, $end): array
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        return $this->select([
+            $this->table . '.student_id',
+            'count(*) as detected_count',
+            'student.name as student_name',
+            'student.gender',
+            'student.class',
+            'student.section',
+            'student.dob',
+            'student.mother',
+            'student.father',
+            'student.mobile',
+            'student.address as address',
+            'school.id as school_id',
+            'school.name as school_name',
+            'school.district',
+            'school.zone',
+        ])
+            ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
+            ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->groupBy("student_id")
+            ->having("detected_count > ", "1")
+            ->findAll();
+
+    }
+
 }

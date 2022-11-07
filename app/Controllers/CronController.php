@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\AttendanceModel;
+use App\Models\AttendanceReportModel;
 use App\Models\CaseModel;
 use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
@@ -55,6 +56,23 @@ class CronController extends BaseController
         $file_name = "attendance.csv";
         $attendance_model = new AttendanceModel();
         $attendance_model->downloadAttendance($file_name, $from_date, $to_date);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    public function createAttendanceReport()
+    {
+        if (getenv('cron.attendancereport') == "0") {
+            log_message("info", "Prepare attendance report is not enabled. Skipping it");
+            return;
+        }
+        set_time_limit(1200);
+        $from_date = new DateTimeImmutable(getenv("cron.from_date"));
+        $to_date = new DateTimeImmutable(getenv("cron.to_date"));
+        $attendance_model = new AttendanceReportModel();
+        $attendance_model->prepareAttendanceReport($from_date, $to_date);
     }
 
     /**
@@ -252,29 +270,26 @@ class CronController extends BaseController
                 $begin = new DateTimeImmutable();
                 $end = $begin;
             }
-            try {
-                if ($morning) {
-                    $this->sendSms();
-                } else {
-                    $this->updateCaseData($begin, $end);
-                    $this->fetchTickets($begin, $end);
-                    $this->updateTicketDetails();
-                    $this->fetchAndUpdateSmsDeliveryReport();
-                    $this->importSchoolData();
-                    $this->importStudentData();
-                    $this->importAttendanceData($begin, $end);
-                    $this->updateDetectedCases($begin, $end);
-                    $this->updateBackToSchool($begin, $end);
-                    $this->sendCronStatusInfoSms($begin);
-                }
-                // Calculate script execution time
-                $end_time = microtime(true);
-                $execution_time = ($end_time - $start_time);
-                log_message('info', "Execution time of script = " . $execution_time . " sec");
-            } catch (Exception $e) {
-                log_message('error', "Cron failed to finish. Error - " . $e->getMessage());
-                $this->sendCronErrorSms($morning);
+            if ($morning) {
+                $this->sendSms();
+            } else {
+                $this->updateCaseData($begin, $end);
+                $this->fetchTickets($begin, $end);
+                $this->updateTicketDetails();
+                $this->fetchAndUpdateSmsDeliveryReport();
+                $this->importSchoolData();
+                $this->importStudentData();
+                $this->importAttendanceData($begin, $end);
+                $this->updateDetectedCases($begin, $end);
+                $this->updateBackToSchool($begin, $end);
+                $this->createAttendanceReport($begin, $end);
+                $this->sendCronStatusInfoSms($begin);
             }
+            // Calculate script execution time
+            $end_time = microtime(true);
+            $execution_time = ($end_time - $start_time);
+            log_message('info', "Execution time of script = " . $execution_time . " sec");
+
         } else {
             log_message('info', "Access to this functionally without CLI is not allowed");
         }

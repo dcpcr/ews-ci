@@ -34,7 +34,6 @@ add('rsync', [
 ]);
 
 // Hosts
-
 host('10.194.73.95')
     ->set('remote_user', 'root')
     ->set('labels', ['stage' => 'staging'])
@@ -81,7 +80,7 @@ add('crontab:jobs', [
 ]);
 
 task('db-changes', function () {
-    run ('cd {{current_path}} && php spark migrate');
+    run('cd {{current_path}} && php spark migrate');
 });
 
 task('logs', function () {

@@ -31,6 +31,12 @@ class Reason extends Migration
                 'NOT NULL' => true,
 
             ],
+            'action_taken' => [
+                'type' => 'varchar',
+                'constraint' => '250',
+                'default' => "",
+
+            ],
         ]);
 
 

@@ -1,6 +1,7 @@
 <?= $this->include('dashboard/partial/scripts/data-table-script'); ?>
 <?php
 $lable = $dataMale = $dataFemale = $dataTransgender = '';
+
 foreach ($response['reason_male_count'] as $row) {
     $lable .= "'" . $row['reason_name'] . "',";
     $dataMale .= "'" . $row['count'] . "',";
@@ -15,7 +16,6 @@ foreach ($response['reason_transgender_count'] as $row) {
     $dataTransgender .= "'" . $row['count'] . "',";
 }
 $dataTransgender = substr_replace($dataTransgender, "", -1) . "";
-
 ?>
 <script>
     const reasonslable = [<?=$lable?>];

@@ -59,4 +59,5 @@ class DetectedCase extends Migration
         //
         $this->forge->dropTable('detected_case');
     }
+
 }
