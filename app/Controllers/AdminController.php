@@ -7,6 +7,7 @@ use App\Models\CaseModel;
 use App\Models\CaseReasonModel;
 use App\Models\DistrictModel;
 use App\Models\HighRiskModel;
+use App\Models\HomeVisitModel;
 use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
@@ -94,6 +95,9 @@ class AdminController extends AuthController
                 case 'case':
                     $this->prepareCaseData();
                     break;
+                case 'summary':
+                    $this->prepareSummaryPageData();
+                    break;
                 case 'absenteeism':
                     $this->prepareAbsenteeismData();
                     break;
@@ -140,16 +144,16 @@ class AdminController extends AuthController
         $high_risk_model = new HighRiskModel();
         $this->view_data['high_risk_count'] = $high_risk_model
             ->getHighRiskCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-              $case_model = new CaseModel();
+        $case_model = new CaseModel();
         $this->view_data['detected_case_count'] = $case_model
             ->getDetectedCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $this->view_data['detected_case_count'][] = [
             'count' => array_sum(array_column($this->view_data['detected_case_count'], "count")),
             'gender' => 'Total'
         ];
-        $this->view_data['high_risk_count'][] =[
-            'count'=>array_sum(array_column($this->view_data['high_risk_count'], "count")),
-            'gender'=>'Total'
+        $this->view_data['high_risk_count'][] = [
+            'count' => array_sum(array_column($this->view_data['high_risk_count'], "count")),
+            'gender' => 'Total'
         ];
         $this->view_data['response'] = [
             'detected_case_count' => $this->view_data['detected_case_count'],
@@ -157,6 +161,49 @@ class AdminController extends AuthController
         ];
 
         $this->view_name = 'dashboard/case';
+    }
+
+    private function prepareSummaryPageData()
+    {
+        $this->view_data['details'] = "Students with frequent absenteeism are at a high risk of danger and compromised well-being. These are students who, without prior information, are absent for more than 20 days in a month or are absent for 7 consecutive days.";
+        $this->view_data['page_title'] = 'Case Status';
+
+        $school_ids = array_keys($this->schools);
+        $detected_case_model = new CaseModel();
+        $total_detected_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
+        $total_fresh_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Fresh"]);
+        $total_bts_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
+        $total_yet_to_be_contacted_cases = $detected_case_model->getYetToBeContactedCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+        $total_moved_out_of_village_count = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
+        $total_denial_of_admission_registration_name_struck_out = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
+        $home_visit_model = new HomeVisitModel();
+        $home_visit_count = $home_visit_model->getHomeVisitCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], "");
+        $detected_case_male_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Male', ["Back to school", "Fresh"]);
+        $detected_case_female_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Female', ["Back to school", "Fresh"]);
+        $detected_case_transgender_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Transgender', ["Back to school", "Fresh"]);
+        $detected_case_class_wise_count_array = $detected_case_model->getCaseCountGroupBy("class", $school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
+        $bts_case_male_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Male', ["Back to school"]);
+        $bts_case_female_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Female', ["Back to school"]);
+        $bts_case_transgender_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Transgender', ["Back to school"]);
+        $bts_case_class_wise_count_array = $detected_case_model->getCaseCountGroupBy("class", $school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
+        $this->view_data['response'] = [
+            'total_detected_case_count' => $total_detected_cases,
+            'total_bts_case_count' => $total_bts_cases,
+            'total_moved_out_of_village_count' => $total_moved_out_of_village_count,
+            'dropped_out_and_in_contact_to_bring_them_school' => $total_denial_of_admission_registration_name_struck_out,
+            'home_visit_count' => $home_visit_count,
+            'enrolled_and_in_contact_to_bring_them_back_to' => $total_fresh_cases - $total_moved_out_of_village_count - $total_denial_of_admission_registration_name_struck_out - $total_yet_to_be_contacted_cases,
+            'yet_to_be_contacted_cases' => $total_yet_to_be_contacted_cases,
+            'detected_case_male_count' => $detected_case_male_count,
+            'detected_case_female_count' => $detected_case_female_count,
+            'detected_case_transgender_count' => $detected_case_transgender_count,
+            'detected_case_class_wise_count_array' => $detected_case_class_wise_count_array,
+            'bts_case_male_count' => $bts_case_male_count,
+            'bts_case_female_count' => $bts_case_female_count,
+            'bts_case_transgender_count' => $bts_case_transgender_count,
+            'bts_case_class_wise_count_array' => $bts_case_class_wise_count_array];
+        $this->view_name = 'dashboard/summary';
     }
 
     private function getGenderWiseReasonsCount(string $gender): array
