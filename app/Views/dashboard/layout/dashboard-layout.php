@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="<?= csrf_token()?>" content="<?=csrf_hash()?>" class="csrf">
+    <meta name="<?= csrf_token() ?>" content="<?= csrf_hash() ?>" class="csrf">
     <title></title>
 
     <!-- Add our own ews styesheet -->
@@ -55,7 +55,13 @@
         <div class="navbar-light">
             <?= $this->include('dashboard/layout/brand-logo-name'); ?>
         </div>
-        <?= $this->include('dashboard/layout/left-nav-bar'); ?>
+        <?php
+        if (!$filter_permissions['viewAllReports']) {
+            echo $this->include('dashboard/layout/school-left-nav-bar');
+        } else {
+            echo $this->include('dashboard/layout/left-nav-bar');
+        }
+        ?>
     </aside>
 
     <div class="content-wrapper">
