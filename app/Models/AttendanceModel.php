@@ -117,4 +117,14 @@ class AttendanceModel extends Model
         $data_array = $this->getStudentAttendanceForCases(array_column($cases, 0));
         dump_array_in_file($data_array, $tofilename, false);
     }
+
+    public function prepareDailyAttendanceReport($school_id, $date): array
+    {
+        return $this->select(["school_id", "class", "count(CASE WHEN attendance_status='p' THEN 'p' ELSE null end) as present_count,count(CASE WHEN attendance_status='a' THEN 'a' ELSE null end) as absent_count,count(CASE WHEN attendance_status='l' THEN 'l' ELSE null end) as leave_count"])
+            ->join("master.student as student", "student.id=student_id")
+            ->where("date", $date->format("Y-m-d"))
+            ->where("school_id", $school_id)
+            ->groupBy("class")
+            ->findAll();
+    }
 }

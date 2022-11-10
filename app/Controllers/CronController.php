@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\AttendanceModel;
+use App\Models\AttendanceReportModel;
 use App\Models\CaseModel;
 use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
@@ -55,6 +56,19 @@ class CronController extends BaseController
         $file_name = "attendance.csv";
         $attendance_model = new AttendanceModel();
         $attendance_model->downloadAttendance($file_name, $from_date, $to_date);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function attendanceReport($from_date, $to_date)
+    {
+        if (getenv('cron.attendancereport') == "0") {
+            log_message("info", "Prepare daily attendance report is not enabled. Skipping it");
+            return;
+        }
+        $attendance_model = new AttendanceReportModel();
+        $attendance_model->createClassWiseDailyAttendanceReport($from_date, $to_date);
     }
 
     /**
@@ -263,6 +277,7 @@ class CronController extends BaseController
                     $this->importSchoolData();
                     $this->importStudentData();
                     $this->importAttendanceData($begin, $end);
+                    $this->attendanceReport($begin, $end);
                     $this->updateDetectedCases($begin, $end);
                     $this->updateBackToSchool($begin, $end);
                     $this->sendCronStatusInfoSms($begin);
