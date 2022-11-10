@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\AttendanceModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\CaseReasonModel;
@@ -11,8 +12,10 @@ use App\Models\HomeVisitModel;
 use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
+use App\Models\StudentModel;
 use App\Models\ZoneModel;
 use DateTime;
+use DateTimeImmutable;
 
 class AdminController extends AuthController
 {
@@ -109,6 +112,9 @@ class AdminController extends AuthController
                     break;
                 case 'attendance':
                     $this->prepareAttendanceData();
+                    break;
+                case 'online-attendance':
+                    $this->prepareOnlineAttendancePageData();
                     break;
                 case 'homevisits':
                     $this->homeVisitsReport();
@@ -268,6 +274,33 @@ class AdminController extends AuthController
         $this->view_data['response'] = ['schoolWiseStudentCount' => $school_wise_student_count, 'markedAttendanceCount' => $marked_attendance_count];
         $this->view_name = 'dashboard/attendance';
     }
+
+    private function prepareOnlineAttendancePageData()
+    {
+        $this->view_data['details'] = "To help us identify children at risk and bring them back to school, please ensure 100% marking of online attendance.";
+        $this->view_data['page_title'] = 'Online Attendance Report';
+        $school_ids = array_keys($this->schools);
+        $current_date = new DateTimeImmutable();
+        $attendance_model = new AttendanceModel();
+        $attendance_data_day_wise = $attendance_model->prepareAttendanceFormLastNDays("30", $school_ids, $this->classes, $current_date);
+        $attendance_data_class_wise = $attendance_model->getLastDayMarkedStudentAttendanceCount($school_ids, $this->classes, "class");
+        $student_model = new StudentModel();
+        $total_student_data_class_wise = $student_model->getTotalStudent($school_ids, $this->classes, "class");
+        $total_student_data_school_wise = $student_model->getTotalStudent($school_ids, $this->classes, "school_id");
+        $marked_attendance_count = $attendance_model
+            ->getClassWiseMarkedAttendance($school_ids, $this->classes);
+        $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate($school_ids);
+        $attendance_data = $this->prepareClassWiseAttendanceData($total_student_data_class_wise, $marked_attendance_count);
+        $this->view_data['response'] = [
+            "attendance_data_day_wise" => $attendance_data_day_wise,
+            "attendance_data_class_wise" => $attendance_data_class_wise,
+            'marked_attendance_data' => $attendance_data,
+            'latest_marked_attendance_date' => $latest_marked_attendance_date,
+            'total_student_data_school_wise' => $total_student_data_school_wise,
+        ];
+        $this->view_name = 'dashboard/online-attendance';
+    }
+
 
     private function homeVisitsReport(): void
     {
@@ -503,5 +536,42 @@ class AdminController extends AuthController
             }
         }
     }
+
+    /**
+     * @param $schoolWiseStudentCount
+     * @param $markedAttendanceCount
+     * @return array
+     */
+    private function prepareClassWiseAttendanceData($schoolWiseStudentCount, $markedAttendanceCount): array
+    {
+        $school_data = [];
+        foreach ($schoolWiseStudentCount as $school) {
+
+            $school_data [$school['class']] ['class'] = $school['class'];
+            $school_data [$school['class']] ['student_count'] = is_null($school['count_total']) ? 0 : $school['count_total'];
+
+        }
+        foreach ($markedAttendanceCount as $school) {
+
+            $school_data [$school['class']] ['class'] = $school['class'];
+            $school_data [$school['class']] ['attendance_count'] = is_null($school['count_att']) ? 0 : $school['count_att'];
+        }
+
+        $table_data = [];
+        $count = 1;
+        foreach ($school_data as $classes => $class) {
+
+            $table_data [] = [
+                "Serial_no" => $count++,
+                "Class" => $class['class'],
+                "Attendance_Marked" => (isset($class['attendance_count'])) ? $class['attendance_count'] : 0,
+                "Attendance_Marked_Percent" => (isset($class['attendance_count'])) ? floor($class['attendance_count'] / $class['student_count'] * 100) : 0,
+                "Total_Students" => (isset($class['student_count'])) ? $class['student_count'] : 0,
+            ];
+
+        }
+        return $table_data;
+    }
+
 
 }

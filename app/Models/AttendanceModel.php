@@ -127,4 +127,68 @@ class AttendanceModel extends Model
             ->groupBy("class")
             ->findAll();
     }
+
+    public function prepareAttendanceFormLastNDays($N, $school_ids, $classes, $date): array
+    {
+        $attendance_data = [];
+        for ($i = 0; $i < $N; $i++) {
+            $result = $this->getDateWiseMarkedStudentAttendanceCount($school_ids, $classes, $date);
+            $attendance_data[] = [
+                "date" => $date->format("d-m-Y"),
+                "count" => (is_null($result[0]["count"])) ? "0" : $result[0]['count'],
+            ];
+            $date = $date->modify('-1 day');
+
+        }
+        return $attendance_data;
+    }
+
+    public function getDateWiseMarkedStudentAttendanceCount($school_ids, $classes, $date): array
+    {
+        return $this->select(['count(*) as count'])
+            ->join("master.student as student", "student.id=student_id")
+            ->where("attendance.date = STR_TO_DATE('" . $date->format("Y-m-d") . "', '%Y-%m-%d')")
+            ->whereIn("school_id", $school_ids)
+            ->whereIn("class", $classes)
+            ->findAll();
+    }
+
+    public function getLastDayMarkedStudentAttendanceCount($school_ids, $classes, string $group_by): array
+    {
+        $max_date = $this->getLatestMarkedAttendanceDate($school_ids);
+        return $this->select(["school_id", "class", "count(*) as count"])
+            ->join("master.student as student", "student.id=student_id")
+            ->where("date", $max_date[0]['date'])
+            ->whereIn("school_id", $school_ids)
+            ->whereIn("class", $classes)
+            ->groupBy("$group_by")
+            ->findAll();
+    }
+
+    public function getLatestMarkedAttendanceDate($school_ids): array
+    {
+        return $this->select("max(date) as date")
+            ->join("master.student as student", "student.id=student_id")
+            ->whereIn("school_id", $school_ids)
+            ->findAll();
+    }
+
+    public function getClassWiseMarkedAttendance($school_ids, $classes): array
+    {
+        helper('general');
+        $max_date = $this->getLatestMarkedAttendanceDate($school_ids);
+        return $this->select([
+            'count(distinct(student.id)) as count_att',
+            'count(student.id)/count(distinct(attendance.date)) as avg_att',
+            'count(distinct(attendance.date)) as days_att',
+            'school_id',
+            'class',
+        ])
+            ->join('master.student', 'student_id = student.id', "left")
+            ->whereIn('school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("date", $max_date[0]['date'])
+            ->groupBy('class')
+            ->findAll();
+    }
 }
