@@ -15,6 +15,11 @@ $(function () {
         $('a.homevisits').attr('href', $('a.homevisits').attr('href') + '?' + query_data);
         $('a.call').attr('href', $('a.call').attr('href') + '?' + query_data);
         $('a.attendance').attr('href', $('a.attendance').attr('href') + '?' + query_data);
+        $('a.summary').attr('href', $('a.summary').attr('href') + '?' + query_data);
+        $('a.frequent-absenteeism').attr('href', $('a.frequent-absenteeism').attr('href') + '?' + query_data);
+        $('a.absenteeism-reason').attr('href', $('a.absenteeism-reason').attr('href') + '?' + query_data);
+        $('a.online-attendance').attr('href', $('a.online-attendance').attr('href') + '?' + query_data);
+
     }
 });
 
