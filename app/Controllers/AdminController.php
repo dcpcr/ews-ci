@@ -105,6 +105,9 @@ class AdminController extends AuthController
                 case 'absenteeism-reason':
                     $this->prepareReasonForAbsenteeismPageData();
                     break;
+                case 'frequent-absenteeism':
+                    $this->prepareFrequentAbsenteeismPageData();
+                    break;
                 case 'highrisk':
                     $this->prepareHighRiskData();
                     break;
@@ -247,6 +250,21 @@ class AdminController extends AuthController
         ];
         $this->view_name = 'dashboard/absenteeism-reason';
     }
+
+    public function prepareFrequentAbsenteeismPageData()
+    {
+        $this->view_data['details'] = "List of students with frequent absenteeism.";
+        $this->view_data['page_title'] = 'Frequent Absenteeism';
+        $school_ids = array_keys($this->schools);
+        $case_model = new CaseModel();
+        $frequent_detected_case_list = $case_model->getFrequentDetectedCases($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_data['response'] = [
+            "frequent_detected_cases" => $frequent_detected_case_list,
+        ];
+        $this->view_name = 'dashboard/frequent-absenteeism.php';
+
+    }
+
 
     private function prepareHighRiskData(): void
     {

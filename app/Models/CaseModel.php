@@ -546,4 +546,37 @@ class CaseModel extends Model
             ->findAll();
 
     }
+
+    public function getFrequentDetectedCases($school_ids, $classes, $start, $end): array
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        return $this->select([
+            $this->table . '.student_id',
+            'count(*) as detected_count',
+            'student.name as student_name',
+            'student.gender',
+            'student.class',
+            'student.section',
+            'student.dob',
+            'student.mother',
+            'student.father',
+            'student.mobile',
+            'student.address as address',
+            'school.id as school_id',
+            'school.name as school_name',
+            'school.district',
+            'school.zone',
+        ])
+            ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
+            ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->groupBy("student_id")
+            ->having("detected_count > ", "1")
+            ->findAll();
+
+    }
 }
