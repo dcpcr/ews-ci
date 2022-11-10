@@ -6,6 +6,7 @@ use App\Models\AttendanceModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\CaseReasonModel;
+use App\Models\DcpcrHelplineTicketModel;
 use App\Models\DistrictModel;
 use App\Models\HighRiskModel;
 use App\Models\HomeVisitModel;
@@ -101,8 +102,8 @@ class AdminController extends AuthController
                 case 'summary':
                     $this->prepareSummaryPageData();
                     break;
-                case 'absenteeism':
-                    $this->prepareAbsenteeismData();
+                case 'absenteeism-reason':
+                    $this->prepareReasonForAbsenteeismPageData();
                     break;
                 case 'highrisk':
                     $this->prepareHighRiskData();
@@ -212,28 +213,39 @@ class AdminController extends AuthController
         $this->view_name = 'dashboard/summary';
     }
 
-    private function getGenderWiseReasonsCount(string $gender): array
+    private function getGenderWiseReasonsCount(array $gender): array
     {
         $school_ids = array_keys($this->schools);
         $case_reason_model = new ReasonForAbsenteeismModel();
         return $case_reason_model->getReasonsCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], $gender);
     }
 
-    private function prepareAbsenteeismData(): void
+    private function prepareReasonForAbsenteeismPageData(): void
     {
         $this->view_data['details'] = "The Early Warning System has laid out a process for ascertaining the various reasons that lead to 
             long absenteeism among students. The following report shows the distribution of such reasons, including the 
             frequency of cases detected across genders.";
         $this->view_data['page_title'] = 'Reasons of Absenteeism';
-        $maleCount = $this->getGenderWiseReasonsCount('Male');
-        $femaleCount = $this->getGenderWiseReasonsCount('Female');
-        $transgenderCount = $this->getGenderWiseReasonsCount('Transgender');
+        $school_ids = array_keys($this->schools);
+        $maleCount = $this->getGenderWiseReasonsCount(['Male']);
+        $femaleCount = $this->getGenderWiseReasonsCount(['Female']);
+        $transgenderCount = $this->getGenderWiseReasonsCount(['Transgender']);
+        $reason_wise_case_count = $this->getGenderWiseReasonsCount(['Female', 'Transgender', 'Male']);
+        $detected_case_model = new CaseModel();
+        $total_detected_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
+        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
+        $sub_division_wise_total_dcpcr_helpline_case_count = $dcpcr_helpline_ticket_model->getDcpcrHelplineCaseDetails($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["New", "Closed", 'Open'], "total_ticket_count");
+        $sub_division_wise_in_total_progress_dcpcr_helpline_case_count = $dcpcr_helpline_ticket_model->getDcpcrHelplineCaseDetails($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["New", 'Open'], "total_in_progress_ticket_count");
         $this->view_data['response'] = [
             'reason_male_count' => $maleCount,
             'reason_female_count' => $femaleCount,
-            'reason_transgender_count' => $transgenderCount
+            'reason_transgender_count' => $transgenderCount,
+            'reason_wise_case_count' => $reason_wise_case_count,
+            'total_detected_cases' => $total_detected_cases,
+            'sub_division_wise_total_dcpcr_helpline_case_count' => $sub_division_wise_total_dcpcr_helpline_case_count,
+            'sub_division_wise_in_total_progress_dcpcr_helpline_case_count' => $sub_division_wise_in_total_progress_dcpcr_helpline_case_count,
         ];
-        $this->view_name = 'dashboard/absenteeism';
+        $this->view_name = 'dashboard/absenteeism-reason';
     }
 
     private function prepareHighRiskData(): void

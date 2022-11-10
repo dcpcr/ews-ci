@@ -49,14 +49,15 @@ class ReasonForAbsenteeismModel extends CaseDetailsModel
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
-        return $this->select(['reason.name as reason_name', 'count(*) as count'])
+        return $this->select(['reason.name as reason_name', 'action_taken', 'count(*) as count'])
             ->join('reason', 'reason.id=reason_for_absenteeism.reason_id')
             ->join('detected_case', 'detected_case.id=reason_for_absenteeism.case_id')
             ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')
             ->whereIn('student.school_id', $school_ids)
             ->whereIn('student.class', $classes)
-            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" . $end . "', '%m/%d/%Y') and master.student.gender='$gender'")
+            ->whereIn('master.student.gender', $gender)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" . $end . "', '%m/%d/%Y')")
             ->groupBy('reason_name')
             ->orderBy('count', 'desc')
             ->findAll();
