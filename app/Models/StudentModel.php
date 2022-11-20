@@ -75,7 +75,7 @@ class StudentModel extends Model
             ->findAll();
     }
 
-    public function getTotalStudent(array $school_ids, array $classes, string $group_by): array
+    public function getStudentCountFor(array $school_ids, array $classes, string $group_by): array
     {
         return $this->select([
             'count(distinct(student.id)) as count_total',

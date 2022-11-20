@@ -67,8 +67,9 @@ class CronController extends BaseController
             log_message("info", "Prepare daily attendance report is not enabled. Skipping it");
             return;
         }
+        $file_name = 'attendance_report.csv';
         $attendance_model = new AttendanceReportModel();
-        $attendance_model->createClassWiseDailyAttendanceReport($from_date, $to_date);
+        $attendance_model->createClassWiseDailyAttendanceReport($file_name, $from_date, $to_date);
     }
 
     /**

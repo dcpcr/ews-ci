@@ -315,8 +315,8 @@ class AdminController extends AuthController
         $attendance_data_day_wise = $attendance_model->prepareAttendanceFormLastNDays("30", $school_ids, $this->classes, $current_date);
         $attendance_data_class_wise = $attendance_model->getLastDayMarkedStudentAttendanceCount($school_ids, $this->classes, "class");
         $student_model = new StudentModel();
-        $total_student_data_class_wise = $student_model->getTotalStudent($school_ids, $this->classes, "class");
-        $total_student_data_school_wise = $student_model->getTotalStudent($school_ids, $this->classes, "school_id");
+        $total_student_data_class_wise = $student_model->getStudentCountFor($school_ids, $this->classes, "class");
+        $total_student_data_school_wise = $student_model->getStudentCountFor($school_ids, $this->classes, "school_id");
         $marked_attendance_count = $attendance_model
             ->getClassWiseMarkedAttendance($school_ids, $this->classes);
         $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate($school_ids);

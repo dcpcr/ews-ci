@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
+use CodeIgniter\Validation\ValidationInterface;
+use ReflectionException;
 
 class AttendanceReportModel extends Model
 {
@@ -16,21 +19,27 @@ class AttendanceReportModel extends Model
     protected $protectFields = true;
     protected $allowedFields = [];
 
-    /**
-     * @throws \ReflectionException
-     */
-    public function createClassWiseDailyAttendanceReport($from_date, $to_date): void
+
+    public function __construct(?ConnectionInterface &$db = null, ?ValidationInterface $validation = null)
     {
-        $file_name = 'attendance_report.csv';
+        parent::__construct($db, $validation);
+        helper('ews');
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function createClassWiseDailyAttendanceReport($file_name, $from_date, $to_date): void
+    {
         $student_model = new StudentModel();
-        $school_model = new SchoolModel();
-        $school_list = $school_model->getSchoolIds();
+        $school_list = get_school_ids();
         $attendance_model = new AttendanceModel();
         for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
             foreach ($school_list as $school) {
                 $class_wise_student_count = $student_model->getClassWiseStudentCount($school);
                 if (!empty($class_wise_student_count)) {
-                    log_message("info", "Total " . count($class_wise_student_count) . " classes student count fetched for school id: " . $school['id'] . " date: " . $date->format("Y-m-d"));
+                    log_message("info", "Total " . count($class_wise_student_count) .
+                        " classes' student-count fetched for school id: " . $school['id'] . " date: " . $date->format("Y-m-d"));
                     $attendance_report = [];
                     foreach ($class_wise_student_count as $row) {
                         $attendance_report[$row['school_id']][$row['class']] = [
@@ -43,7 +52,7 @@ class AttendanceReportModel extends Model
                             "total_leave" => 0,
                         ];
                     }
-                    $attendance_status_count = $attendance_model->prepareDailyAttendanceReport($school['id'], $date);
+                    $attendance_status_count = $attendance_model->getDailyAttendanceReportForSchool($school['id'], $date);
                     if (!empty($attendance_status_count)) {
                         foreach ($attendance_status_count as $row) {
                             $attendance_report[$row['school_id']][$row['class']] = [
@@ -65,6 +74,5 @@ class AttendanceReportModel extends Model
                 }
             }
         }
-
     }
 }
