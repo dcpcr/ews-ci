@@ -14,7 +14,7 @@ class ReasonModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
-    protected $allowedFields = ['id', 'name', 'active'];
+    protected $allowedFields = ['id', 'name', 'action_taken', 'active'];
 
     // Dates
     protected $useTimestamps = false;
