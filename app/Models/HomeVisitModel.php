@@ -2,23 +2,25 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
+
 class HomeVisitModel extends CaseDetailsModel
 {
     protected $DBGroup = 'default';
     protected $table = 'home_visit';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'case_id';
     protected $useAutoIncrement = true;
     protected $insertID = 0;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
-    protected $allowedFields = ['case_id', 'status'];
+    protected $allowedFields = ['case_id'];
 
     public function getHomeVisitCount(array $school_ids, array $classes, $start, $end, string $where_status_is)
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
-        return $this->select(['reason.name as reason_name', 'count(*) as count'])
+        return $this->select(['case_id'])
             ->join('detected_case', 'detected_case.id=home_visit.case_id')
             ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')
@@ -32,13 +34,35 @@ class HomeVisitModel extends CaseDetailsModel
 
     protected function getKeys(): array
     {
-        return array('case_id', 'is_home_visit_required');
+        return array('case_id');
     }
 
     protected function getKeyMappings(): array
     {
         return array(
-            "is_home_visit_required" => "status"
+            "case_id" => "case_id"
         );
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+
+    public function updateHomeVisitData(DateTimeInterface $from_date, DateTimeInterface $to_date)
+    {
+        helper('cyfuture');
+        $url = get_cyfuture_home_visit_url();
+        $record_count = download_and_process_cyfuture_api_data($url, $from_date->format("Y-m-d"),
+            $to_date->format("Y-m-d"), function ($records, $page_number) use ($url) {
+                if ($records) {
+                    $this->updateCaseDetails($records, true);
+                    log_message("info", "The Cyfuture EWS Home Visit API call success, for Page - " . $page_number);
+                } else {
+                    log_message("error", "The Cyfuture EWS Home Visit  record API call failed, Page -" . $page_number . "url - " . $url);
+                }
+            }
+        );
+        log_message("info", "Total Records fetched from Cyfuture EWS Home Visit  record API, ->" . $record_count);
+    }
+
 }

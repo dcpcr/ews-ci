@@ -477,8 +477,6 @@ class CaseModel extends Model
                     $high_risk_model->updateCaseDetails($records);
                     $back_to_school = new BackToSchoolModel();
                     $back_to_school->updateCaseDetails($records);
-                    $home_visit = new HomeVisitModel();
-                    $home_visit->updateCaseDetails($records);
                     log_message("info", "The Cyfuture EWS record API call success, for Page - " . $page_number);
                 } else {
                     log_message("error", "The Cyfuture EWS record API call failed, Page -" . $page_number . "url - " . $url);
@@ -501,20 +499,7 @@ class CaseModel extends Model
             ->countAllResults();
     }
 
-    public function getYetToBeContactedCaseCount(array $school_ids, array $classes, $start, $end)
-    {
-        $call_disposition_model = new CallDispositionModel();
-        $contacted_case_count = $call_disposition_model->getCallDispositionCaseCount($school_ids, $classes, $start, $end);
-        $case_count = $this->select(['detected_case.id'])
-            ->join("master.student as student", "student.id=student_id")
-            ->whereIn('student.school_id', $school_ids)
-            ->whereIn('student.class', $classes)
-            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
-                $end . "', '%m/%d/%Y')")
-            ->countAllResults();
-        return $case_count - $contacted_case_count[0]['count'];
 
-    }
 
     public function getGenderWiseCaseCount($school_ids, $classes, $start, $end, $gender, $where_status_is)
     {

@@ -12,6 +12,16 @@ function get_cyfuture_helpline_ticket_url()
     return getenv('cyfuture_helpline_ticket_url');
 }
 
+function get_cyfuture_home_visit_url()
+{
+    return getenv('cyfuture_home_visit_url');
+}
+
+function get_cyfuture_yettobetakenup_url()
+{
+    return getenv('cyfuture_yettobetakenup_url');
+}
+
 function get_cyfuture_token_url()
 {
     return getenv('cyfuture_token_url');

@@ -14,6 +14,7 @@ use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
+use App\Models\YetToBeContactedModel;
 use App\Models\ZoneModel;
 use DateTime;
 use DateTimeImmutable;
@@ -183,7 +184,8 @@ class AdminController extends AuthController
         $total_detected_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
         $total_fresh_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Fresh"]);
         $total_bts_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
-        $total_yet_to_be_contacted_cases = $detected_case_model->getYetToBeContactedCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $yet_to_be_contacted_model= new YetToBeContactedModel();
+        $total_yet_to_be_contacted_cases = $yet_to_be_contacted_model->getYetToBeContactedCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $total_moved_out_of_village_count = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
         $total_denial_of_admission_registration_name_struck_out = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
