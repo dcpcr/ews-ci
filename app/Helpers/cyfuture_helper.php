@@ -72,10 +72,10 @@ function insert_update_case_details($cases, $keys, $key_mappings, CaseDetailsMod
         $table_data = prepare_data_for_table($reason_data, $key_mappings);
         $count = $model->ignore()->insertBatch($table_data, null, 2000);
         $table_name = $model->getTableName();
-        log_message("info", "$count New Records $table_name inserted in  table.");
+        log_message("info", "$count new records inserted in $table_name table.");
         if (!$only_insert) {
             $count = $model->updateBatch($table_data, 'case_id', 2000);
-            log_message("info", "$count Records updated in $table_name table.");
+            log_message("info", "$count records updated in $table_name table.");
         }
     }
 }

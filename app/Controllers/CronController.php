@@ -143,6 +143,9 @@ class CronController extends BaseController
         $case_model->updateOperatorFormData($begin, $end);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function homeVisitCases($begin, $end)
     {
         if (getenv('cron.homevisitcases') == "0") {
@@ -154,6 +157,9 @@ class CronController extends BaseController
 
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function yetToBeTakenUpCases($begin, $end)
     {
         if (getenv('cron.yettobetakenupcases') == "0") {
