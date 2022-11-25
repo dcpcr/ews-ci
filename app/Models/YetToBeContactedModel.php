@@ -54,6 +54,7 @@ class YetToBeContactedModel extends CaseDetailsModel
     {
 
         return $this->select(['case_id'])
+            ->join("detected_case as case", "case.id=case_id")
             ->join("master.student as student", "student.id=student_id")
             ->whereIn('student.school_id', $school_ids)
             ->whereIn('student.class', $classes)

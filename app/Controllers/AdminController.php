@@ -190,7 +190,7 @@ class AdminController extends AuthController
         $total_moved_out_of_village_count = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
         $total_denial_of_admission_registration_name_struck_out = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
         $home_visit_model = new HomeVisitModel();
-        $home_visit_count = $home_visit_model->getHomeVisitCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], "");
+        $home_visit_count = $home_visit_model->getHomeVisitCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $detected_case_male_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Male', ["Back to school", "Fresh"]);
         $detected_case_female_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Female', ["Back to school", "Fresh"]);
         $detected_case_transgender_count = $detected_case_model->getGenderWiseCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Transgender', ["Back to school", "Fresh"]);
