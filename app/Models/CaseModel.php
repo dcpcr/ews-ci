@@ -385,8 +385,7 @@ class CaseModel extends Model
                 foreach ($potential_cases as $case) {
                     $student_id = $case['student_id'];
                     $case_id = $case['id'];
-                    if ($this->isStudentPresentInLastSevenDays($student_id, $date) &&
-                        $this->isStudentPresentAtLeastNDaysInLast30Days($student_id, $date, 10) &&
+                    if ($this->isStudentPresentAtLeastNDaysInLast30Days($student_id, $date, 20) &&
                         $ticket_model->isTicketNotOpen($case_id)) {
                         $this->markStudentAsBackToSchool($case_id);
                         $bts_counter++;
