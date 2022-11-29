@@ -7,6 +7,7 @@ foreach ($response['frequent_detected_cases'] as $case) {
         "serial_no" => ++$counter,
         "student_id" => $case['student_id'],
         "student_name" => $case['student_name'],
+        "mobile" => $case['mobile'],
         "class" => $case['class'],
         "section" => $case['section'],
         "gender" => $case['gender'],

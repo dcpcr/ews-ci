@@ -7,6 +7,7 @@ $(function () {
             {data: "serial_no", title: 'S.No'},
             {data: 'student_id', title: 'Student Id'},
             {data: 'student_name', title: 'Name'},
+            {data: 'mobile', title: 'Mobile'},
             {data: 'class', title: 'Class'},
             {data: 'section', title: 'Section'},
             {data: 'gender', title: 'Gender'},

@@ -184,7 +184,7 @@ class AdminController extends AuthController
         $total_detected_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
         $total_fresh_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Fresh"]);
         $total_bts_cases = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
-        $yet_to_be_contacted_model= new YetToBeContactedModel();
+        $yet_to_be_contacted_model = new YetToBeContactedModel();
         $total_yet_to_be_contacted_cases = $yet_to_be_contacted_model->getYetToBeContactedCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $total_moved_out_of_village_count = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
@@ -204,8 +204,7 @@ class AdminController extends AuthController
             'total_bts_case_count' => $total_bts_cases,
             'total_moved_out_of_village_count' => $total_moved_out_of_village_count,
             'dropped_out_and_in_contact_to_bring_them_school' => $total_denial_of_admission_registration_name_struck_out,
-            'home_visit_count' => $home_visit_count,
-            'enrolled_and_in_contact_to_bring_them_back_to' => $total_fresh_cases - $total_moved_out_of_village_count - $total_denial_of_admission_registration_name_struck_out - $total_yet_to_be_contacted_cases,
+            'contact_not_established_with_dcpcr' => $contact_not_established = $home_visit_count - $total_moved_out_of_village_count - $total_denial_of_admission_registration_name_struck_out,
             'yet_to_be_contacted_cases' => $total_yet_to_be_contacted_cases,
             'detected_case_male_count' => $detected_case_male_count,
             'detected_case_female_count' => $detected_case_female_count,
@@ -214,7 +213,9 @@ class AdminController extends AuthController
             'bts_case_male_count' => $bts_case_male_count,
             'bts_case_female_count' => $bts_case_female_count,
             'bts_case_transgender_count' => $bts_case_transgender_count,
-            'bts_case_class_wise_count_array' => $bts_case_class_wise_count_array];
+            'bts_case_class_wise_count_array' => $bts_case_class_wise_count_array,
+            'enrolled_and_in_contact_to_bring_them_back_to' => $total_detected_cases - $total_bts_cases - $contact_not_established - $total_moved_out_of_village_count - $total_denial_of_admission_registration_name_struck_out - $total_yet_to_be_contacted_cases,
+        ];
         $this->view_name = 'dashboard/summary';
     }
 

@@ -542,6 +542,7 @@ class CaseModel extends Model
             'student.name as student_name',
             'student.gender',
             'student.class',
+            'student.mobile',
             'student.section',
             'student.dob',
             'student.mother',

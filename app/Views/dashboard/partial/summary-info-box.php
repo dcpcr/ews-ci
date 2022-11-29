@@ -40,7 +40,7 @@
     <div class="col-lg-4 col-6">
         <div class="small-box bg-danger text-center">
             <div class="inner">
-                <h4><span class="number"><?= $response['home_visit_count'] ?></span></h4>
+                <h4><span class="number"><?= $response['contact_not_established_with_dcpcr'] ?></span></h4>
                 <p class="mt-4">Contact not established with DCPCR
                     <span class="fa fa-info-circle" data-toggle="tooltip"
                           data-placement="right"

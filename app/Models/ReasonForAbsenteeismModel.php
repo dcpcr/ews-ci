@@ -26,6 +26,7 @@ class ReasonForAbsenteeismModel extends CaseDetailsModel
             ->whereIn('student.school_id', $school_ids)
             ->whereIn('student.class', $classes)
             ->whereIn('reason_id', $reason_id)
+            ->where('status!=',"Back To School")
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $end . "', '%m/%d/%Y')")
             ->countAllResults();
