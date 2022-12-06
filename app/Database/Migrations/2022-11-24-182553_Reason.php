@@ -25,6 +25,13 @@ class Reason extends Migration
 
             ],
 
+            'action_taken' => [
+                'type' => 'VARCHAR',
+                'constraint' => '500',
+                'NOT NULL' => true,
+
+            ],
+
             'active' => [
                 'type' => 'int',
                 'constraint' => '1',

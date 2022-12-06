@@ -9,7 +9,7 @@ class UserController extends AuthController
         if ($this->checkForOperator()) {
             return redirect()->route('operator');
         } else {
-            return redirect()->route('dashboard', ['case']);
+            return redirect()->route('dashboard', ['summary']);
         }
     }
 

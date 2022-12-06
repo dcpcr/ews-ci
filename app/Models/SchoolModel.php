@@ -94,5 +94,11 @@ class SchoolModel extends Model
         return $query->getResultArray();
     }
 
+    public function getSchoolIds(): array
+    {
+        return $this->select(['id'])->findAll();
+
+    }
+
 
 }

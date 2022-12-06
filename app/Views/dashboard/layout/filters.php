@@ -211,7 +211,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class='col-md-3'>
+                        <div class='col-md-3' id="duration">
                             <div class='form-group'>
                                 <label>Duration</label>
                                 <div class='input-group'>

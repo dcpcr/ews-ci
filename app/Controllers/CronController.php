@@ -3,13 +3,16 @@
 namespace App\Controllers;
 
 use App\Models\AttendanceModel;
+use App\Models\AttendanceReportModel;
 use App\Models\CaseModel;
 use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
+use App\Models\HomeVisitModel;
 use App\Models\MobileSmsStatusModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
+use App\Models\YetToBeContactedModel;
 use DateTimeImmutable;
 use Exception;
 use ReflectionException;
@@ -55,6 +58,20 @@ class CronController extends BaseController
         $file_name = "attendance.csv";
         $attendance_model = new AttendanceModel();
         $attendance_model->downloadAttendance($file_name, $from_date, $to_date);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function attendanceReport($from_date, $to_date)
+    {
+        if (getenv('cron.attendancereport') == "0") {
+            log_message("info", "Prepare daily attendance report is not enabled. Skipping it");
+            return;
+        }
+        $file_name = 'attendance_report.csv';
+        $attendance_model = new AttendanceReportModel();
+        $attendance_model->createClassWiseDailyAttendanceReport($file_name, $from_date, $to_date);
     }
 
     /**
@@ -124,6 +141,34 @@ class CronController extends BaseController
         }
         $case_model = new CaseModel();
         $case_model->updateOperatorFormData($begin, $end);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function homeVisitCases($begin, $end)
+    {
+        if (getenv('cron.homevisitcases') == "0") {
+            log_message("info", "homeVisitCases is not enabled. Skipping it");
+            return;
+        }
+        $home_visit_model= new HomeVisitModel();
+        $home_visit_model->updateHomeVisitData($begin, $end);
+
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function yetToBeTakenUpCases($begin, $end)
+    {
+        if (getenv('cron.yettobetakenupcases') == "0") {
+            log_message("info", "yetToBeTakenUpCases is not enabled. Skipping it");
+            return;
+        }
+        $home_visit_model= new YetToBeContactedModel();
+        $home_visit_model->updateYetToBeTakenUpData($begin, $end);
+
     }
 
     /**
@@ -256,14 +301,18 @@ class CronController extends BaseController
                 if ($morning) {
                     $this->sendSms();
                 } else {
-                    $this->updateCaseData($begin, $end);
-                    $this->fetchTickets($begin, $end);
-                    $this->updateTicketDetails();
+
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();
                     $this->importStudentData();
                     $this->importAttendanceData($begin, $end);
+                    $this->attendanceReport($begin, $end);
                     $this->updateDetectedCases($begin, $end);
+                    $this->updateCaseData($begin, $end);
+                    $this->homeVisitCases($begin, $end);
+                    $this->yetToBeTakenUpCases($begin, $end);
+                    $this->fetchTickets($begin, $end);
+                    $this->updateTicketDetails();
                     $this->updateBackToSchool($begin, $end);
                     $this->sendCronStatusInfoSms($begin);
                 }

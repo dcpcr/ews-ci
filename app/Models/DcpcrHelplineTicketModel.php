@@ -82,4 +82,19 @@ class DcpcrHelplineTicketModel extends CaseDetailsModel
         return $flag;
     }
 
+    public function getDcpcrHelplineCaseDetails($school_ids, $classes, $start, $end, $where_status_is, $column_name): array
+    {
+        return $this->select(['sub_division', "count(ticket_number) as $column_name"])
+            ->join("detected_case as case", "case.id=case_id")
+            ->join("master.student as student", "student.id=case.student_id")
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->whereIn("dcpcr_helpline_ticket.status", $where_status_is)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->groupBy("sub_division")
+            ->orderBy("sub_division")
+            ->findAll();
+
+    }
 }
