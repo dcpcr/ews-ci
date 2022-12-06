@@ -1,0 +1,1 @@
+<script src='/assets-adminlte/ews-js/summary.js'></script>

@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class HomeVisit extends Migration
+class YetToBeTakenUp extends Migration
 {
     public function up()
     {
@@ -14,22 +14,17 @@ class HomeVisit extends Migration
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
-            'status' => [
-                'type' => 'char',
-                'constraint' => '3',
-                'default' => null,
-            ],]);
+            ]);
         $this->forge->addField(
             [
                 'created_at timestamp not null default current_timestamp',
-                'updated_at timestamp not null default current_timestamp on update current_timestamp',
             ]);
         $this->forge->addPrimaryKey('case_id');
-        $this->forge->createTable('home_visit');
+        $this->forge->createTable('yet_to_be_taken_up');
     }
 
     public function down()
     {
-        $this->forge->dropTable('home_visit');
+        $this->forge->dropTable('yet_to_be_taken_up');
     }
 }
