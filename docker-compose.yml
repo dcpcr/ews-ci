@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes:
+      - /usr/local/var/mysql_ews_ci:/var/lib/mysql
