@@ -26,12 +26,13 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-6">
                     <?= view('App\Views\_message_block') ?>
-                    <form action="<?= route_to('login') ?>" method="post">
+                    <form autocomplete="false" action="<?= route_to('login') ?>" method="post">
                         <?= csrf_field() ?>
                         <?php if ($config->validFields === ['email']): ?>
                             <div class="form-group">
                                 <label for="login"><?= lang('Auth.email') ?></label>
                                 <input type="email"
+                                        autocomplete="false"
                                        class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>"
                                        name="login" placeholder="<?= lang('Auth.email') ?>">
                                 <div class="invalid-feedback">
@@ -42,6 +43,7 @@
                             <div class="form-group">
                                 <label for="login"><?= lang('Auth.username') ?></label>
                                 <input type="text"
+                                        autocomplete="false"
                                        class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>"
                                        name="login" placeholder="<?= lang('Auth.username') ?>">
                                 <div class="invalid-feedback">
