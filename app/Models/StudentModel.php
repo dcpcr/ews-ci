@@ -41,7 +41,15 @@ class StudentModel extends Model
                 for ($i = 0; $i < count($data_array); $i++) {
                     $data_array[$i]['school_id'] = $id;
                     $data_array[$i]['CorAddress'] = trim(preg_replace('/\s+/', ' ', $data_array[$i]['CorAddress']));;
-                    $data_array[$i]['CorAddress'] = rtrim($data_array[$i]['CorAddress'], "\ ");
+                    $data_array[$i]['CorAddress'] = remove_slash_from_string($data_array[$i]['CorAddress']);
+                    $data_array[$i]['FatherName'] = remove_slash_from_string($data_array[$i]['FatherName']);
+                    $data_array[$i]['MotherName'] = remove_slash_from_string($data_array[$i]['MotherName']);
+                    $data_array[$i]['Student_Name'] = remove_slash_from_string($data_array[$i]['Student_Name']);
+                    $data_array[$i]['GuardianName'] = remove_slash_from_string($data_array[$i]['GuardianName']);
+                    $data_array[$i]['GuardianRelation'] = remove_slash_from_string($data_array[$i]['GuardianRelation']);
+                    $data_array[$i]['District_Name'] = remove_slash_from_string($data_array[$i]['District_Name']);
+                    $data_array[$i]['CWSN'] = remove_slash_from_string($data_array[$i]['CWSN']);
+                    $data_array[$i]['Type_OF_Disability'] = remove_slash_from_string($data_array[$i]['Type_OF_Disability']);
                     $student_count++;
                 }
                 if ($count != 0)
