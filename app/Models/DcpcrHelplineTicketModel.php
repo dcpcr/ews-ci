@@ -92,6 +92,7 @@ class DcpcrHelplineTicketModel extends CaseDetailsModel
             ->whereIn("dcpcr_helpline_ticket.status", $where_status_is)
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $end . "', '%m/%d/%Y')")
+            ->groupBy("sub_division")
             ->orderBy("sub_division")
             ->findAll();
 

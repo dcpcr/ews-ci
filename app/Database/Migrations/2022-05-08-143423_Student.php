@@ -50,11 +50,29 @@ class Student extends Migration
                 'type' => 'char',
                 'constraint' => '100',
             ],
+            'guardian' => [
+                'type' => 'char',
+                'constraint' => '100',
+            ],
+            'guardian_relation' => [
+                'type' => 'char',
+                'constraint' => '100',
+            ],
             'address' => [
                 'type' => 'varchar',
                 'constraint' => '255',
             ],
             'mobile' => [
+                'type' => 'CHAR',
+                'constraint' => '20',
+                'NOT NULL' => true,
+            ],
+            'cwsn' => [
+                'type' => 'CHAR',
+                'constraint' => '20',
+                'NOT NULL' => true,
+            ],
+            'disability_type' => [
                 'type' => 'CHAR',
                 'constraint' => '20',
                 'NOT NULL' => true,
