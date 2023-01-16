@@ -499,7 +499,6 @@ class CaseModel extends Model
     }
 
 
-
     public function getGenderWiseCaseCount($school_ids, $classes, $start, $end, $gender, $where_status_is)
     {
         helper('general');
@@ -562,5 +561,23 @@ class CaseModel extends Model
             ->groupBy("student_id")
             ->findAll();
 
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function updateDetectedStudentStatus()
+    {
+        $student_ids = $this->distinct()
+            ->select(['student_id'])
+            ->findAll();
+        foreach ($student_ids as $student_id) {
+            $latest_status_data = $this->select(['student_id', 'id as case_id', 'status'])
+                ->where("student_id", $student_id["student_id"])
+                ->orderBy("id", "DESC")
+                ->findAll("1");
+            $latest_student_status_model = new LatestStudentStatusModel();
+            $latest_student_status_model->updateStudentStatus($latest_status_data);
+        }
     }
 }

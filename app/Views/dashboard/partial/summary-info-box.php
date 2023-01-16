@@ -2,7 +2,7 @@
     <div class="col-lg-12 col-12">
         <div>
             <div class="inner">
-                <h4>Total Detected Cases: <span class="number"><?= $response['total_detected_case_count'] ?></span>
+                <h4>Total Detected Students: <span class="number"><?= $response['total_detected_student_count'] ?></span>
                 </h4>
             </div>
         </div>

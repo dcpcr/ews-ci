@@ -152,7 +152,7 @@ class CronController extends BaseController
             log_message("info", "homeVisitCases is not enabled. Skipping it");
             return;
         }
-        $home_visit_model= new HomeVisitModel();
+        $home_visit_model = new HomeVisitModel();
         $home_visit_model->updateHomeVisitData($begin, $end);
 
     }
@@ -166,7 +166,7 @@ class CronController extends BaseController
             log_message("info", "yetToBeTakenUpCases is not enabled. Skipping it");
             return;
         }
-        $home_visit_model= new YetToBeContactedModel();
+        $home_visit_model = new YetToBeContactedModel();
         $home_visit_model->updateYetToBeTakenUpData($begin, $end);
 
     }
@@ -251,6 +251,20 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
+    public function updateStudentStatus()
+    {
+        if (getenv('cron.updateLatestStudentStatus') == "0") {
+            log_message("info", "updateLatestStudentStatus is not enabled. Skipping it");
+            return;
+        }
+        $case_model = new CaseModel();
+        $case_model->updateDetectedStudentStatus();
+
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     private function sendCronErrorSms($morning)
     {
         if (getenv('cron.sendcronalert') == "0") {
@@ -308,6 +322,7 @@ class CronController extends BaseController
                     $this->importAttendanceData($begin, $end);
                     $this->attendanceReport($begin, $end);
                     $this->updateDetectedCases($begin, $end);
+                    $this->updateStudentStatus();
                     $this->updateCaseData($begin, $end);
                     $this->homeVisitCases($begin, $end);
                     $this->yetToBeTakenUpCases($begin, $end);
