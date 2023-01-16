@@ -560,7 +560,6 @@ class CaseModel extends Model
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $end . "', '%m/%d/%Y')")
             ->groupBy("student_id")
-            ->having("detected_count > ", "1")
             ->findAll();
 
     }
