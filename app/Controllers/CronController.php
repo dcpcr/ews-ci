@@ -160,14 +160,14 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
-    private function yetToBeTakenUpCases($begin, $end)
+    private function yetToBeTakenUpCases($end)
     {
         if (getenv('cron.yettobetakenupcases') == "0") {
             log_message("info", "yetToBeTakenUpCases is not enabled. Skipping it");
             return;
         }
         $home_visit_model = new YetToBeContactedModel();
-        $home_visit_model->updateYetToBeTakenUpData($begin, $end);
+        $home_visit_model->updateYetToBeTakenUpData($end);
 
     }
 
@@ -325,7 +325,7 @@ class CronController extends BaseController
                     $this->updateStudentStatus();
                     $this->updateCaseData($begin, $end);
                     $this->homeVisitCases($begin, $end);
-                    $this->yetToBeTakenUpCases($begin, $end);
+                    $this->yetToBeTakenUpCases($end);
                     $this->fetchTickets($begin, $end);
                     $this->updateTicketDetails();
                     $this->updateBackToSchool($begin, $end);
