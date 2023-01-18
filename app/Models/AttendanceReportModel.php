@@ -50,6 +50,7 @@ class AttendanceReportModel extends Model
                             "total_present" => 0,
                             "total_absent" => 0,
                             "total_leave" => 0,
+                            "total_attendance_marked" => 0,
                         ];
                     }
                     $attendance_status_count = $attendance_model->getDailyAttendanceReportForSchool($school['id'], $date);
@@ -63,6 +64,7 @@ class AttendanceReportModel extends Model
                                 "total_present" => $row['present_count'],
                                 "total_absent" => $row['absent_count'],
                                 "total_leave" => $row['leave_count'],
+                                "total_attendance_marked" => $row['present_count']+$row['absent_count']+$row['leave_count'],
                             ];
                         }
                     }

@@ -43,6 +43,11 @@ class AttendanceReport extends Migration
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
+            'total_attendance_marked' => [
+                'type' => 'BIGINT',
+                'unsigned' => true,
+                'NOT NULL' => true,
+            ],
 
         ]);
         $this->forge->addPrimaryKey(['school_id', 'class', 'date']);
