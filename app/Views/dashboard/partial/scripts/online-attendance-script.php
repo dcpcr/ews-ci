@@ -1,7 +1,7 @@
 <?= $this->include('dashboard/partial/scripts/data-table-script'); ?>
 <?php
 $attendanceCountData = $attendanceLabel = $totalStudentCountData = "";
-foreach ($response['attendance_data_day_wise'] as $row) {
+foreach (array_reverse($response['attendance_data_day_wise']) as $row) {
     $attendanceLabel .= "'" . $row['date'] . "',";
     $attendanceCountData .= "'" . $row['count'] . "',";
     $totalStudentCountData .= "'" . $response['total_student_data_school_wise'][0]['count_total'] . "',";
