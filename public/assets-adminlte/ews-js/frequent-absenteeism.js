@@ -12,7 +12,10 @@ $(function () {
             {data: 'section', title: 'Section'},
             {data: 'gender', title: 'Gender'},
             {data: 'address', title: 'Address'},
-            {data: 'detected_count', title: 'Number of Time Student Detected'},
+            {data: 'detected_count', title: 'Number of Time Detected'},
+        ],
+        columnDefs: [
+            {"visible": false, "targets": [7]},
         ],
         "responsive": true,
         "lengthChange": false,
