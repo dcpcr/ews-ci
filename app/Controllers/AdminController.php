@@ -125,6 +125,9 @@ class AdminController extends AuthController
                 case 'homevisits':
                     $this->homeVisitsReport();
                     break;
+                default:
+                    $this->error_404();
+
             }
             $this->view_data['user_name'] = user()->username;
             return view($this->view_name, $this->view_data);
@@ -607,6 +610,11 @@ class AdminController extends AuthController
 
         }
         return $table_data;
+    }
+
+    private function error_404(): string
+    {
+        return $this->view_name = 'errors/html/error_404';
     }
 
 
