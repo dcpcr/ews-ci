@@ -26,14 +26,14 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-6">
                     <?= view('App\Views\_message_block') ?>
-                    <form action="<?= route_to('login') ?>" method="post" onsubmit="return validate()">
+                    <form action="<?= route_to('login') ?>" method="post" onsubmit="return validate()" autocomplete="off">
                         <?= csrf_field() ?>
                         <?php if ($config->validFields === ['email']): ?>
                             <div class="form-group">
                                 <label for="login"><?= lang('Auth.email') ?></label>
                                 <input type="email"
                                        class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>"
-                                       name="login" placeholder="<?= lang('Auth.email') ?>">
+                                       name="login" placeholder="<?= lang('Auth.email') ?>" autocomplete="off">
                                 <div class="invalid-feedback">
                                     <?= session('errors.login') ?>
                                 </div>
@@ -43,7 +43,7 @@
                                 <label for="login"><?= lang('Auth.username') ?></label>
                                 <input type="text"
                                        class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>"
-                                       name="login" placeholder="<?= lang('Auth.username') ?>">
+                                       name="login" placeholder="<?= lang('Auth.username') ?>" autocomplete="off">
                                 <div class="invalid-feedback">
                                     <?= session('errors.login') ?>
                                 </div>
@@ -54,7 +54,7 @@
                             <label for="password"><?= lang('Auth.password') ?></label>
                             <input type="password" name="password"
                                    class="form-control  <?php if (session('errors.password')) : ?>is-invalid<?php endif ?>"
-                                   placeholder="<?= lang('Auth.password') ?>">
+                                   placeholder="<?= lang('Auth.password') ?>" autocomplete="off">
                             <div class="invalid-feedback">
                                 <?= session('errors.password') ?>
                             </div>
@@ -63,7 +63,7 @@
                         <div class="form-group">
                             <div class="" id="error"></div>
                             <canvas id="canvas" class=""></canvas>
-                            <input type="password" name="code" class="form-control" />
+                            <input name="code" class="form-control" />
 
                         </div>
                         <?php if ($config->allowRemembering): ?>
