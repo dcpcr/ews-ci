@@ -56,7 +56,7 @@
                                    class="form-control  <?php if (session('errors.password')) : ?>is-invalid<?php endif ?>"
                                    placeholder="<?= lang('Auth.password') ?>" autocomplete="off">
                             <div class="invalid-feedback">
-                                <?= session('errors.password') ?>
+                                <?= session('errors.login') ?>
                             </div>
                         </div>
 
