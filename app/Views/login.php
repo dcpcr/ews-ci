@@ -26,7 +26,7 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-6">
                     <?= view('App\Views\_message_block') ?>
-                    <form action="<?= route_to('login') ?>" method="post">
+                    <form action="<?= route_to('login') ?>" method="post" onsubmit="return validate()">
                         <?= csrf_field() ?>
                         <?php if ($config->validFields === ['email']): ?>
                             <div class="form-group">
@@ -60,6 +60,12 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <div class="" id="error"></div>
+                            <canvas id="canvas" class=""></canvas>
+                            <input type="password" name="code" class="form-control" />
+
+                        </div>
                         <?php if ($config->allowRemembering): ?>
                             <div class="form-check">
                                 <label class="form-check-label">
