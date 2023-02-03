@@ -366,7 +366,7 @@ class AdminController extends AuthController
         } else {
             $begin = new DateTime();
             $data['end'] = $begin->format("m/d/Y");
-            $begin = $begin->modify('-1 year');
+            $begin = $begin->modify('-5 day ');
             $data['start'] = $begin->format("m/d/Y");
         }
         return $data;
