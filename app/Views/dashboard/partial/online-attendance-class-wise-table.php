@@ -16,7 +16,7 @@
             </thead>
             <tbody>
             <?php
-            foreach ($response['marked_attendance_data'] as $row) {
+            foreach ($response['attendance_data_class_wise'] as $row) {
 
                 ?>
                 <tr>
