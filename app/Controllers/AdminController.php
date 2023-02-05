@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\AttendanceModel;
+use App\Models\AttendanceReportModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
 use App\Models\CaseReasonModel;
@@ -319,23 +320,15 @@ class AdminController extends AuthController
         $this->view_data['details'] = "To help us identify children at risk and bring them back to school, please ensure 100% marking of online attendance.";
         $this->view_data['page_title'] = 'Online Attendance Report';
         $school_ids = array_keys($this->schools);
-        $current_date = new DateTimeImmutable();
         $attendance_model = new AttendanceModel();
-        $attendance_data_day_wise = $attendance_model->prepareAttendanceFormLastNDays("30", $school_ids, $this->classes, $current_date);
-        $attendance_data_class_wise = $attendance_model->getLastDayMarkedStudentAttendanceCount($school_ids, $this->classes, "class");
-        $student_model = new StudentModel();
-        $total_student_data_class_wise = $student_model->getStudentCountFor($school_ids, $this->classes, "class");
-        $total_student_data_school_wise = $student_model->getStudentCountFor($school_ids, $this->classes, "school_id");
-        $marked_attendance_count = $attendance_model
-            ->getClassWiseMarkedAttendance($school_ids, $this->classes);
         $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate($school_ids);
-        $attendance_data = $this->prepareClassWiseAttendanceData($total_student_data_class_wise, $marked_attendance_count);
+        $attendance_report_model = new AttendanceReportModel();
+        $attendance_data_day_wise = $attendance_report_model->getDateWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $latest_marked_attendance_date);
         $this->view_data['response'] = [
             "attendance_data_day_wise" => $attendance_data_day_wise,
             "attendance_data_class_wise" => $attendance_data_class_wise,
-            'marked_attendance_data' => $attendance_data,
             'latest_marked_attendance_date' => $latest_marked_attendance_date,
-            'total_student_data_school_wise' => $total_student_data_school_wise,
         ];
         $this->view_name = 'dashboard/online-attendance';
     }
