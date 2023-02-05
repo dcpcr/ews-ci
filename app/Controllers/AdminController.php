@@ -186,8 +186,8 @@ class AdminController extends AuthController
 
         $school_ids = array_keys($this->schools);
         $latest_student_status_model = new LatestStudentStatusModel();
-        $total_detected_student_count=$latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
-        $total_bts_student_count=$latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
+        $total_detected_student_count = $latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
+        $total_bts_student_count = $latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
         $detected_case_model = new CaseModel();
         $total_detected_case_count = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
         $yet_to_be_contacted_model = new YetToBeContactedModel();
@@ -324,7 +324,7 @@ class AdminController extends AuthController
         $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate($school_ids);
         $attendance_report_model = new AttendanceReportModel();
         $attendance_data_day_wise = $attendance_report_model->getDateWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceCount($school_ids, $this->classes,$latest_marked_attendance_date);
+        $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $latest_marked_attendance_date);
         $this->view_data['response'] = [
             "attendance_data_day_wise" => $attendance_data_day_wise,
             "attendance_data_class_wise" => $attendance_data_class_wise,
