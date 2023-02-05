@@ -44,7 +44,7 @@ host('10.194.73.95')
 host('10.194.73.94')
     ->set('remote_user', 'root')
     ->set('labels', ['stage' => 'prod'])
-    ->set('deploy_path', '/usr/share/nginx/{{application}}')
+    ->set('deploy_path', '/var/www/html/{{application}}')
     ->set('rsync_dest', '{{release_path}}');
 
 // Tasks
@@ -60,14 +60,14 @@ task('deploy', [
     'deploy:symlink',
     'deploy:unlock',
     'deploy:cleanup',
-    'restart-nginx-fpm',
+    //'restart-nginx-fpm',
     'deploy:success'
 ]);
 
-task('restart-nginx-fpm', function () {
+/*task('restart-nginx-fpm', function () {
     run('systemctl restart nginx');
     run('systemctl restart php-fpm');
-});
+});*/
 
 after('deploy:failed', 'deploy:unlock');
 
@@ -75,10 +75,10 @@ after('deploy:success', 'crontab:sync');
 
 after('deploy:success', 'db-changes');
 
-add('crontab:jobs', [
+/*add('crontab:jobs', [
     '0 10 * * * cd {{current_path}}/public && {{bin/php}} index.php cron morning >> /dev/null 2>&1',
     '0 23 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
-]);
+]);*/
 
 task('db-changes', function () {
     run ('cd {{current_path}} && php spark migrate');
