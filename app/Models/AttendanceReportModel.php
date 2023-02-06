@@ -64,7 +64,7 @@ class AttendanceReportModel extends Model
                                 "total_present" => $row['present_count'],
                                 "total_absent" => $row['absent_count'],
                                 "total_leave" => $row['leave_count'],
-                                "total_attendance_marked" => $row['present_count']+$row['absent_count']+$row['leave_count'],
+                                "total_attendance_marked" => $row['present_count'] + $row['absent_count'] + $row['leave_count'],
                             ];
                         }
                     }
@@ -80,27 +80,27 @@ class AttendanceReportModel extends Model
 
     public function getDateWiseMarkedStudentAttendanceCount($school_ids, $classes, $start, $end): array
     {
-        return $this->select(['date','sum(total_attendance_marked) as attendance_count','sum(total_student) as total_student'])
-            ->whereIn($this->table.".school_id", $school_ids)
-            ->whereIn($this->table.".class", $classes)
+        return $this->select(['date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+            ->whereIn($this->table . ".school_id", $school_ids)
+            ->whereIn($this->table . ".class", $classes)
             ->groupBy("date")
-            ->orderBy("date","DESC")
+            ->orderBy("date", "DESC")
             ->findAll("30");
     }
 
     public function getClassWiseMarkedStudentAttendanceCount($school_ids, $classes, $latest_date): array
     {
-        $response =  $this->select(['class','date','sum(total_attendance_marked) as attendance_count','sum(total_student) as total_student'])
-            ->whereIn($this->table.".school_id", $school_ids)
-            ->whereIn($this->table.".class", $classes)
-            ->where("date",$latest_date[0]['date'])
+        $response = $this->select(['class', 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+            ->whereIn($this->table . ".school_id", $school_ids)
+            ->whereIn($this->table . ".class", $classes)
+            ->where("date", $latest_date[0]['date'])
             ->groupBy("class")
             ->orderBy("class")
             ->findAll();
-        $count=0;
-        $data=[];
+        $count = 0;
+        $data = [];
         foreach ($response as $row) {
-            $data[]=[
+            $data[] = [
                 "Serial_no" => $count++,
                 "Class" => $row['class'],
                 "Attendance_Marked" => (isset($row['attendance_count'])) ? $row['attendance_count'] : 0,
@@ -112,4 +112,48 @@ class AttendanceReportModel extends Model
         return $data;
 
     }
+
+    public function getMarkedSchoolAttendance($school_ids, $classes, $start, $end): array
+    {
+        $attendance_data = $this->select([
+            'sum(total_attendance_marked) as count_att',
+            'sum(total_attendance_marked)/count(distinct date) as avg_att',
+            'count(distinct date) as days_att',
+            'school_id'
+        ])
+            ->whereIn('school_id', $school_ids)
+            ->whereIn('class', $classes)
+            ->where('total_attendance_marked!=', 0)
+            ->where("date BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->groupBy('school_id')
+            ->findAll();
+
+        $student_count_model = new StudentCountModel();
+        $total_student_count_data = $student_count_model->getSchoolWiseStudentCount($school_ids, $classes);
+        $data = [];
+        $count = 1;
+        foreach ($total_student_count_data as $row) {
+            $data[$row['school_id']] = [
+                "Serial_no" => $count++,
+                "School" => $row['school_id'] . "-" . $row['school_name'],
+                "District" => $row['district_name'],
+                "Zone" => $row['zone_name'],
+                "Total_Students" => $row['total_student'],
+                "Average_Attendance_Marked" => 0,
+                "Attendance_Marked_Days" => 0
+            ];
+        }
+        foreach ($attendance_data as $row) {
+            $data [$row['school_id']] ['Average_Attendance_Marked'] = is_null($row['avg_att']) ? 0 : $row['avg_att'];
+            $data [$row['school_id']] ['Attendance_Marked_Days'] = is_null($row['days_att']) ? 0 : $row['days_att'];
+        }
+        $final_data = [];
+        foreach ($data as $row) {
+            $final_data[] = $row;
+
+        }
+        return $final_data;
+    }
+
 }

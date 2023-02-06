@@ -95,4 +95,20 @@ class StudentModel extends Model
             ->findAll();
     }
 
+    /**
+     * @throws \ReflectionException
+     */
+    public function prepareSchoolWiseTotalStudents()
+    {
+        $res = $this->select(['count(student.id) as total_student', 'student.school_id', 'student.class as class', 'district.name as district_name', 'zone.name as zone_name', 'school.name as school_name'])
+            ->join('school', 'school.id = student.school_id')
+            ->join('school_mapping', 'school_mapping.school_id = student.school_id')
+            ->join('district', 'district.id = school_mapping.district_id')
+            ->join('zone', 'zone.id = school_mapping.zone_id')
+            ->groupBy("student.school_id")
+            ->findAll();
+        $student_count_model = new StudentCountModel();
+        $student_count_model->updateStudentCount($res);
+    }
+
 }

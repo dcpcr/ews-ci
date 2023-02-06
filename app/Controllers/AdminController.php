@@ -15,11 +15,9 @@ use App\Models\LatestStudentStatusModel;
 use App\Models\ReasonForAbsenteeismModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
-use App\Models\StudentModel;
 use App\Models\YetToBeContactedModel;
 use App\Models\ZoneModel;
 use DateTime;
-use DateTimeImmutable;
 
 class AdminController extends AuthController
 {
@@ -186,8 +184,8 @@ class AdminController extends AuthController
 
         $school_ids = array_keys($this->schools);
         $latest_student_status_model = new LatestStudentStatusModel();
-        $total_detected_student_count=$latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
-        $total_bts_student_count=$latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
+        $total_detected_student_count = $latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
+        $total_bts_student_count = $latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
         $detected_case_model = new CaseModel();
         $total_detected_case_count = $detected_case_model->getCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
         $yet_to_be_contacted_model = new YetToBeContactedModel();
@@ -306,12 +304,11 @@ class AdminController extends AuthController
         $this->view_data['page_title'] = 'Attendance Report';
 
         $school_ids = array_keys($this->schools);
-
-        $school_wise_student_count = $this->school_model
-            ->getSchoolWiseStudentCount($school_ids, $this->classes);
-        $marked_attendance_count = $this->school_model
-            ->getMarkedSchoolAttendance($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        $this->view_data['response'] = ['schoolWiseStudentCount' => $school_wise_student_count, 'markedAttendanceCount' => $marked_attendance_count];
+        $attendance_report_model = new AttendanceReportModel();
+        $attendance_data = $attendance_report_model->getMarkedSchoolAttendance($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_data['response'] = [
+            'attendance_data' => $attendance_data,
+        ];
         $this->view_name = 'dashboard/attendance';
     }
 

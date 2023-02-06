@@ -265,6 +265,20 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
+    public function updateTotalStudentCount()
+    {
+        if (getenv('cron.updateTotalStudentCount') == "0") {
+            log_message("info", "updateTotalStudentCount is not enabled. Skipping it");
+            return;
+        }
+        $case_model = new StudentModel();
+        $case_model->prepareSchoolWiseTotalStudents();
+
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     private function sendCronErrorSms($morning)
     {
         if (getenv('cron.sendcronalert') == "0") {
@@ -323,6 +337,7 @@ class CronController extends BaseController
                     $this->attendanceReport($begin, $end);
                     $this->updateDetectedCases($begin, $end);
                     $this->updateStudentStatus();
+                    $this->updateTotalStudentCount();
                     $this->updateCaseData($begin, $end);
                     $this->homeVisitCases($begin, $end);
                     $this->yetToBeTakenUpCases($end);

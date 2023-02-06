@@ -8,7 +8,6 @@ $(function () {
             {data: 'District', title: 'District'},
             {data: 'Zone', title: 'Zone'},
             {data: 'Total_Students', title: 'Total Students', render: DataTable.render.number( ',')},
-            {data: 'Attendance_Marked', title: 'Attendance Marked', render: DataTable.render.number( ',')},
             {data: 'Attendance_Marked_Days', title: 'Marked Days', render: DataTable.render.number( ',')},
             {data: 'Average_Attendance_Marked', title: 'Average Attendance', render: DataTable.render.number( ',')},
         ],
