@@ -161,7 +161,7 @@ class AttendanceModel extends Model
 
     public function getLastDayMarkedStudentAttendanceCount($school_ids, $classes, string $group_by): array
     {
-        $max_date = $this->getLatestMarkedAttendanceDate($school_ids);
+        $max_date = $this->getLatestMarkedAttendanceDate();
         return $this->select(["school_id", "class", "count(*) as count"])
             ->join("master.student as student", "student.id=student_id")
             ->where("date", $max_date[0]['date'])
@@ -171,18 +171,16 @@ class AttendanceModel extends Model
             ->findAll();
     }
 
-    public function getLatestMarkedAttendanceDate($school_ids): array
+    public function getLatestMarkedAttendanceDate(): array
     {
         return $this->select("max(date) as date")
-            ->join("master.student as student", "student.id=student_id")
-            ->whereIn("school_id", $school_ids)
             ->findAll();
     }
 
     public function getClassWiseMarkedAttendance($school_ids, $classes): array
     {
         helper('general');
-        $max_date = $this->getLatestMarkedAttendanceDate($school_ids);
+        $max_date = $this->getLatestMarkedAttendanceDate();
         return $this->select([
             'count(distinct(student.id)) as count_att',
             'count(student.id)/count(distinct(attendance.date)) as avg_att',

@@ -321,7 +321,7 @@ class AdminController extends AuthController
         $this->view_data['page_title'] = 'Online Attendance Report';
         $school_ids = array_keys($this->schools);
         $attendance_model = new AttendanceModel();
-        $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate($school_ids);
+        $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate();
         $attendance_report_model = new AttendanceReportModel();
         $attendance_data_day_wise = $attendance_report_model->getDateWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $latest_marked_attendance_date);
