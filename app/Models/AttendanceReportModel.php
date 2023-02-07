@@ -156,4 +156,39 @@ class AttendanceReportModel extends Model
         return $final_data;
     }
 
+    public function getMarkedSchoolAttendanceNew($school_ids, $classes, $start, $end): array
+    {
+        $count=0;
+        $attendance_data=[];
+        $student_count_model = new StudentCountModel();
+        $final_school_ids = $student_count_model->getSchoolIds($school_ids);
+        foreach ($final_school_ids as $school_id) {
+            $data = $this->select([
+                'sum(total_attendance_marked) as count_att',
+                'sum(total_attendance_marked)/count(distinct date) as avg_att',
+                'count(distinct date) as days_att',
+                'school_id'
+            ])
+                ->where('school_id', $school_id)
+                ->whereIn('class', $classes)
+                ->where('total_attendance_marked!=', 0)
+                ->where("date BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                    $end . "', '%m/%d/%Y')")
+                ->findAll();
+            $total_student_count_data = $student_count_model->getSchoolWiseStudentCount([$school_id], $classes);
+            $attendance_data[]=[
+                "Serial_no"=>$count++,
+                "School"=>$total_student_count_data[0]['school_id']."-".$total_student_count_data[0]['school_name'],
+                "class"=>$total_student_count_data[0]['class'],
+                "Total_Students"=>$total_student_count_data[0]['total_student'],
+                "District"=>$total_student_count_data[0]['district_name'],
+                "Zone"=>$total_student_count_data[0]['zone_name'],
+                "Average_Attendance_Marked"=>$data[0]['avg_att'],
+                "Attendance_Marked_Days"=>$data[0]['days_att'],
+
+            ];
+
+        }
+        return $attendance_data;
+  }
 }

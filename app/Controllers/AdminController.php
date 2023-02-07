@@ -305,7 +305,7 @@ class AdminController extends AuthController
 
         $school_ids = array_keys($this->schools);
         $attendance_report_model = new AttendanceReportModel();
-        $attendance_data = $attendance_report_model->getMarkedSchoolAttendance($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $attendance_data = $attendance_report_model->getMarkedSchoolAttendanceNew($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $this->view_data['response'] = [
             'attendance_data' => $attendance_data,
         ];
