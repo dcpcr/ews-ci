@@ -29,6 +29,8 @@ return [
     'badAttempt'      => 'Unable to log you in. Please check your credentials.',
     'loginSuccess'    => 'Welcome back!',
     'invalidPassword' => 'Unable to log you in. Please check your credentials.',
+    'tooManyAttempts' => 'Too many attempts!! please wait for one minute.',
+
 
     // Forgotten Passwords
     'forgotDisabled'  => 'Reseting password option has been disabled.',
