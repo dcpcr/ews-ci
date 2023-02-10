@@ -83,7 +83,12 @@ class AuthController extends Controller
             $login    = $this->request->getPost('login');
             $password = $this->request->getPost('password');
             $remember = (bool) $this->request->getPost('remember');
-
+            $captcha = $this->request->getPost('code');
+            if(!isset($captcha)){ 
+                $redirectURL = session('redirect_url') ?? site_url('/');
+                unset($_SESSION['redirect_url']);
+                return redirect()->to($redirectURL)->withCookies()->with('error', lang('Auth.captchaError'));
+            }
             // Determine credential type
             $type = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
@@ -120,6 +125,16 @@ class AuthController extends Controller
         }
 
         return redirect()->to(site_url('/'));
+    }
+
+    public function timeout()
+    {
+        if ($this->auth->check()) {
+            $this->auth->logout();
+        }
+        $redirectURL = session('redirect_url') ?? site_url('/');
+        unset($_SESSION['redirect_url']);
+        return redirect()->to($redirectURL)->withCookies()->with('message', lang('Auth.timeout'));
     }
 
     //--------------------------------------------------------------------

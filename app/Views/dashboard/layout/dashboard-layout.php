@@ -117,7 +117,7 @@
     <script src="/assets-adminlte/plugins/sparklines/sparkline.js"></script>
 
     <script src="/assets-adminlte/ews-js/common.js"></script>
-
+    <script src="/assets-adminlte/ews-js/check-user-active.js"></script>
     <!-- Page specific script -->
     <?= $this->include('dashboard/partial/scripts/filter-script'); ?>
     <?= $this->renderSection("page-specific-script-section") ?>
