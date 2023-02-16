@@ -123,6 +123,7 @@ class AuthController extends Controller
     {
         if ($this->auth->check()) {
             $this->auth->logout();
+            session_destroy();
         }
 
         return redirect()->to(site_url('/'));
