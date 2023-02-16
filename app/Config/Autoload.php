@@ -46,6 +46,7 @@ class Autoload extends AutoloadConfig
         'Myth\Auth' => APPPATH . 'ThirdParty/myth-auth/src',
         'Firebase\JWT' => APPPATH . 'ThirdParty/php-jwt/src',
         'SSP' => APPPATH . 'ThirdParty/ssp',
+        'Daycry\Encryption'=> APPPATH . 'ThirdParty/encryption/src',
     ];
 
     /**
