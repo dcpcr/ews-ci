@@ -84,9 +84,9 @@ foreach ($response['sub_division_wise_in_total_progress_dcpcr_helpline_case_coun
                 <tr>
                     <td><?= ++$counter ?></td>
                     <td><?= $row['sub_division'] ?></td>
-                    <td><?= $row['total_ticket_count'] ?></td>
-                    <td><?= $row['closed'] ?></td>
                     <td><?= $row['total_in_progress_ticket_count'] ?></td>
+                    <td><?= $row['closed'] ?></td>
+                    <td><?= $row['total_ticket_count'] ?></td>
                 </tr>
                 <?php
             }
