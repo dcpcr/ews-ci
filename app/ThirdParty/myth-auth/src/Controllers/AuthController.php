@@ -90,8 +90,6 @@ class AuthController extends Controller
 
                 $login = $this->request->getPost('login');
                 $encrypted_password = $this->request->getPost('password');
-                var_dump($encrypted_password);
-                die();
                 $password = CryptoJsAes::decrypt($encrypted_password, $_SESSION['key']);
                 $remember = (bool)$this->request->getPost('remember');
                 // Determine credential type
