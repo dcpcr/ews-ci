@@ -18,6 +18,10 @@
         body {
             padding-top: 3em;
         }
+        .captcha-input {
+            background: #FFF url(<?=base_url('/CaptchaController/captcha')?>) repeat-y left center;
+            padding-left: 85px;
+        }
     </style>
 
     <?= $this->renderSection('pageStyles') ?>

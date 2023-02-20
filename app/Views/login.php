@@ -61,7 +61,12 @@
                                 <?= session('errors.login') ?>
                             </div>
                         </div>
-                        <div class="g-recaptcha" data-sitekey="6LdBgpskAAAAAJMf8p4VI_GcUTpN8ieQXQcflTU4"></div>
+<!--                        <div class="g-recaptcha" data-sitekey="6LdBgpskAAAAAJMf8p4VI_GcUTpN8ieQXQcflTU4"></div>
+-->
+                        <input type="text" name="captcha" id="captcha"
+                               class="captcha-input form-control  <?php if (session('errors.captcha')) : ?>is-invalid<?php endif ?>"
+                               placeholder="<?= lang('Auth.captcha') ?>" autocomplete="off">
+
 
                         <?php if ($config->allowRemembering): ?>
                             <div class="form-check">
