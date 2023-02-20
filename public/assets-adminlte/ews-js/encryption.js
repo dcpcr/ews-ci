@@ -137,7 +137,6 @@ var Encryption = (function ($) {
         }
     };
 })(jQuery);
-
 function encrypt() {
     const password = document.getElementById("password").value;
     if (password !== null) {

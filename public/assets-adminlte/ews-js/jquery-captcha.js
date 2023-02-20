@@ -17,7 +17,7 @@ let Captcha;
       resourceExtra: [],
       clickRefresh: true,
       autoRefresh: true,
-      caseSensitive: false,
+      caseSensitive: true,
     };
 
     self.element = element;
