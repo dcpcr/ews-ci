@@ -387,7 +387,7 @@ class CaseModel extends Model
                     $case_id = $case['id'];
                     if ($this->isStudentPresentAtLeastNDaysInLast30Days($student_id, $date, 20) &&
                         $ticket_model->isTicketNotOpen($case_id)) {
-                        $this->markStudentAsBackToSchool($case_id);
+                        $this->markStudentAsBackToSchool($case_id, $date);
                         $bts_counter++;
                     } else {
                         $not_bts_counter++;
@@ -429,11 +429,14 @@ class CaseModel extends Model
         return false;
     }
 
-    protected function markStudentAsBackToSchool($case_id)
+    protected function markStudentAsBackToSchool($case_id, $date)
     {
-        $this->builder->set('status', 'Back To School')
-            ->where('id', "$case_id")
-            ->update();
+        $data = [
+            'status' => 'Back To School',
+            'date_of_bts' => $date->format("Y/m/d"),
+        ];
+        $this->builder->where('id', $case_id);
+        $this->builder->update($data);
     }
 
     /**
