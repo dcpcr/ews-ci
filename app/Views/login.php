@@ -61,7 +61,7 @@
                                 <?= session('errors.login') ?>
                             </div>
                         </div>
-
+                        <div class="g-recaptcha" data-sitekey="6LdBgpskAAAAAJMf8p4VI_GcUTpN8ieQXQcflTU4"></div>
                         <div class="form-group">
                             <div class="" id="error"></div>
                             <canvas id="canvas" class=""></canvas>

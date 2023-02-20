@@ -30,7 +30,7 @@ return [
     'loginSuccess'    => 'Welcome back!',
     'invalidPassword' => 'Unable to log you in. Please check your credentials.',
     'tooManyAttempts' => 'Too many attempts!! please wait for one minute.',
-    'captchaError'    => 'Cannot bypass captcha',
+    'captchaError'    => 'Invalid reCAPTCHA',
 
     // Logout
     'timeout'         => 'User inactive for more than 20 mins',
