@@ -26,7 +26,7 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-6">
                     <?= view('App\Views\_message_block') ?>
-                    <form action="<?= route_to('login') ?>" method="post" onsubmit="return encrypt();"
+                    <form action="<?= route_to('login') ?>" method="post" onsubmit="return check();"
                           autocomplete="off">
                         <?= csrf_field() ?>
                         <?php if ($config->validFields === ['email']): ?>

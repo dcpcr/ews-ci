@@ -54,9 +54,9 @@ class AuthController extends Controller
         }
 
         // Set a return URL if none is specified
-        $_SESSION['key'] = $this->str_rand();
+        $_SESSION['key'] = $this->str_rand("50");
         $_SESSION['redirect_url'] = session('redirect_url') ?? previous_url() ?? site_url('/');
-        return $this->_render($this->config->views['login'], ['config' => $this->config, 'key' => $_SESSION['key']]);
+        return $this->_render($this->config->views['login'], ['config' => $this->config]);
     }
 
     /**
@@ -90,7 +90,7 @@ class AuthController extends Controller
 
                 $login = $this->request->getPost('login');
                 $encrypted_password = $this->request->getPost('password');
-                $password = CryptoJsAes::decrypt($encrypted_password, $_SESSION['key']);
+                $password = $this->cryptoJsAesDecrypt($_SESSION['key'], $encrypted_password);
                 $remember = (bool)$this->request->getPost('remember');
                 // Determine credential type
                 $type = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
@@ -452,4 +452,61 @@ class AuthController extends Controller
         $length = ($length < 4) ? 4 : $length;
         return bin2hex(random_bytes(($length - ($length % 2)) / 2));
     }
+
+    function random_number($min, $max): int
+    {
+        return rand($min, $max);
+
+    }
+
+    /**
+     * Decrypt data from a CryptoJS json encoding string
+     *
+     * @param mixed $passphrase
+     * @param mixed $jsonString
+     * @return mixed
+     */
+
+    function cryptoJsAesDecrypt($passphrase, $jsonString)
+    {
+        $jsondata = json_decode($jsonString, true);
+        $salt = hex2bin($jsondata["s"]);
+        $ct = base64_decode($jsondata["ct"]);
+        $iv = hex2bin($jsondata["iv"]);
+        $concatedPassphrase = $passphrase . $salt;
+        $md5 = array();
+        $md5[0] = md5($concatedPassphrase, true);
+        $result = $md5[0];
+        for ($i = 1; $i < 3; $i++) {
+            $md5[$i] = md5($md5[$i - 1] . $concatedPassphrase, true);
+            $result .= $md5[$i];
+        }
+        $key = substr($result, 0, 32);
+        $data = openssl_decrypt($ct, 'aes-256-cbc', $key, true, $iv);
+        return json_decode($data, true);
+    }
+
+    /**
+     * Encrypt value to a cryptojs compatiable json encoding string
+     *
+     * @param mixed $passphrase
+     * @param mixed $value
+     * @return string
+     */
+    function cryptoJsAesEncrypt($passphrase, $value)
+    {
+        $salt = openssl_random_pseudo_bytes(8);
+        $salted = '';
+        $dx = '';
+        while (strlen($salted) < 48) {
+            $dx = md5($dx . $passphrase . $salt, true);
+            $salted .= $dx;
+        }
+        $key = substr($salted, 0, 32);
+        $iv = substr($salted, 32, 16);
+        $encrypted_data = openssl_encrypt(json_encode($value), 'aes-256-cbc', $key, true, $iv);
+        $data = array("ct" => base64_encode($encrypted_data), "iv" => bin2hex($iv), "s" => bin2hex($salt));
+        return json_encode($data);
+    }
+
 }
