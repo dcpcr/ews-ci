@@ -445,9 +445,13 @@ class AdminController extends AuthController
         $district_get = $this->request->getGet('district');
         $this->districts = (empty($district_get) || ($district_get == ['All'])) ? $data['user_district']
             : array_intersect_key($data['user_district'], array_flip($district_get));
+        if(empty($this->districts))
+        die("<h1>Invalid Request</h1>");
         $zone_get = $this->request->getGet('zone');
         $this->zones = (empty($zone_get) || ($zone_get == ['All'])) ? $data['user_zone']
             : array_intersect_key($data['user_zone'], array_flip($zone_get));
+        if(empty($this->zones))
+            die("<h1>Invalid Request</h1>");
         $school_get = $this->request->getGet('school');
         $this->setSchools($school_get, $data['user_school'], $this->districts, $this->zones);
 
