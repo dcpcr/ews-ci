@@ -27,7 +27,6 @@ function check() {
             document.getElementById("password").value,
             key
         );
-        alert(encrypted);
         document.getElementById("password").value = encrypted;
         return true;
     } else {
