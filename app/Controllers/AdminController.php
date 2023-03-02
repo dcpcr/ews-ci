@@ -450,8 +450,6 @@ class AdminController extends AuthController
         $zone_get = $this->request->getGet('zone');
         $this->zones = (empty($zone_get) || ($zone_get == ['All'])) ? $data['user_zone']
             : array_intersect_key($data['user_zone'], array_flip($zone_get));
-        var_dump($this->zones);
-        die();
         if (empty($this->zones))
             die("<h1>Invalid Request</h1>");
         $school_get = $this->request->getGet('school');
