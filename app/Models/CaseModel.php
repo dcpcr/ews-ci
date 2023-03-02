@@ -80,6 +80,7 @@ class CaseModel extends Model
             $this->table . '.system_bts',
             $this->table . '.priority',
             $this->table . '.day',
+            $this->table . '.date_of_bts',
             $this->table . '.status',
             'student.id as student_id',
             'student.name as student_name',
@@ -131,6 +132,7 @@ class CaseModel extends Model
             array('db' => 'district', 'dt' => 19),
             array('db' => 'zone', 'dt' => 20),
             array('db' => 'sms_status', 'dt' => 21),
+            array('db' => 'date_of_bts', 'dt' => 22),
         );
 
         // SQL server connection information
