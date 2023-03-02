@@ -88,21 +88,21 @@ class AttendanceReportModel extends Model
             ->findAll("30");
     }
 
-    public function getClassWiseMarkedStudentAttendanceCount($school_ids, $classes, $latest_date): array
+    public function getClassWiseMarkedStudentAttendanceGroupByCount($school_ids, $classes, $latest_date, $group_by): array
     {
-        $response = $this->select(['class', 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+        $response = $this->select(["$group_by", 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
             ->whereIn($this->table . ".school_id", $school_ids)
             ->whereIn($this->table . ".class", $classes)
             ->where("date", $latest_date[0]['date'])
-            ->groupBy("class")
-            ->orderBy("class")
+            ->groupBy("$group_by")
+            ->orderBy("$group_by")
             ->findAll();
-        $count = 0;
+        $count = 1;
         $data = [];
         foreach ($response as $row) {
             $data[] = [
                 "Serial_no" => $count++,
-                "Class" => $row['class'],
+                "$group_by" => $row["$group_by"],
                 "Attendance_Marked" => (isset($row['attendance_count'])) ? $row['attendance_count'] : 0,
                 "Attendance_Marked_Percent" => (isset($row['attendance_count'])) ? floor($row['attendance_count'] / $row['total_student'] * 100) : 0,
                 "Total_Students" => (isset($row['total_student'])) ? $row['total_student'] : 0,

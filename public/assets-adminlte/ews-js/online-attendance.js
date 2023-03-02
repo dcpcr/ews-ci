@@ -54,7 +54,7 @@ $(function () {
     $("#onlineattendancetable").DataTable({
         "pageLength": 40,
         data: attendancedata,
-        columns: [{data: "Serial_no", title: 'S.No'}, {data: 'Class', title: 'Class'}, {
+        columns: [{data: "Serial_no", title: 'S.No'}, {data: column, title: column}, {
             data: 'Total_Students',
             title: 'Total Students',
             render: DataTable.render.number(',')

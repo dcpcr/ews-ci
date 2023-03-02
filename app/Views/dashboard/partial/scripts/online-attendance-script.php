@@ -12,7 +12,7 @@ $attendanceCountData = substr_replace($attendanceCountData, "", -1) . "";
 $attendance_data = $response['attendance_data_class_wise'];
 $lable = $data = '';
 foreach ($attendance_data as $row) {
-    $lable .= "'" . $row['Class'] . "',";
+    $lable .= "'" . $row[$response['col_name']] . "',";
     $data .= "'" . $row['Attendance_Marked_Percent'] . "',";
 }
 $lable = substr_replace($lable, "", -1) . "";
@@ -20,6 +20,7 @@ $data = substr_replace($data, "", -1) . "";
 ?>
 
 <script>
+    const column = "<?=$response['col_name']?>";
     const lablevalue = [<?=$lable?>];
     const labledata = [<?=$data?>];
     const attendancedata = <?=$data = json_encode($attendance_data)?>;

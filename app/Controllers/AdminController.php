@@ -312,6 +312,7 @@ class AdminController extends AuthController
 
     private function prepareOnlineAttendancePageData()
     {
+        $user_id = user()->id;
         $this->view_data['details'] = "To help us identify children at risk and bring them back to school, please ensure 100% marking of online attendance.";
         $this->view_data['page_title'] = 'Online Attendance Report';
         $school_ids = array_keys($this->schools);
@@ -319,11 +320,21 @@ class AdminController extends AuthController
         $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate();
         $attendance_report_model = new AttendanceReportModel();
         $attendance_data_day_wise = $attendance_report_model->getDateWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $latest_marked_attendance_date);
+        if (!$this->authorize->inGroup(['Level5'], $user_id)) {
+            $col_name = "school_id";
+            $table_title = "School Wise";
+            $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "$col_name");
+        } else {
+            $table_title = "Class Wise";
+            $col_name = "class";
+            $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "class");
+        }
         $this->view_data['response'] = [
+            "table_title" => $table_title,
+            "col_name" => $col_name,
             "attendance_data_day_wise" => $attendance_data_day_wise,
-            "attendance_data_class_wise" => $attendance_data_class_wise,
             'latest_marked_attendance_date' => $latest_marked_attendance_date,
+            "attendance_data_class_wise" => $attendance_data_class_wise,
         ];
         $this->view_name = 'dashboard/online-attendance';
     }
