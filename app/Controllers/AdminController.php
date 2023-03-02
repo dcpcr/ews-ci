@@ -233,9 +233,7 @@ class AdminController extends AuthController
 
     private function prepareReasonForAbsenteeismPageData(): void
     {
-        $this->view_data['details'] = "The Early Warning System has laid out a process for ascertaining the various reasons that lead to 
-            long absenteeism among students. The following report shows the distribution of such reasons, including the 
-            frequency of cases detected across genders.";
+        $this->view_data['details'] = "These children are at high risk of danger and compromised well-being. Extend the required support to them and ensure that they have regular attendance at school.";
         $this->view_data['page_title'] = 'Reasons of Absenteeism';
         $school_ids = array_keys($this->schools);
         $maleCount = $this->getGenderWiseReasonsCount(['Male']);
