@@ -320,21 +320,47 @@ class AdminController extends AuthController
         $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate();
         $attendance_report_model = new AttendanceReportModel();
         $attendance_data_day_wise = $attendance_report_model->getDateWiseMarkedStudentAttendanceCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        if (!$this->authorize->inGroup(['Level5'], $user_id)) {
+        if ($this->authorize->inGroup(['Level2', 'Level1'], $user_id)) {
+            //if user is admin
             $col_name = "school_id";
-            $table_title = "School Wise";
-            $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "$col_name");
-        } else {
-            $table_title = "Class Wise";
-            $col_name = "class";
-            $attendance_data_class_wise = $attendance_report_model->getClassWiseMarkedStudentAttendanceGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "class");
+            $graph_lable = "district";
+            $table_title = "School";
+            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id",false);
+            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "district",true);
+        } elseif($this->authorize->inGroup(['Level3'], $user_id)) {
+            //if user is district
+            $col_name = "zone";
+            $graph_lable = "zone";
+            $table_title = "Zone";
+            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id",false);
+            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "zone",true);
         }
+        elseif($this->authorize->inGroup(['Level4'], $user_id)) {
+            //if user is zone
+            $col_name = "school_id";
+            $graph_lable = "school_id";
+            $table_title = "school";
+            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id",false);
+            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id",true);
+        }
+        elseif ($this->authorize->inGroup(['Level5'], $user_id))
+        {
+            //if user is school
+            $col_name = "class";
+            $graph_lable = "class";
+            $table_title = "class";
+            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "class",false);
+            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "class", true);
+        }
+
         $this->view_data['response'] = [
             "table_title" => $table_title,
+            "graph_lable" => $graph_lable,
             "col_name" => $col_name,
             "attendance_data_day_wise" => $attendance_data_day_wise,
             'latest_marked_attendance_date' => $latest_marked_attendance_date,
             "attendance_data_class_wise" => $attendance_data_class_wise,
+            "attendance_data_for_graph" => $attendance_data_for_graph,
         ];
         $this->view_name = 'dashboard/online-attendance';
     }

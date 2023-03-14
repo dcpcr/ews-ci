@@ -1,13 +1,8 @@
 <div class="row">
     <div class="col-md-12 col-sm-6">
-        <div class="card collapsed-card">
+        <div class="card">
             <div>
-                <p>Class Wise Attendance Graph</p>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
+                <p><?=ucfirst($response['graph_lable'])?> Wise Attendance Graph Date: <?= $response['latest_marked_attendance_date'][0]['date'] ?></p>
             </div>
             <div class="card-body">
                 <div class="chart">

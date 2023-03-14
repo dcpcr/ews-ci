@@ -9,10 +9,11 @@ foreach ($response['attendance_data_day_wise'] as $row) {
 $attendanceLabel = substr_replace($attendanceLabel, "", -1) . "";
 $attendanceCountData = substr_replace($attendanceCountData, "", -1) . "";
 
-$attendance_data = $response['attendance_data_class_wise'];
+$attendance_data = $response['attendance_data_for_graph'];
+$graphlable=ucfirst($response['graph_lable']).' Wise Attendance %';
 $lable = $data = '';
 foreach ($attendance_data as $row) {
-    $lable .= "'" . $row[$response['col_name']] . "',";
+    $lable .= "'" . $row[$response['graph_lable']] . "',";
     $data .= "'" . $row['Attendance_Marked_Percent'] . "',";
 }
 $lable = substr_replace($lable, "", -1) . "";
@@ -22,6 +23,7 @@ $data = substr_replace($data, "", -1) . "";
 <script>
     const column = "<?=$response['col_name']?>";
     const lablevalue = [<?=$lable?>];
+    const graph_legend = "<?=$graphlable?>";
     const labledata = [<?=$data?>];
     const attendancedata = <?=$data = json_encode($attendance_data)?>;
     const attendanceLabel = [<?=$attendanceLabel?>];

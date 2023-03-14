@@ -52,17 +52,22 @@ $(function () {
 })
 $(function () {
     $("#onlineattendancetable").DataTable({
-        "pageLength": 40,
+        "pageLength": 10,
         data: attendancedata,
-        columns: [{data: "Serial_no", title: 'S.No'}, {data: column, title: column}, {
+        columns: [
+            {data: "Serial_no", title: 'S.No'},
+            {data: column, title: column},
+            {
             data: 'Total_Students',
             title: 'Total Students',
             render: DataTable.render.number(',')
-        }, {data: 'Attendance_Marked', title: 'Attendance Marked', render: DataTable.render.number(',')}, {
+        },
+            {data: 'Attendance_Marked', title: 'Attendance Marked', render: DataTable.render.number(',')}, {
             data: 'Attendance_Marked_Percent',
             title: 'Attendance Marked %',
             render: $.fn.dataTable.render.number('', '', '', '', "%")
-        },],
+        },
+        ],
         "responsive": true,
         "lengthChange": false,
         "autoWidth": false,
@@ -70,6 +75,50 @@ $(function () {
         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
     }).buttons().container().appendTo('#onlineattendancetable_wrapper .col-md-6:eq(0)');
 });
+$(function () {
+    $("#onlineattendancepercentagetable").DataTable({
+        "pageLength": 10,
+        /*data: attendancedata,
+        columns: [
+            {
+                data: "Serial_no",
+                title: 'S.No'
+            },
+            {
+                data: "district",
+                title: 'District'
+            },
+            {
+                data: "zone",
+                title: 'Zone'
+            },
+            {
+                data: column,
+                title: column
+            },
+            {
+                data: 'Total_Students', title: 'Total Students',
+                render: DataTable.render.number(',')
+            },
+            {
+                data: 'Attendance_Marked',
+                title: 'Attendance Marked',
+                render: DataTable.render.number(',')
+            },
+            {
+                data: 'Attendance_Marked_Percent',
+                title: 'Attendance Marked %',
+                render: $.fn.dataTable.render.number('', '', '', '', "%")
+            },
+        ],*/
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        "ordering": true,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#onlineattendancepercentagetable_wrapper .col-md-6:eq(0)');
+});
+
 $(document).ready(function () {
     $("#duration").empty();
 });
@@ -79,7 +128,7 @@ $(function () {
     //---------------------
     var stackchartdata = {
         labels: lablevalue, datasets: [{
-            label: 'Class Wise Attendance %',
+            label: graph_legend,
             backgroundColor: 'rgba(100, 214, 222, 1)',
             borderColor: 'rgba(210, 214, 222, 1)',
             pointRadius: false,

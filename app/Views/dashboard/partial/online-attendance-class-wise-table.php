@@ -1,15 +1,17 @@
 <div class="card">
     <div>
-        <h3 class="card-title"> <?= $response['table_title'] ?> Attendance Performance for Last Marked Attendance
+        <h3 class="card-title"> <?= ucfirst($response['table_title']) ?> Wise Attendance Performance for Last Marked Attendance
             Date: <?= $response['latest_marked_attendance_date'][0]['date'] ?></h3>
     </div>
     <!-- /.card-header -->
     <div class="card-body">
-        <table id="example1" class="table table-bordered table-striped">
+        <table id="onlineattendancepercentagetable" class="table table-bordered table-striped">
             <thead>
             <tr>
                 <th>S.No</th>
-                <th><?= $response['col_name'] ?></th>
+                <th>District</th>
+                <th>Zone</th>
+                <th><?= ucfirst($response['table_title']) ?></th>
                 <th>% Online attendance marked (Last Attendance Mark)</th>
                 <th>Attendance Marked</th>
             </tr>
@@ -20,6 +22,8 @@
                 ?>
                 <tr>
                     <td><?= $row['Serial_no'] ?></td>
+                    <td><?= $row['district'] ?></td>
+                    <td><?= $row['zone'] ?></td>
                     <td><?= $row[$response["col_name"]] ?></td>
                     <td class="project_progress">
                         <div class="progress progress-sm">

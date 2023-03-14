@@ -88,25 +88,60 @@ class AttendanceReportModel extends Model
             ->findAll("30");
     }
 
-    public function getClassWiseMarkedStudentAttendanceGroupByCount($school_ids, $classes, $latest_date, $group_by): array
+    public function getMarkedStudentAttendanceDataGroupByCount($school_ids, $classes, $latest_date, $group_by, $graph): array
     {
-        $response = $this->select(["$group_by", 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
-            ->whereIn($this->table . ".school_id", $school_ids)
-            ->whereIn($this->table . ".class", $classes)
-            ->where("date", $latest_date[0]['date'])
-            ->groupBy("$group_by")
-            ->orderBy("$group_by")
-            ->findAll();
-        $count = 1;
-        $data = [];
-        foreach ($response as $row) {
-            $data[] = [
-                "Serial_no" => $count++,
-                "$group_by" => $row["$group_by"],
-                "Attendance_Marked" => (isset($row['attendance_count'])) ? $row['attendance_count'] : 0,
-                "Attendance_Marked_Percent" => (isset($row['attendance_count'])) ? floor($row['attendance_count'] / $row['total_student'] * 100) : 0,
-                "Total_Students" => (isset($row['total_student'])) ? $row['total_student'] : 0,
-            ];
+        if ($group_by=="district")
+        {
+            $response = $this->select([ 'd.name as district', 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+                ->whereIn($this->table . ".school_id", $school_ids)
+                ->whereIn($this->table . ".class", $classes)
+                ->join("master.school as s", "s.id=attendance_report.school_id")
+                ->join("master.school_mapping as sm", "sm.school_id=s.id")
+                ->join("master.district as d", "d.id=sm.district_id")
+                ->join("master.zone as z", "z.id=sm.zone_id")
+                ->where("date", $latest_date[0]['date'])
+                ->groupBy("district")
+                ->orderBy("district")
+                ->findAll();
+            foreach ($response as $row) {
+                $data[] = [
+                    "district" => $row['district'],
+                    "Attendance_Marked" => (isset($row['attendance_count'])) ? $row['attendance_count'] : 0,
+                    "Attendance_Marked_Percent" => (isset($row['attendance_count'])) ? floor($row['attendance_count'] / $row['total_student'] * 100) : 0,
+                    "Total_Students" => (isset($row['total_student'])) ? $row['total_student'] : 0,
+                ];
+            }
+            return $data;
+        }
+
+        if ($group_by=="zone")
+        {
+            $response = $this->select([ 'z.name as zone', 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+                ->whereIn($this->table . ".school_id", $school_ids)
+                ->whereIn($this->table . ".class", $classes)
+                ->join("master.school as s", "s.id=attendance_report.school_id")
+                ->join("master.school_mapping as sm", "sm.school_id=s.id")
+                ->join("master.district as d", "d.id=sm.district_id")
+                ->join("master.zone as z", "z.id=sm.zone_id")
+                ->where("date", $latest_date[0]['date'])
+                ->groupBy("zone")
+                ->orderBy("zone")
+                ->findAll();
+            foreach ($response as $row) {
+                $data[] = [
+                    "zone" => $row['zone'],
+                    "Attendance_Marked" => (isset($row['attendance_count'])) ? $row['attendance_count'] : 0,
+                    "Attendance_Marked_Percent" => (isset($row['attendance_count'])) ? floor($row['attendance_count'] / $row['total_student'] * 100) : 0,
+                    "Total_Students" => (isset($row['total_student'])) ? $row['total_student'] : 0,
+                ];
+            }
+            return $data;
+        }
+        elseif ($group_by=="class") {
+            $data = $this->getArr($group_by, $school_ids, $classes, $latest_date[0]['date'], $graph);
+        }
+        elseif ($group_by=="school_id") {
+            $data = $this->getArr($group_by, $school_ids, $classes, $latest_date[0]['date'],$graph);
         }
 
         return $data;
@@ -185,10 +220,56 @@ class AttendanceReportModel extends Model
                 "Zone" => $total_student_count_data[0]['zone_name'],
                 "Average_Attendance_Marked" => $data[0]['avg_att'],
                 "Attendance_Marked_Days" => $data[0]['days_att'],
-
             ];
 
         }
         return $attendance_data;
+    }
+
+    /**
+     * @param $group_by
+     * @param $school_ids
+     * @param $classes
+     * @param $date
+     * @return array
+     */
+    public function getArr($group_by, $school_ids, $classes, $date, $graph): array
+    {
+        $response = $this->select(['s.name as name', 'z.name as zone', 'd.name as district', "attendance_report.$group_by as $group_by", 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+            ->whereIn($this->table . ".school_id", $school_ids)
+            ->whereIn($this->table . ".class", $classes)
+            ->join("master.school as s", "s.id=attendance_report.school_id")
+            ->join("master.school_mapping as sm", "sm.school_id=s.id")
+            ->join("master.district as d", "d.id=sm.district_id")
+            ->join("master.zone as z", "z.id=sm.zone_id")
+            ->where("date", $date)
+            ->groupBy("$group_by")
+            ->orderBy("$group_by")
+            ->findAll();
+
+
+        $count = 1;
+        $data = [];
+        $school_name='';
+        foreach ($response as $row) {
+            if($group_by=='school_id')
+            {
+                $school_name = "-".$row["name"];
+            }
+            if($graph)
+            {
+                $school_name = "";
+            }
+            $data[] = [
+                "Serial_no" => $count++,
+                "$group_by" => $row["$group_by"].$school_name,
+                "district" => $row['district'],
+                "zone" => $row['zone'],
+                "Attendance_Marked" => (isset($row['attendance_count'])) ? $row['attendance_count'] : 0,
+                "Attendance_Marked_Percent" => (isset($row['attendance_count'])) ? floor($row['attendance_count'] / $row['total_student'] * 100) : 0,
+                "Total_Students" => (isset($row['total_student'])) ? $row['total_student'] : 0,
+            ];
+        }
+        return $data;
     }
 }
