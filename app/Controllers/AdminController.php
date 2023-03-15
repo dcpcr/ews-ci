@@ -214,6 +214,8 @@ class AdminController extends AuthController
         $total_denial_of_admission_registration_name_struck_out = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
         $home_visit_model = new HomeVisitModel();
         $home_visit_count = $home_visit_model->getHomeVisitCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        // var_dump($home_visit_count);
+        
         $detected_case_male_count = $latest_student_status_model->getDetectedStudentGenderWiseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Male', ["Back to school", "Fresh"]);
         $detected_case_female_count = $latest_student_status_model->getDetectedStudentGenderWiseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Female', ["Back to school", "Fresh"]);
         $detected_case_transgender_count = $latest_student_status_model->getDetectedStudentGenderWiseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], 'Transgender', ["Back to school", "Fresh"]);
@@ -272,11 +274,16 @@ class AdminController extends AuthController
     }
     private function prepareDropoutInContactStudentList()
     {
+        $school_ids = array_keys($this->schools);
+        
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Dropped out and in contact to bring them back to school';
         //TODO @pratik Add data  and send the data in views
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+        $dropout_bring_back_to_school_student_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
+        
         $this->view_data['response'] = [
-            "dropped_out_in_contact" => "",
+            "dropped_out_in_contact" => $dropout_bring_back_to_school_student_list,
         ];
         $this->view_name = 'dashboard/list';
 
@@ -284,22 +291,65 @@ class AdminController extends AuthController
 
     private function prepareMovedOutOfDelhiStudentList()
     {
+        $school_ids = array_keys($this->schools);
+        
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Moved out of Delhi/Changed school ';
-        //TODO @pratik Add data  and send the data in views
+        
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+        $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
+        
         $this->view_data['response'] = [
-            "moved_out_of_delhi" => "",
+            "moved_out_of_delhi" => $total_moved_out_of_village_list,
         ];
         $this->view_name = 'dashboard/list';
     }
 
     private function prepareEnrolledInContactStudentList()
     {
+
+        //   $home_visit_count
+        // - $total_moved_out_of_village_count
+        // - $total_denial_of_admission_registration_name_struck_out,
+
+        // total moved out of village count
+        $school_ids = array_keys($this->schools);
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+        $total_moved_out_of_village_student_id = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
+        $total_denial_of_admission_registration_name_struck_out = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
+        $student_ids = "";
+        foreach($total_moved_out_of_village_student_id as $row){
+            
+            $student_ids.=$row["student_id"].",";
+            
+        }
+        // var_dump(sizeOf($total_moved_out_of_village_student_id));
+        
+        foreach($total_denial_of_admission_registration_name_struck_out as $row){
+            
+            $student_ids.=$row["student_id"].",";
+        }
+        // var_dump(sizeOf($total_moved_out_of_village_student_id));
+        $finalString = substr($student_ids,0,-1);
+
+
+        $home_visit_model = new HomeVisitModel();
+        // var_dump($home_visit_model->getHomeVisitCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']));
+       
+        $home_visit_list = $home_visit_model->getHomeVisitList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'],$finalString);
+       
+        
+
+
+
+
+
+
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Enrolled and in contact to bring them back to school ';
         //TODO @pratik Add data  and send the data in views
         $this->view_data['response'] = [
-            "enrolled_in_contact" => "",
+            "enrolled_in_contact" => $home_visit_list
         ];
         $this->view_name = 'dashboard/list';
     }

@@ -33,6 +33,28 @@ class ReasonForAbsenteeismModel extends CaseDetailsModel
 
     }
 
+
+    public function getReasonCategoryList(array $school_ids, array $classes, $start, $end, array $reason_id)
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        return $this->select()
+            ->join('reason', 'reason.id=reason_for_absenteeism.reason_id')
+            ->join('detected_case', 'detected_case.id=reason_for_absenteeism.case_id')
+            ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
+            ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->whereIn('reason_id', $reason_id)
+            ->where('status!=',"Back To School")
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->findAll();
+
+    }
+
+
+
     protected function getKeys(): array
     {
         return array('case_id', 'reason_of_absense', 'other_reason_of_absense');

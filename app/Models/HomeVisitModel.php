@@ -32,6 +32,23 @@ class HomeVisitModel extends CaseDetailsModel
             ->countAllResults();
     }
 
+    public function getHomeVisitList(array $school_ids, array $classes, $start, $end,$student_ids)
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        return $this->select()
+            ->join('detected_case', 'detected_case.id=home_visit.case_id')
+            ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
+            ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->whereNotIn('student.id',[$student_ids])
+            ->where("detected_case.status!=","Back To School")
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->findAll();
+    }
+
     protected function getKeys(): array
     {
         return array('case_id');
