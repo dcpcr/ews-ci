@@ -35,7 +35,6 @@
                     </span>
                 </p>
             </div>
-            <a href="<?php echo site_url('dashboard/enrolled-and-in-contact'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 
@@ -43,14 +42,13 @@
         <div class="small-box bg-danger text-center">
             <div class="inner">
                 <h4><span class="number"><?= $response['contact_not_established_with_dcpcr'] ?></span></h4>
-                <p class="mt-4">Contact not established with DCPCR
+                <p class="mt-4 mb-4">Contact not established with DCPCR
                     <span class="fa fa-info-circle" data-toggle="tooltip"
                           data-placement="right"
                           title="Update the phone number and/or home address of these students to assist DCPCR in reaching out to these students."
                     </span>
                 </p>
             </div>
-            <a href="<?php echo site_url('dashboard/contact-not-established-with-dcpcr'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
