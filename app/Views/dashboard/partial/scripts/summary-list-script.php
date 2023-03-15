@@ -1,14 +1,23 @@
-<?= 
-    $this->include('dashboard/partial/scripts/data-table-script'); 
-
-    $counter = 0;
-    $table_data = [];
-    var_dump($response['yet_to_be_contacted']);
-    die();
-    foreach (
-        //$response['back_to_school'] as $case
-        $response['yet_to_be_contacted'] as $case
-        ) {
+<?=
+$this->include('dashboard/partial/scripts/data-table-script');
+$data = "";
+if (isset($response['yet_to_be_contacted'])) {
+    $data = $response['yet_to_be_contacted'];
+} elseif (isset($response['back_to_school'])) {
+    $data = $response['back_to_school'];
+}elseif (isset($response['dropped_out_in_contact'])) {
+    $data = $response['dropped_out_in_contact'];
+}elseif (isset($response['moved_out_of_delhi'])) {
+    $data = $response['moved_out_of_delhi'];
+}elseif (isset($response['enrolled_in_contact'])) {
+    $data = $response['enrolled_in_contact'];
+}elseif (isset($response['contact_not_established'])) {
+    $data = $response['contact_not_established'];
+}
+$counter = 0;
+$table_data = [];
+if (!empty($data)) {
+    foreach ($data as $case) {
         $table_data [] = [
             "serial_no" => ++$counter,
             "case_id" => $case['case_id'],
@@ -36,6 +45,8 @@
             "day" => $case['day']
         ];
     }
+
+}
 
 
 ?>

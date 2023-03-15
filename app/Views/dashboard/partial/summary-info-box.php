@@ -13,7 +13,7 @@
         <div class="small-box bg-success text-center">
             <div class="inner">
                 <h4><span class="number"><?= $response['total_bts_case_count'] ?></span></h4>
-                <p class="mt-4"><a href= "">Back To School</a>
+                <p class="mt-4">Back To School
                     <span class="fa fa-info-circle" data-toggle="tooltip"
                           data-placement="right"
                           title="Closely monitor these students to ensure that they do not have high frequency of absence again.">
@@ -21,6 +21,7 @@
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/bts-list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-4 col-6">
@@ -34,6 +35,7 @@
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/enrolled-and-in-contact'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 
@@ -48,6 +50,7 @@
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/contact-not-established-with-dcpcr'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
@@ -65,6 +68,7 @@
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/moved-out-off-delhi'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-4 col-6">
@@ -77,10 +81,10 @@
                     <span class="fa fa-info-circle" data-toggle="tooltip"
                           data-placement="right"
                           title="Reach out to the parents/guardians of these students to get them re-admitted to the school."
-                          ;
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/dropped-out-list-in-contact'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 
@@ -96,6 +100,7 @@
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/ytbtu-list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
