@@ -13,7 +13,7 @@
         <div class="small-box bg-success text-center">
             <div class="inner">
                 <h4><span class="number"><?= $response['total_bts_case_count'] ?></span></h4>
-                <p class="mt-4">Back To School
+                <p class="mt-4"><a href= "">Back To School</a>
                     <span class="fa fa-info-circle" data-toggle="tooltip"
                           data-placement="right"
                           title="Closely monitor these students to ensure that they do not have high frequency of absence again.">

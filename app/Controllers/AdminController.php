@@ -124,6 +124,9 @@ class AdminController extends AuthController
                 case 'homevisits':
                     $this->homeVisitsReport();
                     break;
+                case 'list':
+                    $this->prepareList();
+                    break;
                 default:
                     $this->error_404();
 
@@ -135,6 +138,8 @@ class AdminController extends AuthController
             log_message("notice", "The user - " . user()->username . " - does not have the permission to view this page.");
         }
     }
+
+
 
     private function getCaseTableData(): array
     {
@@ -223,6 +228,27 @@ class AdminController extends AuthController
         ];
         $this->view_name = 'dashboard/summary';
     }
+
+    private function prepareList(){
+        $this->view_data['details'] = "This is a summary page";
+        $this->view_data['page_title'] = 'Sumamry Page';
+        $school_ids = array_keys($this->schools);
+        //$latest_student_status_modal = new LatestStudentStatusModel();
+        //$back_to_school_student_list = $latest_student_status_modal->getDetectedStudentList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
+        $yet_to_be_contacted_model = new YetToBeContactedModel();
+        $yet_to_be_contacted_list = $yet_to_be_contacted_model->getYetToBeContactedCaseList($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        
+        var_dump($yet_to_be_contacted_list);
+        die();
+        
+        
+        $this->view_data['response'] = [
+            //"back_to_school" => $back_to_school_student_list,
+            "yet_to_be_contacted" => $yet_to_be_contacted_list
+        ];
+        $this->view_name = 'dashboard/list';      
+    }
+
 
     private function getGenderWiseReasonsCount(array $gender): array
     {
@@ -365,6 +391,7 @@ class AdminController extends AuthController
         $this->view_name = 'dashboard/online-attendance';
     }
 
+    
 
     private function homeVisitsReport(): void
     {

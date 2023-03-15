@@ -51,6 +51,21 @@ class LatestStudentStatusModel extends Model
             ->countAllResults();
     }
 
+    public function getDetectedStudentList(array $school_ids, array $classes, $start, $end, array $where_status_is)
+    {
+
+        return $this->select()
+            ->join("master.student as student", "student.id=student_id")
+            ->join("detected_case", "detected_case.id=case_id")
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->whereIn("latest_student_status.status", $where_status_is)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->findAll();
+    }
+
+
     public function getDetectedStudentGenderWiseCount($school_ids, $classes, $start, $end, $gender, $where_status_is)
     {
         return $this->select(['case_id'])
