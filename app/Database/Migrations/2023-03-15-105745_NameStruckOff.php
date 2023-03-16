@@ -25,7 +25,7 @@ class NameStruckOff extends Migration
                 'unsigned' => true,
                 'NOT NULL' => true,
             ],
-            'name' => [
+            'student_name' => [
                 'type' => 'CHAR',
                 'constraint' => '100',
                 'NOT NULL' => true,

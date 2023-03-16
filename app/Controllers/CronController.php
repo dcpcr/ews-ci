@@ -9,6 +9,8 @@ use App\Models\CdacSmsModel;
 use App\Models\DcpcrHelplineTicketModel;
 use App\Models\HomeVisitModel;
 use App\Models\MobileSmsStatusModel;
+use App\Models\NameStruckOffModel;
+use App\Models\SchoolLeavingCertificateModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\StudentModel;
@@ -279,6 +281,32 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
+    private function updateNameStruckOff()
+    {
+        if (getenv('cron.update_name_struck_off') == "0") {
+            log_message("info", "updateNameStruckOff is not enabled. Skipping it");
+            return;
+        }
+        $nso_model = new NameStruckOffModel();
+        $nso_model->fetchNameStruckOffData();
+
+
+    }
+
+    private function updateSchoolLeavingCertificate()
+    {
+        if (getenv('cron.school_leaving_certificate') == "0") {
+            log_message("info", "updateSchoolLeavingCertificate is not enabled. Skipping it");
+            return;
+        }
+        $slc_model = new SchoolLeavingCertificateModel();
+        $slc_model->fetchSchoolLeavingCertificateData();
+
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     private function sendCronErrorSms($morning)
     {
         if (getenv('cron.sendcronalert') == "0") {
@@ -329,7 +357,6 @@ class CronController extends BaseController
                 if ($morning) {
                     $this->sendSms();
                 } else {
-
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();
                     $this->importStudentData();
@@ -344,6 +371,8 @@ class CronController extends BaseController
                     $this->fetchTickets($begin, $end);
                     $this->updateTicketDetails();
                     $this->updateBackToSchool($begin, $end);
+                    $this->updateNameStruckOff();
+                    $this->updateSchoolLeavingCertificate();
                     $this->sendCronStatusInfoSms($begin);
                 }
                 // Calculate script execution time
