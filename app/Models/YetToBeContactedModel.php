@@ -70,4 +70,19 @@ class YetToBeContactedModel extends CaseDetailsModel
     }
 
 
+    public function getYetToBeContactedCaseList(array $school_ids, array $classes, $start, $end)
+    {
+
+        return $this->select()
+            ->join("detected_case as case", "case.id=case_id")
+            ->join("latest_student_status", "latest_student_status.case_id=" . $this->table . ".case_id")
+            ->join("master.student as student", "student.id=latest_student_status.student_id")
+            ->whereIn('student.school_id', $school_ids)
+            ->whereIn('student.class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end . "', '%m/%d/%Y')")
+            ->findAll();
+
+    }
+
 }

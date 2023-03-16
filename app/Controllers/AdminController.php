@@ -124,6 +124,24 @@ class AdminController extends AuthController
                 case 'homevisits':
                     $this->homeVisitsReport();
                     break;
+                case 'bts-list':
+                    $this->prepareBtsStudentList();
+                    break;
+                case 'ytbtu-list':
+                    $this->prepareYetToBeTakeUpStudentList();
+                    break;
+                case 'dropped-out-list-in-contact':
+                    $this->prepareDropoutInContactStudentList();
+                    break;
+                case 'moved-out-off-delhi':
+                    $this->prepareMovedOutOfDelhiStudentList();
+                    break;
+                case 'enrolled-and-in-contact':
+                    $this->prepareEnrolledInContactStudentList();
+                    break;
+                    case 'contact-not-established-with-dcpcr':
+                    $this->prepareContactNotEstablishedStudentList();
+                    break;
                 default:
                     $this->error_404();
 
@@ -135,6 +153,7 @@ class AdminController extends AuthController
             log_message("notice", "The user - " . user()->username . " - does not have the permission to view this page.");
         }
     }
+
 
     private function getCaseTableData(): array
     {
@@ -223,6 +242,89 @@ class AdminController extends AuthController
         ];
         $this->view_name = 'dashboard/summary';
     }
+
+    private function prepareBtsStudentList()
+    {
+
+        $this->view_data['details'] = "";
+        $this->view_data['page_title'] = 'Back to School';
+        $school_ids = array_keys($this->schools);
+        $latest_student_status_modal = new LatestStudentStatusModel();
+        $back_to_school_student_list = $latest_student_status_modal->getDetectedStudentList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
+        $this->view_data['response'] = [
+            "back_to_school" => $back_to_school_student_list,
+        ];
+        $this->view_name = 'dashboard/list';
+    }
+
+    private function prepareYetToBeTakeUpStudentList()
+    {
+        $this->view_data['details'] = "";
+        $this->view_data['page_title'] = 'Yet To Be Contacted';
+        $school_ids = array_keys($this->schools);
+        $yet_to_be_contacted_model = new YetToBeContactedModel();
+        $yet_to_be_contacted_list = $yet_to_be_contacted_model->getYetToBeContactedCaseList($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_data['response'] = [
+            "yet_to_be_contacted" => $yet_to_be_contacted_list,
+        ];
+        $this->view_name = 'dashboard/list';
+
+    }
+    private function prepareDropoutInContactStudentList()
+    {
+        $school_ids = array_keys($this->schools);
+        
+        $this->view_data['details'] = "";
+        $this->view_data['page_title'] = 'Dropped out and in contact to bring them back to school';
+        //TODO @pratik Add data  and send the data in views
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+        $dropout_bring_back_to_school_student_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
+        
+        $this->view_data['response'] = [
+            "dropped_out_in_contact" => $dropout_bring_back_to_school_student_list,
+        ];
+        $this->view_name = 'dashboard/list';
+
+    }
+
+    private function prepareMovedOutOfDelhiStudentList()
+    {
+        $school_ids = array_keys($this->schools);
+        
+        $this->view_data['details'] = "";
+        $this->view_data['page_title'] = 'Moved out of Delhi/Changed school ';
+        
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+        $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
+        
+        $this->view_data['response'] = [
+            "moved_out_of_delhi" => $total_moved_out_of_village_list,
+        ];
+        $this->view_name = 'dashboard/list';
+    }
+
+    private function prepareEnrolledInContactStudentList()
+    {
+        $this->view_data['details'] = "";
+        $this->view_data['page_title'] = 'Enrolled and in contact to bring them back to school ';
+        //TODO @pratik Add data  and send the data in views
+        $this->view_data['response'] = [
+            "enrolled_in_contact" => ""
+        ];
+        $this->view_name = 'dashboard/list';
+    }
+
+    private function prepareContactNotEstablishedStudentList()
+    {
+        $this->view_data['details'] = "";
+        $this->view_data['page_title'] = 'Enrolled and in contact to bring them back to school ';
+        //TODO @pratik Add data  and send the data in views
+        $this->view_data['response'] = [
+            "enrolled_in_contact" => ""
+        ];
+        $this->view_name = 'dashboard/list';
+    }
+
 
     private function getGenderWiseReasonsCount(array $gender): array
     {
@@ -325,31 +427,28 @@ class AdminController extends AuthController
             $col_name = "school_id";
             $graph_lable = "district";
             $table_title = "School";
-            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id",false);
-            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "district",true);
-        } elseif($this->authorize->inGroup(['Level3'], $user_id)) {
+            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id", false);
+            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "district", true);
+        } elseif ($this->authorize->inGroup(['Level3'], $user_id)) {
             //if user is district
             $col_name = "zone";
             $graph_lable = "zone";
             $table_title = "Zone";
-            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id",false);
-            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "zone",true);
-        }
-        elseif($this->authorize->inGroup(['Level4'], $user_id)) {
+            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id", false);
+            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "zone", true);
+        } elseif ($this->authorize->inGroup(['Level4'], $user_id)) {
             //if user is zone
             $col_name = "school_id";
             $graph_lable = "school_id";
             $table_title = "school";
-            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id",false);
-            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id",true);
-        }
-        elseif ($this->authorize->inGroup(['Level5'], $user_id))
-        {
+            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id", false);
+            $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id", true);
+        } elseif ($this->authorize->inGroup(['Level5'], $user_id)) {
             //if user is school
             $col_name = "class";
             $graph_lable = "class";
             $table_title = "class";
-            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "class",false);
+            $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "class", false);
             $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "class", true);
         }
 

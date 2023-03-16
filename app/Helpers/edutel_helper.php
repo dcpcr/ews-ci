@@ -36,16 +36,31 @@ function fetch_student_data_for_school_from_edutel($school_id)
     return fetch_api_response($url);
 }
 
+function fetch_school_leaving_certificate_data_from_edudel()
+{
+    $url = getenv('edudel.slc');
+    return fetch_api_response($url,true,false);
+}
+
+function fetch_name_struck_out_data_from_edudel()
+{
+    $url = getenv('edudel.nso');
+    return fetch_api_response($url,true,false);
+}
+
 function fetch_attendance_from_edutel($date, $school_id)
 {
     $url = "https://www.edudel.nic.in/mis/EduWebService_Other/Smc_MITTRA.asmx/Student_Attendence_School?School_ID=$school_id&Date=$date";
     return fetch_api_response($url);
 }
 
-function fetch_api_response($url, bool $retry = true)
+function fetch_api_response($url, bool $retry = true, $password = true)
 {
+    helper("general");
     //Todo: extract password to a config file
-    $url .= "&password=Ukr@7520";
+    if ($password){
+        $url .= "&password=Ukr@7520";
+    }
     $response = get_curl_response($url);
     if ($response) {
         log_message("info", "API call success, url - " . $url);

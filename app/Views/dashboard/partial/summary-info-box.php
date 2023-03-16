@@ -21,6 +21,7 @@
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/bts-list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-4 col-6">
@@ -41,7 +42,7 @@
         <div class="small-box bg-danger text-center">
             <div class="inner">
                 <h4><span class="number"><?= $response['contact_not_established_with_dcpcr'] ?></span></h4>
-                <p class="mt-4">Contact not established with DCPCR
+                <p class="mt-4 mb-4">Contact not established with DCPCR
                     <span class="fa fa-info-circle" data-toggle="tooltip"
                           data-placement="right"
                           title="Update the phone number and/or home address of these students to assist DCPCR in reaching out to these students."
@@ -65,6 +66,7 @@
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/moved-out-off-delhi'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-4 col-6">
@@ -77,10 +79,10 @@
                     <span class="fa fa-info-circle" data-toggle="tooltip"
                           data-placement="right"
                           title="Reach out to the parents/guardians of these students to get them re-admitted to the school."
-                          ;
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/dropped-out-list-in-contact'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 
@@ -96,6 +98,7 @@
                     </span>
                 </p>
             </div>
+            <a href="<?php echo site_url('dashboard/ytbtu-list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
