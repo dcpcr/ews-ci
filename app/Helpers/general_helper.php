@@ -61,7 +61,7 @@ function get_curl_response($url, $username = '', $password = '', $method = 'GET'
     $err = curl_error($curl);
     curl_close($curl);
     if ($err) {
-        log_message('error', "cURL Error #:" . $err);
+        log_message('error', "cURL Error #:" . $err."for url->".$url);
         return null;
     } else {
         return $response;
