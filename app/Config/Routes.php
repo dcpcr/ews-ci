@@ -34,6 +34,7 @@ $routes->setAutoRoute(true);
 $routes->get('operator', 'OperatorController::index', ['as' => 'operator']);
 $routes->get('dashboard/ajax/(:segment)', 'AdminController::ajax/$1', ['as' => 'dashboard.ajax']);
 $routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
+$routes->get('dashboard/(:num)/(:any)', 'AdminController::index/$1/$2');
 $routes->cli("cron/night", "CronController::runDailyAtNight");
 $routes->cli("cron/morning", "CronController::runDailyAtMorning");
 $routes->cli("cron/detect/(:num)/(:any)", "CronController::detect/$1/$2");
