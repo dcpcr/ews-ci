@@ -307,6 +307,7 @@ class AdminController extends AuthController
     {
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Enrolled and in contact to bring them back to school ';
+        $this->view_data['status'] = 'Enrolled and in contact to bring them back to school ';
         //TODO @pratik Add data  and send the data in views
         $this->view_data['response'] = [
             "enrolled_in_contact" => ""
