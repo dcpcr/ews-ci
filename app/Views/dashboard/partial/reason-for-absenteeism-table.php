@@ -46,7 +46,15 @@ foreach ($response['sub_division_wise_in_total_progress_dcpcr_helpline_case_coun
                             <?= $percent ?>%
                         </small>
                     </td>
-                    <td><a href="<?=$row["id"]?>"><?= $row['count'] ?></a></td>
+                    <td><?php
+                        if($row['id'] != 4 && $row['id'] != 5 && $row['id'] != 8){
+                            echo "<a href = '".$row['id']."'>".$row['count']."</a>";
+                        } 
+                        else{
+                            echo $row['count'];
+                        }       
+                    ?>
+                    </td>
                     <td><?= $row['action_taken'] ?></td>
                 </tr>
                 <?php
