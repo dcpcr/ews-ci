@@ -46,7 +46,7 @@ foreach ($response['sub_division_wise_in_total_progress_dcpcr_helpline_case_coun
                             <?= $percent ?>%
                         </small>
                     </td>
-                    <td><?= $row['count'] ?></td>
+                    <td><a href="<?=$row["id"]?>"><?= $row['count'] ?></a></td>
                     <td><?= $row['action_taken'] ?></td>
                 </tr>
                 <?php
