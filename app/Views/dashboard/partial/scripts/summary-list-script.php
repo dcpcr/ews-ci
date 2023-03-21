@@ -22,7 +22,7 @@ if (!empty($data)) {
             "serial_no" => ++$counter,
             "case_id" => $case['case_id'],
             "student_id" => $case['student_id'],
-            "status" => $case['status'],
+            "status" => $status,
             "district" => $case['district'],
             "id" => $case['id'],
             "name" => $case['name'],

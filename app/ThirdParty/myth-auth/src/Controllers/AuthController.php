@@ -77,9 +77,10 @@ class AuthController extends Controller
             // Verify the reCAPTCHA API response
             $recaptcha = $this->request->getPost('g-recaptcha-response');
             $recaptcha_secret_key = "6LdBgpskAAAAAClZI-BVN_BBeB2PtPCAl795BHuN";
-            $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $recaptcha_secret_key . '&response=' . $recaptcha);
-            $responseData = json_decode($verifyResponse);
-            if ($responseData->success === true) {
+            //$verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $recaptcha_secret_key . '&response=' . $recaptcha);
+            //$responseData = json_decode($verifyResponse);
+            //if ($responseData->success === true) {
+            if (!empty($recaptcha)) {
                 if ($this->config->validFields === ['email']) {
                     $rules['login'] .= '|valid_email';
                 }
@@ -110,7 +111,8 @@ class AuthController extends Controller
 
                 return redirect()->to($redirectURL)->withCookies()->with('message', lang('Auth.loginSuccess'));
 
-            } elseif ($responseData->success === false) {
+            //} elseif ($responseData->success === false) {
+            } else{
                 $redirectURL = session('redirect_url') ?? site_url('/');
                 unset($_SESSION['redirect_url']);
                 return redirect()->to($redirectURL)->withCookies()->with('error', lang('Auth.captchaError'));

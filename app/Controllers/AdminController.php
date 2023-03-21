@@ -200,7 +200,6 @@ class AdminController extends AuthController
     {
         $this->view_data['details'] = "Students with frequent absenteeism are at a high risk of danger and compromised well-being. These are students who, without prior information, are absent for more than 20 days in a month or are absent for 7 consecutive days.";
         $this->view_data['page_title'] = 'Case Status';
-
         $school_ids = array_keys($this->schools);
         $latest_student_status_model = new LatestStudentStatusModel();
         $total_detected_student_count = $latest_student_status_model->getDetectedStudentCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school", "Fresh"]);
@@ -248,6 +247,7 @@ class AdminController extends AuthController
 
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Back to School';
+        $this->view_data['status'] = 'Back to School';
         $school_ids = array_keys($this->schools);
         $latest_student_status_modal = new LatestStudentStatusModel();
         $back_to_school_student_list = $latest_student_status_modal->getDetectedStudentList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ["Back to school"]);
@@ -261,6 +261,7 @@ class AdminController extends AuthController
     {
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Yet To Be Contacted';
+        $this->view_data['status'] = 'Yet To Be Contacted';
         $school_ids = array_keys($this->schools);
         $yet_to_be_contacted_model = new YetToBeContactedModel();
         $yet_to_be_contacted_list = $yet_to_be_contacted_model->getYetToBeContactedCaseList($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
@@ -270,16 +271,17 @@ class AdminController extends AuthController
         $this->view_name = 'dashboard/list';
 
     }
+
     private function prepareDropoutInContactStudentList()
     {
         $school_ids = array_keys($this->schools);
-        
+
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Dropped out and in contact to bring them back to school';
+        $this->view_data['status'] = 'Dropped out and in contact to bring them back to school';
         //TODO @pratik Add data  and send the data in views
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $dropout_bring_back_to_school_student_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
-        
         $this->view_data['response'] = [
             "dropped_out_in_contact" => $dropout_bring_back_to_school_student_list,
         ];
@@ -290,13 +292,11 @@ class AdminController extends AuthController
     private function prepareMovedOutOfDelhiStudentList()
     {
         $school_ids = array_keys($this->schools);
-        
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Moved out of Delhi/Changed school ';
-        
+        $this->view_data['status'] = 'Moved out of Delhi/Changed school ';
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
-        
         $this->view_data['response'] = [
             "moved_out_of_delhi" => $total_moved_out_of_village_list,
         ];
@@ -318,6 +318,7 @@ class AdminController extends AuthController
     {
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Enrolled and in contact to bring them back to school ';
+        $this->view_data['status'] = 'Enrolled and in contact to bring them back to school ';
         //TODO @pratik Add data  and send the data in views
         $this->view_data['response'] = [
             "enrolled_in_contact" => ""
