@@ -367,7 +367,7 @@ class AdminController extends AuthController
     public function prepareReasonListByReasonId($id, $reason_name)
     {
         $this->view_data['details'] = "";
-        $this->view_data['page_title'] = $reason_name;
+        $this->view_data['page_title'] = str_replace("*","/",$reason_name);
         $school_ids = array_keys($this->schools);
         $reason_model = new ReasonForAbsenteeismModel();
         $list = $reason_model->getCaseListByReasonId($id, $school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
