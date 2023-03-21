@@ -72,7 +72,7 @@ class ReasonForAbsenteeismModel extends CaseDetailsModel
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
-        return $this->select(['reason.name as reason_name', 'action_taken', 'count(*) as count'])
+        return $this->select(['reason.id as id'.'reason.name as reason_name', 'action_taken', 'count(*) as count'])
             ->join('reason', 'reason.id=reason_for_absenteeism.reason_id')
             ->join('detected_case', 'detected_case.id=reason_for_absenteeism.case_id')
             ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
