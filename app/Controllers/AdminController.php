@@ -139,7 +139,7 @@ class AdminController extends AuthController
                 case 'enrolled-and-in-contact':
                     $this->prepareEnrolledInContactStudentList();
                     break;
-                case 'contact-not-established-with-dcpcr':
+                    case 'contact-not-established-with-dcpcr':
                     $this->prepareContactNotEstablishedStudentList();
                     break;
                 default:
@@ -282,7 +282,6 @@ class AdminController extends AuthController
         //TODO @pratik Add data  and send the data in views
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $dropout_bring_back_to_school_student_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
-
         $this->view_data['response'] = [
             "dropped_out_in_contact" => $dropout_bring_back_to_school_student_list,
         ];
@@ -293,13 +292,11 @@ class AdminController extends AuthController
     private function prepareMovedOutOfDelhiStudentList()
     {
         $school_ids = array_keys($this->schools);
-
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = 'Moved out of Delhi/Changed school ';
         $this->view_data['status'] = 'Moved out of Delhi/Changed school ';
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
-
         $this->view_data['response'] = [
             "moved_out_of_delhi" => $total_moved_out_of_village_list,
         ];
