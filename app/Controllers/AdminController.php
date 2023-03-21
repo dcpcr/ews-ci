@@ -93,7 +93,7 @@ class AdminController extends AuthController
         }
     }
 
-    public function index($report_type)
+    public function index($report_type, $reason_name = '')
     {
         if ($this->doesUserHavePermission()) {
             $this->initializeFilterData();
@@ -143,32 +143,18 @@ class AdminController extends AuthController
                 case 'contact-not-established-with-dcpcr':
                     $this->prepareContactNotEstablishedStudentList();
                     break;
-                case '1':
-                    $this->prepareReasonListByReasonId(1,"Sickness");
+                case $report_type :
+                    $this->prepareReasonListByReasonId($report_type, $reason_name);
                     break;
-                case '2':
-                    $this->prepareReasonListByReasonId(2,"Incarceration");
-                    break;
-                case '3':
-                    $this->prepareReasonListByReasonId(3,"Moved Back to Village/ Different State");
-                    break;
-                case '4':
-                    $this->prepareReasonListByReasonId(4,"Sexual Offences or Sexually Inappropriate Behaviou");
-                    break;
-                case '5':
-                    $this->prepareReasonListByReasonId(5,"Child Marriage");
-                    break;
-                                                            
-                default:
-                    $this->error_404();
-
             }
-            $this->view_data['user_name'] = user()->username;
-            return view($this->view_name, $this->view_data);
+
         } else {
+            $this->error_404();
             //TODO: Show Forbidden Page
             log_message("notice", "The user - " . user()->username . " - does not have the permission to view this page.");
         }
+        $this->view_data['user_name'] = user()->username;
+        return view($this->view_name, $this->view_data);
     }
 
 
@@ -378,12 +364,13 @@ class AdminController extends AuthController
         $this->view_name = 'dashboard/absenteeism-reason';
     }
 
-    public function prepareReasonListByReasonId($id,$reason_name){
+    public function prepareReasonListByReasonId($id, $reason_name)
+    {
         $this->view_data['details'] = "";
         $this->view_data['page_title'] = $reason_name;
         $school_ids = array_keys($this->schools);
         $reason_model = new ReasonForAbsenteeismModel();
-        $list = $reason_model->getCaseListByReasonId($id,$school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $list = $reason_model->getCaseListByReasonId($id, $school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $this->view_data['response'] = [
             "reason_for_absenteeism" => $list,
         ];
