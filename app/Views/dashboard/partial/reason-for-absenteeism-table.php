@@ -47,8 +47,8 @@ foreach ($response['sub_division_wise_in_total_progress_dcpcr_helpline_case_coun
                         </small>
                     </td>
                     <td><?php
-                        if($row['id'] != 4 && $row['id'] != 5 && $row['id'] != 8){
-                            echo "<a href = '".$row['id'].'/'.stripslashes($row['reason_name'])."'>".$row['count']."</a>";
+                        if($row['id'] != 4 && $row['id'] != 5 && $row['id'] != 8)
+                            echo "<a href = '".$row['id'].'/'.str_replace("/","*",$row['reason_name'])."'>".$row['count']."</a>";
                         } 
                         else{
                             echo $row['count'];
