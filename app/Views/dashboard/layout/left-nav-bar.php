@@ -32,12 +32,6 @@
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/case'); ?>" class="nav-link case" id="case-nav">
-                    <p>Case Status</p>
-                </a>
-            </li>
-
-            <li class="nav-item mb-1 mt-1">
                 <a href="<?php echo site_url('dashboard/attendance'); ?>" class="nav-link attendance"
                    id="attendance-nav">
                     <p>

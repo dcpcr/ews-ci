@@ -97,9 +97,6 @@ class AdminController extends AuthController
         if ($this->doesUserHavePermission()) {
             $this->initializeFilterData();
             switch ($report_type) {
-                case 'case':
-                    $this->prepareCaseData();
-                    break;
                 case 'summary':
                     $this->prepareSummaryPageData();
                     break;
@@ -107,7 +104,7 @@ class AdminController extends AuthController
                     $this->prepareReasonForAbsenteeismPageData();
                     break;
                 case 'frequent-absenteeism':
-                    $this->prepareFrequentAbsenteeismPageData();
+                    $this->prepareFrequentCaseData();
                     break;
                 case 'highrisk':
                     $this->prepareHighRiskData();
@@ -139,7 +136,7 @@ class AdminController extends AuthController
                 case 'enrolled-and-in-contact':
                     $this->prepareEnrolledInContactStudentList();
                     break;
-                    case 'contact-not-established-with-dcpcr':
+                case 'contact-not-established-with-dcpcr':
                     $this->prepareContactNotEstablishedStudentList();
                     break;
                 default:
@@ -163,37 +160,12 @@ class AdminController extends AuthController
             ->getDetectedCasesForDataTable($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
     }
 
-    private function prepareCaseData(): void
+    private function prepareFrequentCaseData(): void
     {
-        $this->view_data['details'] = "The Early Warning System detects long absenteeism, i.e., uninformed absence of 7 consecutive days 
-            or for more than 66.67% days in a month (i.e., 20/30 days), across students in Delhi Government schools. 
-            It is based  on the premise that low attendance is the earliest indicator of a student at risk, which their 
-            family is not able to overcome. The following report shows the status of such EWS cases detected in the selected 
-            duration and other key parameters such as the number of students at high risk, the number of students who have 
-            returned back to school, and students who couldn’t be contacted due to various reasons.";
+
+        $this->view_data['details'] = "List of students with frequent absenteeism.";
         $this->view_data['page_title'] = 'Case Status';
-
-        $school_ids = array_keys($this->schools);
-        $high_risk_model = new HighRiskModel();
-        $this->view_data['high_risk_count'] = $high_risk_model
-            ->getHighRiskCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        $case_model = new CaseModel();
-        $this->view_data['detected_case_count'] = $case_model
-            ->getDetectedCasesCountGenderWise($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
-        $this->view_data['detected_case_count'][] = [
-            'count' => array_sum(array_column($this->view_data['detected_case_count'], "count")),
-            'gender' => 'Total'
-        ];
-        $this->view_data['high_risk_count'][] = [
-            'count' => array_sum(array_column($this->view_data['high_risk_count'], "count")),
-            'gender' => 'Total'
-        ];
-        $this->view_data['response'] = [
-            'detected_case_count' => $this->view_data['detected_case_count'],
-            'high_risk_count' => $this->view_data['high_risk_count'],
-        ];
-
-        $this->view_name = 'dashboard/case';
+        $this->view_name = 'dashboard/frequent-absenteeism';
     }
 
     private function prepareSummaryPageData()

@@ -86,3 +86,19 @@ $.fn.dataTable.ext.buttons.download =
                 });
         }
     };
+
+
+$.extend( true, $.fn.dataTable.defaults, {
+    "language": {
+        "processing": "<span class='fa-stack fa-lg'>\n\
+                            <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
+                       </span>&emsp;Processing ...",
+        "select": {
+            "rows": {
+                _: '%d rows selected',
+                0: 'Click row to select',
+                1: '1 row selected'
+            }
+        }
+    }
+} );
