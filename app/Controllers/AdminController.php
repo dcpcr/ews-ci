@@ -13,6 +13,7 @@ use App\Models\HighRiskModel;
 use App\Models\HomeVisitModel;
 use App\Models\LatestStudentStatusModel;
 use App\Models\ReasonForAbsenteeismModel;
+use App\Models\ReasonModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\YetToBeContactedModel;
@@ -92,7 +93,7 @@ class AdminController extends AuthController
         }
     }
 
-    public function index($report_type)
+    public function index($report_type, $reason_name = '')
     {
         if ($this->doesUserHavePermission()) {
             $this->initializeFilterData();
@@ -139,16 +140,18 @@ class AdminController extends AuthController
                 case 'contact-not-established-with-dcpcr':
                     $this->prepareContactNotEstablishedStudentList();
                     break;
-                default:
-                    $this->error_404();
-
+                case $report_type :
+                    $this->prepareReasonListByReasonId($report_type, $reason_name);
+                    break;
             }
-            $this->view_data['user_name'] = user()->username;
-            return view($this->view_name, $this->view_data);
+
         } else {
+            $this->error_404();
             //TODO: Show Forbidden Page
             log_message("notice", "The user - " . user()->username . " - does not have the permission to view this page.");
         }
+        $this->view_data['user_name'] = user()->username;
+        return view($this->view_name, $this->view_data);
     }
 
 
@@ -331,6 +334,20 @@ class AdminController extends AuthController
             'sub_division_wise_in_total_progress_dcpcr_helpline_case_count' => $sub_division_wise_in_total_progress_dcpcr_helpline_case_count,
         ];
         $this->view_name = 'dashboard/absenteeism-reason';
+    }
+
+    public function prepareReasonListByReasonId($id, $reason_name)
+    {
+        $this->view_data['details'] = "";
+        $this->view_data['page_title'] = str_replace("*","/",$reason_name);
+        $school_ids = array_keys($this->schools);
+        $reason_model = new ReasonForAbsenteeismModel();
+        $list = $reason_model->getCaseListByReasonId($id, $school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
+        $this->view_data['response'] = [
+            "reason_for_absenteeism" => $list,
+        ];
+        $this->view_name = 'dashboard/list.php';
+
     }
 
     public function prepareFrequentAbsenteeismPageData()

@@ -14,6 +14,9 @@ if (isset($response['yet_to_be_contacted'])) {
 }elseif (isset($response['contact_not_established'])) {
     $data = $response['contact_not_established'];
 }
+elseif (isset($response['reason_for_absenteeism'])){
+    $data = $response['reason_for_absenteeism'];
+}
 $counter = 0;
 $table_data = [];
 if (!empty($data)) {
@@ -22,7 +25,7 @@ if (!empty($data)) {
             "serial_no" => ++$counter,
             "case_id" => $case['case_id'],
             "student_id" => $case['student_id'],
-            "status" => $status,
+            "status" => isset($status)?$status:$case['status'],
             "district" => $case['district'],
             "id" => $case['id'],
             "name" => $case['name'],
