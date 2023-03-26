@@ -167,7 +167,7 @@ class AdminController extends AuthController
     {
 
         $this->view_data['details'] = "List of students with frequent absenteeism.";
-        $this->view_data['page_title'] = 'Case Status';
+        $this->view_data['page_title'] = 'Frequent Absenteeism';
         $this->view_name = 'dashboard/frequent-absenteeism';
     }
 
@@ -339,7 +339,7 @@ class AdminController extends AuthController
     public function prepareReasonListByReasonId($id, $reason_name)
     {
         $this->view_data['details'] = "";
-        $this->view_data['page_title'] = str_replace("*","/",$reason_name);
+        $this->view_data['page_title'] = str_replace("*", "/", $reason_name);
         $school_ids = array_keys($this->schools);
         $reason_model = new ReasonForAbsenteeismModel();
         $list = $reason_model->getCaseListByReasonId($id, $school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
