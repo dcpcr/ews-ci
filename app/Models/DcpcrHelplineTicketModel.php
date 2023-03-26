@@ -62,9 +62,17 @@ class DcpcrHelplineTicketModel extends CaseDetailsModel
                 log_message('notice', "Ticket Number " . $ticket['ticket_number'] . " details not fetched");
             }
         }
-        $batchSize = count($data);
-        $response = $this->updateBatch($data, "ticket_number", $batchSize);
-        log_message('info', "Total $response Tickets details has been updated");
+        if(!empty($data))
+        {
+            $batchSize = count($data);
+            $response = $this->updateBatch($data, "ticket_number", $batchSize);
+            log_message('info', "");
+
+        }
+        else{
+            log_message('notice', "Zero DCPCR Helpline Ticket");
+
+        }
     }
 
     //This function checks is there is any open ticket for the case in the system
