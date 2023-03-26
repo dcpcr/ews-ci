@@ -96,7 +96,8 @@ class CaseModel extends Model
             'school.name as school_name',
             'school.district',
             'school.zone',
-            'sms.sms_status'
+            'sms.sms_status',
+            'count(*) as no_time'
         ])
             ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')
@@ -105,6 +106,7 @@ class CaseModel extends Model
             ->whereIn('student.class', $classes)
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
                 $end . "', '%m/%d/%Y')")
+            ->groupBy("student_id")
             ->getCompiledSelect();
 
         $table = '(' . $query . ') temp';
@@ -133,6 +135,7 @@ class CaseModel extends Model
             array('db' => 'zone', 'dt' => 20),
             array('db' => 'sms_status', 'dt' => 21),
             array('db' => 'date_of_bts', 'dt' => 22),
+            array('db' => 'no_time', 'dt' => 23),
         );
 
         // SQL server connection information
