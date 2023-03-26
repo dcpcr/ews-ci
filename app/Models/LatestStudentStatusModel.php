@@ -52,7 +52,7 @@ class LatestStudentStatusModel extends Model
     }
 
 
-    public function getDetectedStudentList(array $school_ids, array $classes, $start, $end, array $where_status_is)
+    public function getDetectedStudentList(array $school_ids, array $classes, $start, $end, array $where_status_is): array
     {
 
         return $this->select()
