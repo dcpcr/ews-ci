@@ -81,7 +81,7 @@ class CaseModel extends Model
             $this->table . '.priority',
             $this->table . '.day',
             $this->table . '.date_of_bts',
-            $this->table . '.status',
+            'latest_student_status.status as latest_status',
             'student.id as student_id',
             'student.name as student_name',
             'student.gender',
@@ -102,6 +102,7 @@ class CaseModel extends Model
             ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')
             ->join($master_db . '.mobile_sms_status as sms', 'student.mobile = sms.mobile')
+            ->join('latest_student_status', 'latest_student_status.student_id = ' . $this->table . '.student_id')
             ->whereIn('student.school_id', $school_ids)
             ->whereIn('student.class', $classes)
             ->where("day BETWEEN STR_TO_DATE('" . $start . "' , '%m/%d/%Y') and STR_TO_DATE('" .
@@ -118,7 +119,7 @@ class CaseModel extends Model
             array('db' => 'system_bts', 'dt' => 3),
             array('db' => 'priority', 'dt' => 4),
             array('db' => 'day', 'dt' => 5),
-            array('db' => 'status', 'dt' => 6),
+            array('db' => 'latest_status', 'dt' => 6),
             array('db' => 'student_id', 'dt' => 7),
             array('db' => 'student_name', 'dt' => 8),
             array('db' => 'gender', 'dt' => 9),
