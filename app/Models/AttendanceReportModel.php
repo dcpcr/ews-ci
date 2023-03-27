@@ -80,19 +80,30 @@ class AttendanceReportModel extends Model
 
     public function getDateWiseMarkedStudentAttendanceCount($school_ids, $classes, $start, $end): array
     {
-        return $this->select(['date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+        $res = $this->select(['date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
             ->whereIn($this->table . ".school_id", $school_ids)
             ->whereIn($this->table . ".class", $classes)
             ->groupBy("date")
             ->orderBy("date", "DESC")
             ->findAll("30");
+        $data = [];
+        foreach ($res as $row) {
+            if (date('l', strtotime($row['date'])) != "Sunday") {
+                $data[] = [
+                    "date" => $row['date'],
+                    "attendance_count" => $row['attendance_count'],
+                    "total_student" => $row['total_student']
+                ];
+            }
+
+        }
+        return $data;
     }
 
     public function getMarkedStudentAttendanceDataGroupByCount($school_ids, $classes, $latest_date, $group_by, $graph): array
     {
-        if ($group_by=="district")
-        {
-            $response = $this->select([ 'd.name as district', 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+        if ($group_by == "district") {
+            $response = $this->select(['d.name as district', 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
                 ->whereIn($this->table . ".school_id", $school_ids)
                 ->whereIn($this->table . ".class", $classes)
                 ->join("master.school as s", "s.id=attendance_report.school_id")
@@ -114,9 +125,8 @@ class AttendanceReportModel extends Model
             return $data;
         }
 
-        if ($group_by=="zone")
-        {
-            $response = $this->select([ 'z.name as zone', 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
+        if ($group_by == "zone") {
+            $response = $this->select(['z.name as zone', 'date', 'sum(total_attendance_marked) as attendance_count', 'sum(total_student) as total_student'])
                 ->whereIn($this->table . ".school_id", $school_ids)
                 ->whereIn($this->table . ".class", $classes)
                 ->join("master.school as s", "s.id=attendance_report.school_id")
@@ -136,12 +146,10 @@ class AttendanceReportModel extends Model
                 ];
             }
             return $data;
-        }
-        elseif ($group_by=="class") {
+        } elseif ($group_by == "class") {
             $data = $this->getArr($group_by, $school_ids, $classes, $latest_date[0]['date'], $graph);
-        }
-        elseif ($group_by=="school_id") {
-            $data = $this->getArr($group_by, $school_ids, $classes, $latest_date[0]['date'],$graph);
+        } elseif ($group_by == "school_id") {
+            $data = $this->getArr($group_by, $school_ids, $classes, $latest_date[0]['date'], $graph);
         }
 
         return $data;
@@ -250,19 +258,17 @@ class AttendanceReportModel extends Model
 
         $count = 1;
         $data = [];
-        $school_name='';
+        $school_name = '';
         foreach ($response as $row) {
-            if($group_by=='school_id')
-            {
-                $school_name = "-".$row["name"];
+            if ($group_by == 'school_id') {
+                $school_name = "-" . $row["name"];
             }
-            if($graph)
-            {
+            if ($graph) {
                 $school_name = "";
             }
             $data[] = [
                 "Serial_no" => $count++,
-                "$group_by" => $row["$group_by"].$school_name,
+                "$group_by" => $row["$group_by"] . $school_name,
                 "district" => $row['district'],
                 "zone" => $row['zone'],
                 "Attendance_Marked" => (isset($row['attendance_count'])) ? $row['attendance_count'] : 0,
