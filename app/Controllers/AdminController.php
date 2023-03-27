@@ -422,9 +422,9 @@ class AdminController extends AuthController
             $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "district", true);
         } elseif ($this->authorize->inGroup(['Level3'], $user_id)) {
             //if user is district
-            $col_name = "zone";
+            $col_name = "school_id";
             $graph_lable = "zone";
-            $table_title = "Zone";
+            $table_title = "School";
             $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "school_id", false);
             $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_ids, $this->classes, $latest_marked_attendance_date, "zone", true);
         } elseif ($this->authorize->inGroup(['Level4'], $user_id)) {
