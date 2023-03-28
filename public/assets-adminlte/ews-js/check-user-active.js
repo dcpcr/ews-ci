@@ -1,4 +1,4 @@
-var timeoutTime = 120000;
+var timeoutTime = 1200000;
 var timeoutTimer = setTimeout(timeOutRedirect, timeoutTime);
 $(document).ready(function () {
     $("body").bind("mousedown keydown", function (event) {
