@@ -148,7 +148,7 @@ class CronController extends BaseController
      */
     private function updateCaseData($begin, $end)
     {
-        if (getenv('cron.casedata') == "0") {
+        if (getenv('cron.updatecasedata') == "0") {
             log_message("info", "updateCaseData is not enabled. Skipping it");
             return;
         }
@@ -225,7 +225,7 @@ class CronController extends BaseController
      */
     private function sendSms()
     {
-        if (getenv('cron.sms') == "0") {
+        if (getenv('cron.send_sms') == "0") {
             log_message("info", "sendSms is not enabled. Skipping it");
             return;
         }
@@ -251,7 +251,7 @@ class CronController extends BaseController
      */
     private function sendCronStatusInfoSms($date)
     {
-        if (getenv('cron.sendreport') == "0") {
+        if (getenv('cron.send_cron_status_info') == "0") {
             log_message("info", "sendCronStatusInfoSms is not enabled. Skipping it");
             return;
         }
@@ -264,7 +264,7 @@ class CronController extends BaseController
     /**
      * @throws ReflectionException
      */
-    public function updateStudentStatus()
+    public function updateLatestStudentStatus()
     {
         if (getenv('cron.updateLatestStudentStatus') == "0") {
             log_message("info", "updateLatestStudentStatus is not enabled. Skipping it");
@@ -375,7 +375,7 @@ class CronController extends BaseController
                     $this->importAttendanceData($begin, $end);
                     $this->attendanceReport($begin, $end);
                     $this->updateDetectedCases($begin, $end);
-                    $this->updateStudentStatus();
+                    $this->updateLatestStudentStatus();
                     $this->updateTotalStudentCount();
                     $this->updateCaseData($begin, $end);
                     $this->homeVisitCases($begin, $end);
