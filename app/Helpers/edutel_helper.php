@@ -39,13 +39,13 @@ function fetch_student_data_for_school_from_edutel($school_id)
 function fetch_school_leaving_certificate_data_from_edudel()
 {
     $url = getenv('edudel.slc');
-    return fetch_api_response($url,true,false);
+    return fetch_api_response($url, true, false);
 }
 
 function fetch_name_struck_out_data_from_edudel()
 {
     $url = getenv('edudel.nso');
-    return fetch_api_response($url,true,false);
+    return fetch_api_response($url, true, false);
 }
 
 function fetch_attendance_from_edutel($date, $school_id)
@@ -54,11 +54,25 @@ function fetch_attendance_from_edutel($date, $school_id)
     return fetch_api_response($url);
 }
 
+function fetch_attendance_in_json_file_from_edudel($school_id)
+{
+    $url = "https://www.edudel.nic.in/mis/EduWebService_Other/Smc_MITTRA.asmx/Student_Schoolwise_details_Json?schid=$school_id";
+    return dump_in_json_file($url, $school_id);
+}
+
+function dump_in_json_file($url, $file_name)
+{
+    $path = FCPATH;
+    $command = 'curl --location ' . "'$url&password=Ukr@7520' > $path/data-files/$file_name.json";
+    sleep("0.5");
+    return exec("$command");
+}
+
 function fetch_api_response($url, bool $retry = true, $password = true)
 {
     helper("general");
     //Todo: extract password to a config file
-    if ($password){
+    if ($password) {
         $url .= "&password=Ukr@7520";
     }
     $response = get_curl_response($url);

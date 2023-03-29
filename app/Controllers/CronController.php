@@ -51,6 +51,17 @@ class CronController extends BaseController
         $mobile_sms_status_model->updateMobiles();
     }
 
+    private function importStudentDataInFile()
+    {
+        if (getenv('cron.studentdatainfile') == "0") {
+            log_message("info", "importStudentDatainfile is not enabled. Skipping it");
+            return;
+        }
+        $student_model = new StudentModel();
+        $student_model->fetchStudents();
+
+    }
+
     protected function importAttendanceData($from_date, $to_date)
     {
         if (getenv('cron.attendancedata') == "0") {
@@ -360,6 +371,7 @@ class CronController extends BaseController
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();
                     $this->importStudentData();
+                    $this->importStudentDataInFile();
                     $this->importAttendanceData($begin, $end);
                     $this->attendanceReport($begin, $end);
                     $this->updateDetectedCases($begin, $end);

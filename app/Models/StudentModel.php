@@ -111,4 +111,14 @@ class StudentModel extends Model
         $student_count_model->updateStudentCount($res);
     }
 
+    public function fetchStudents()
+    {
+        $school_ids = get_school_ids();
+        foreach ($school_ids as $school_id) {
+            $id = $school_id['id'];
+            $data_array = fetch_attendance_in_json_file_from_edudel($id);
+            log_message("info", "data fetched for school_id:" . $id);
+        }
+    }
+
 }
