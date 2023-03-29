@@ -3,6 +3,8 @@ $grievance_data = [];
 
 foreach ($response['sub_division_wise_total_dcpcr_helpline_case_count'] as $row) {
     $grievance_data [$row['sub_division']] ['sub_division'] = $row['sub_division'];
+    $grievance_data [$row['sub_division']] ['total_in_progress_ticket_count'] = 0;
+    $grievance_data [$row['sub_division']] ['closed'] = 0;
     $grievance_data [$row['sub_division']] ['total_ticket_count'] = is_null($row['total_ticket_count']) ? 0 : $row['total_ticket_count'];
 }
 foreach ($response['sub_division_wise_in_total_progress_dcpcr_helpline_case_count'] as $row) {
@@ -47,13 +49,12 @@ foreach ($response['sub_division_wise_in_total_progress_dcpcr_helpline_case_coun
                         </small>
                     </td>
                     <td><?php
-                        if($row['id'] != 4 && $row['id'] != 5 && $row['id'] != 8){
-                            echo "<a href = '".$row['id'].'/'.str_replace("/","*",$row['reason_name'])."'>".$row['count']."</a>";
-                        } 
-                        else{
+                        if ($row['id'] != 4 && $row['id'] != 5 && $row['id'] != 8) {
+                            echo "<a href = '" . $row['id'] . '/' . str_replace("/", "*", $row['reason_name']) . "'>" . $row['count'] . "</a>";
+                        } else {
                             echo $row['count'];
-                        }       
-                    ?>
+                        }
+                        ?>
                     </td>
                     <td><?= $row['action_taken'] ?></td>
                 </tr>
