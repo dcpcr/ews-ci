@@ -43,5 +43,19 @@ class NameStruckOffModel extends Model
 
     }
 
+    public function getNSOList($offset, $no_of_records_per_page): array
+    {
+        return $this->select()
+            ->join("master.student","master.student.id=student_id")
+            ->limit($no_of_records_per_page, $offset)
+            ->findAll();
+    }
+
+    public function getTotalNumberNSOStudent()
+    {
+        return $this->select(['student_id'])
+            ->countAllResults();
+    }
+
 
 }

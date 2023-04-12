@@ -7,6 +7,7 @@ use App\Models\AttendanceModel;
 use App\Models\CaseModel;
 use App\Models\MitraModel;
 use App\Models\MobileSmsStatusModel;
+use App\Models\NameStruckOffModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -261,5 +262,52 @@ class ApiController extends ResourceController
                     'status' => $response,
                 ]
             );
+    }
+
+    public function getNameStruckOffStudentList(): \CodeIgniter\HTTP\Response
+    {
+        $rules = [
+            'limit' => 'permit_empty|trim|numeric|greater_than[0]',
+            'pageno' => 'permit_empty|trim|numeric|greater_than[0]'
+        ];
+        if (!$this->validateRequest($_GET, $rules)) {
+            return $this
+                ->getResponse(
+                    $this->validator->getErrors(),
+                    ResponseInterface::HTTP_BAD_REQUEST
+                );
+        }
+
+        if (!isset($_GET['limit'])) {
+            $no_of_records_per_page = 1000;
+        } else {
+            $no_of_records_per_page = $_GET['limit'];
+        }
+        if (!isset($_GET['pageno'])) {
+            $page_no = 1;
+        } else {
+            $page_no = $_GET['pageno'];
+        }
+
+        $name_struck_off_model = new NameStruckOffModel();
+
+        $total_rows = $name_struck_off_model->getTotalNumberNSOStudent();
+
+        $total_pages = ceil($total_rows / $no_of_records_per_page);
+        $offset = ($page_no - 1) * $no_of_records_per_page;
+        $data =   $name_struck_off_model->getNSOList($offset, $no_of_records_per_page);
+
+        return $this
+            ->getResponse(
+                [
+                    'no_of_records' => $total_rows,
+                    'pageno' => $page_no,
+                    'total_pages' => $total_pages,
+                    'limit' => $no_of_records_per_page,
+                    'data' => $data,
+                ]
+            );
+
+
     }
 }
