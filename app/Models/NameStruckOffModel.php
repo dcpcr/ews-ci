@@ -54,6 +54,7 @@ class NameStruckOffModel extends Model
     public function getTotalNumberNSOStudent()
     {
         return $this->select(['student_id'])
+            ->join("master.student","master.student.id=student_id")
             ->countAllResults();
     }
 
