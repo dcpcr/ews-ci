@@ -295,7 +295,7 @@ class ApiController extends ResourceController
 
         $total_pages = ceil($total_rows / $no_of_records_per_page);
         $offset = ($page_no - 1) * $no_of_records_per_page;
-        $data =   $name_struck_off_model->getNSOList($offset, $no_of_records_per_page);
+        $data = $name_struck_off_model->getNSOList($no_of_records_per_page, $offset);
 
         return $this
             ->getResponse(

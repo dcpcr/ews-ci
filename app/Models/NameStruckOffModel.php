@@ -43,7 +43,7 @@ class NameStruckOffModel extends Model
 
     }
 
-    public function getNSOList($offset, $no_of_records_per_page): array
+    public function getNSOList($no_of_records_per_page,$offset): array
     {
         return $this->select()
             ->join("master.student","master.student.id=student_id")
