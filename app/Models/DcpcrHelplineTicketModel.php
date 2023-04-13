@@ -41,10 +41,18 @@ class DcpcrHelplineTicketModel extends CaseDetailsModel
     public function updateOpenTicketFromNsbbpo()
     {
         $ticket_numbers = $this->getTicketNumbers();
+        if(count($ticket_numbers)==0){
+            log_message("info","There is no DCPCR Helpline Ticket");
+            return;
+        }
         helper('nsbbpo');
-        $counter = 1;
-        $data = [];
+        $counter=0;
+        $ticket_details_updated=0;
         foreach ($ticket_numbers as $ticket) {
+            if($counter % 100==0){
+                sleep("5");
+            }
+            $data = [];
             $response = download_ticket_details($ticket['ticket_number']);
             if (!empty($response)) {
                 $ticket_number = $response->TicketNo;
@@ -55,24 +63,18 @@ class DcpcrHelplineTicketModel extends CaseDetailsModel
                     "division" => $response->Division,
                     "sub_division" => $response->SubDivision
                 ];
+                $batchSize = count($data);
+                $update_response = $this->updateBatch($data, "ticket_number", $batchSize);
                 $counter++;
-                log_message('info', "Ticket Number $ticket_number details has been fetched");
-                sleep(1);
+                if($update_response!=0){
+                    $ticket_details_updated++;
+                    log_message('info', "Ticket Number $ticket_number details has been updated:");
+                }
             } else {
                 log_message('notice', "Ticket Number " . $ticket['ticket_number'] . " details not fetched");
             }
         }
-        if(!empty($data))
-        {
-            $batchSize = count($data);
-            $response = $this->updateBatch($data, "ticket_number", $batchSize);
-            log_message('info', "");
-
-        }
-        else{
-            log_message('notice', "Zero DCPCR Helpline Ticket");
-
-        }
+        log_message("info","Total DCPCR Helpline tickets updated:".$ticket_details_updated);
     }
 
     //This function checks is there is any open ticket for the case in the system
