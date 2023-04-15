@@ -74,7 +74,7 @@ function fetch_attendance_from_edutel($date, $school_id)
 function fetch_attendance_in_json_file_from_edudel($school_id)
 {
     $url = "https://www.edudel.nic.in/mis/EduWebService_Other/Smc_MITTRA.asmx/Student_Schoolwise_details_Json?schid=$school_id";
-    return dump_in_json_file($url, $school_id);
+    dump_in_json_file($url, $school_id);
 }
 
 function dump_in_json_file($url, $file_name)

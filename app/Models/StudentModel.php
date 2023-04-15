@@ -120,10 +120,10 @@ class StudentModel extends Model
         $school_ids = get_school_ids();
         foreach ($school_ids as $school_id) {
             $id = $school_id['id'];
-            $data_array = fetch_attendance_in_json_file_from_edudel($id);
-            $path = FCPATH."/data-files/";
+            fetch_attendance_in_json_file_from_edudel($id);
+            $path = FCPATH."data-files/";
             $file_name = "$id.json";
-            if(filesize("$path.$file_name")==0)
+            if(filesize("$path$file_name")==0)
             {
                 log_message("notice","Data not fetched in json file for school id:$id");
             }
