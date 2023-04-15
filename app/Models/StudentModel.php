@@ -36,7 +36,11 @@ class StudentModel extends Model
         $exists = false;
         foreach ($school_ids as $school_id) {
             $id = $school_id['id'];
-            $data_array = fetch_student_data_for_school_from_edutel($id);
+            if (getenv("cron.import_student_data_from_json_file")) {
+                $data_array = fetch_student_data_for_school_from_json_file($id);
+            } else {
+                $data_array = fetch_student_data_for_school_from_edutel($id);
+            }
             if ($data_array) {
                 for ($i = 0; $i < count($data_array); $i++) {
                     $data_array[$i]['school_id'] = $id;
@@ -117,7 +121,15 @@ class StudentModel extends Model
         foreach ($school_ids as $school_id) {
             $id = $school_id['id'];
             $data_array = fetch_attendance_in_json_file_from_edudel($id);
-            log_message("info", "data fetched for school_id:" . $id);
+            $path = FCPATH."/data-files/";
+            $file_name = "$id.json";
+            if(filesize("$path.$file_name")==0)
+            {
+                log_message("notice","Data not fetched in json file for school id:$id");
+            }
+            else{
+                log_message("info", "data fetched in json file for school_id:" . $id);
+            }
         }
     }
 

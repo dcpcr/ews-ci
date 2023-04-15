@@ -36,6 +36,23 @@ function fetch_student_data_for_school_from_edutel($school_id)
     return fetch_api_response($url);
 }
 
+function fetch_student_data_for_school_from_json_file($school_id)
+{
+    $file_path = FCPATH . "/data-files/$school_id.json";
+    if(file_exists($file_path)){
+        $json_string = file_get_contents($file_path);
+        $decoded_json = json_decode($json_string, true);
+        if (!empty($decoded_json)) {
+            log_message("info", "Student Data fetched for school id: $school_id");
+            return $decoded_json['Cargo'];
+        } else {
+            log_message("notice", "No student data for school id: $school_id in json file.");
+            return 0;
+        }
+    }
+
+}
+
 function fetch_school_leaving_certificate_data_from_edudel()
 {
     $url = getenv('edudel.slc');
