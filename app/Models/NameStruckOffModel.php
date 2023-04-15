@@ -48,7 +48,7 @@ class NameStruckOffModel extends Model
         return $this->select()
             ->join("master.student","master.student.id=student_id")
             ->limit($no_of_records_per_page, $offset)
-            ->findAll();
+            ->find();
     }
 
     public function getTotalNumberNSOStudent()
