@@ -370,8 +370,8 @@ class CronController extends BaseController
                 } else {
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();
-                    $this->importStudentData();
                     $this->importStudentDataInFile();
+                    $this->importStudentData();
                     $this->importAttendanceData($begin, $end);
                     $this->attendanceReport($begin, $end);
                     $this->updateDetectedCases($begin, $end);
