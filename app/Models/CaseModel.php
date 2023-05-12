@@ -181,6 +181,7 @@ class CaseModel extends Model
             ->join($master_db . '.school as school', 'student.school_id = school.id')
             ->join($master_db . '.mobile_sms_status as sms', 'student.mobile = sms.mobile')
             ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
+            ->where("sms.sms_status","DELIVERED")
             ->limit($no_of_records_per_page, $offset)
             ->find();
     }
