@@ -188,7 +188,13 @@ class CaseModel extends Model
 
     public function getTotalNumberOfCaseData($from_date, $to_date)
     {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
         return $this->select(['id'])
+            ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
+            ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->join($master_db . '.mobile_sms_status as sms', 'student.mobile = sms.mobile')
+            ->where("sms.sms_status","DELIVERED")
             ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
             ->countAllResults();
     }
