@@ -328,6 +328,22 @@ class CronController extends BaseController
         ews_cron_error_sms($morning);
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    private function sendSmsToDetectedCases($begin, $end)
+    {
+
+        if (getenv('cron.send_sms_to_detected_cases') == "0") {
+            log_message("info", "sendSmsToDetectedCases is not enabled. Skipping it");
+            return;
+        }
+        $begin = $begin->modify('-1 day');
+        //Send SMS to previous day detected students
+        $case_model = new CaseModel();
+        $case_model->smsToDetectedCases($begin, $end);
+    }
+
 
     /**
      * @throws ReflectionException
@@ -367,6 +383,7 @@ class CronController extends BaseController
             try {
                 if ($morning) {
                     $this->sendSms();
+                    $this->sendSmsToDetectedCases($begin, $end);
                 } else {
                     $this->fetchAndUpdateSmsDeliveryReport();
                     $this->importSchoolData();

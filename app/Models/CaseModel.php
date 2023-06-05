@@ -409,6 +409,39 @@ class CaseModel extends Model
         }
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    public function smsToDetectedCases($start, $end)
+    {
+        helper('general');
+        $master_db = get_database_name_from_db_group('master');
+        $data = $this->select([
+            $this->table . '.id as case_id',
+            'student.id as student_id',
+            'student.name as student_name',
+            'student.gender',
+            'student.class',
+            'student.section',
+            'student.mobile as mobile_number',
+            'school.id as school_id',
+            'school.name as school_name',
+            'school.district',
+            'school.zone',
+        ])
+            ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
+            ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->where("day BETWEEN '" . $start->format("Y-m-d") . "' and '" .
+                $end->format("Y-m-d") . "'")
+            ->find();
+
+        foreach ($data as $row) {
+            var_dump("<pre>", $row['mobile_number']);
+            helper("ews_sms_template_helper");
+            new_ews_detected_case_sms($row['mobile_number'], $row['student_id'], $row['student_name']);
+        }
+    }
+
     protected function isStudentPresentInLastSevenDays($student_id, $date): bool
     {
         return $this->isStudentPresentForAtLeastNDaysInLastMDays($student_id, $date, 1, 7);
