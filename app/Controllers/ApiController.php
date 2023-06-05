@@ -229,9 +229,9 @@ class ApiController extends ResourceController
             if ($verified) {
                 helper('ews_sms_template_helper');
                 switch ($_GET['sms_type']) {
-                    case "new_case":
+                    /*case "new_case":
                         $response = new_ews_detected_case_sms($mobile_number, $student_id, $student_name);
-                        break;
+                        break;*/
                     case "call_connected":
                         $response = connected_call_sms($mobile_number, $student_id, $student_name);
                         break;
