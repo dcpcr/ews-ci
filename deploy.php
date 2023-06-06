@@ -60,13 +60,26 @@ task('deploy', [
     'deploy:symlink',
     'deploy:unlock',
     'deploy:cleanup',
+    'set-permissions',
     //'restart-nginx-fpm',
+    'restart-http',
     'deploy:success'
 ]);
 
 task('restart-nginx-fpm', function () {
     run('systemctl restart nginx');
     run('systemctl restart php-fpm');
+});
+
+task('restart-http', function () {
+    run('systemctl restart http');
+});
+
+task('set-permissions', function () {
+    run('find /var/www/html/ews/ -type d -exec chmod 755 {} \;');
+    run('find /var/www/html/ews/ -type f -exec chmod 644 {} \;');
+    run('chmod 777 /var/www/html/ews/current/writable/*');
+    run('chmod 777 /var/www/html/ews/current/writable/');
 });
 
 after('deploy:failed', 'deploy:unlock');
@@ -77,7 +90,7 @@ after('deploy:success', 'db-changes');
 
 add('crontab:jobs', [
     '0 10 * * * cd {{current_path}}/public && {{bin/php}} index.php cron morning >> /dev/null 2>&1',
-    '0 23 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
+    '0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
 ]);
 
 task('db-changes', function () {
