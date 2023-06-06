@@ -162,7 +162,7 @@ function insert_response($response, string $template_id, $sms_count = 1, $api_re
     $messageId = $response_arr[1];
     $sms_batch_model = new CdacSmsModel();
     $result = $sms_batch_model->insertSmsBatchData($messageId, $statusCode, $template_id, $sms_count, $download_report);
-    log_message('info', "The Max id " . $result[0]['id'] . "after inserting details of new sms batch of :(" . $sms_count . ")in CdacSms Table");
+    log_message('info', "The Max id " . $result[0]['id'] . " after inserting details of new sms batch of :(" . $sms_count . ")in CdacSms Table");
 }
 
 function check_if_error($response)
