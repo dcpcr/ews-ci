@@ -436,7 +436,6 @@ class CaseModel extends Model
             ->find();
 
         foreach ($data as $row) {
-            var_dump("<pre>", $row['mobile_number']);
             helper("ews_sms_template_helper");
             new_ews_detected_case_sms($row['mobile_number'], $row['student_id'], $row['student_name']);
         }

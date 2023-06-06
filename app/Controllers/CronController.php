@@ -304,6 +304,9 @@ class CronController extends BaseController
 
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function updateSchoolLeavingCertificate()
     {
         if (getenv('cron.school_leaving_certificate') == "0") {
