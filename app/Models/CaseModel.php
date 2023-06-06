@@ -416,7 +416,7 @@ class CaseModel extends Model
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
-        $data = $this->select([
+        $cases = $this->select([
             $this->table . '.id as case_id',
             'student.id as student_id',
             'student.name as student_name',
@@ -434,10 +434,12 @@ class CaseModel extends Model
             ->where("day BETWEEN '" . $start->format("Y-m-d") . "' and '" .
                 $end->format("Y-m-d") . "'")
             ->find();
-
-        foreach ($data as $row) {
+        $date = new DateTimeImmutable();
+        $date = $date->format("Y-m-d");
+        foreach ($cases as $case) {
             helper("ews_sms_template_helper");
-            new_ews_detected_case_sms($row['mobile_number'], $row['student_id'], $row['student_name']);
+            $response = new_ews_detected_case_sms($case['mobile_number'], $case['student_id'], $case['student_name']);
+            $this->updateSmsDetailsForDetectedCase($case['case_id'], $response, $date);
         }
     }
 
@@ -623,6 +625,29 @@ class CaseModel extends Model
                 ->findAll("1");
             $latest_student_status_model = new LatestStudentStatusModel();
             $latest_student_status_model->updateStudentStatus($latest_status_data);
+        }
+    }
+
+    private function updateSmsDetailsForDetectedCase($case_id, $response, $date)
+    {
+        $response = str_replace("\n", "", $response);
+        $response_arr = explode(',', $response);
+        $statusCode = $response_arr[0];
+        $messageId = $response_arr[1];
+        $array = explode('=', $messageId);
+        $finalMessageId = trim($array[1]);
+        $data = [
+            "message_id" => "$finalMessageId",
+            "status_code" => "$statusCode",
+            "sms_template_id" => getenv("template_id.new_case"),
+            "download_report" => "0",
+            "sms_sent_date" => "$date",
+        ];
+        $res = $this->doUpdate("$case_id", $data);
+        if ($res) {
+            log_message("info", "SMS record updated for case id: $case_id");
+        } else {
+            log_message("error", "SMS record not updated for case id: $case_id");
         }
     }
 }
