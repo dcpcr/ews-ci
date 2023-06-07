@@ -72,7 +72,7 @@ task('restart-nginx-fpm', function () {
 });
 
 task('restart-http', function () {
-    run('systemctl restart http');
+    run('systemctl restart httpd');
 });
 
 task('set-permissions', function () {
