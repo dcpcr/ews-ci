@@ -17,7 +17,7 @@ class CaseModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
 
-    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority'];
+    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'name', 'dob', 'class', 'section', 'gender', 'father', 'mother', 'guardian', 'guardian_relation', 'address', 'mobile', 'cwsn', 'disability_type', 'school_id'];
 
 
     /**
@@ -446,6 +446,49 @@ class CaseModel extends Model
             log_message("notice", "Zero Cases to send SMS for date $date");
         }
 
+    }
+
+    public function fetchIncompleteDetailStudentIds(): array
+    {
+        return $this->select(["student_id"])
+            ->where("name =", "")
+            ->findAll();
+    }
+
+    public function updateDetectedStudentDetails(array $student_details, $case_ids)
+    {
+        foreach ($case_ids as $case_id) {
+
+            $data = [
+                "name" => $student_details['name'],
+                "dob" => $student_details['dob'],
+                "class" => $student_details['class'],
+                "section" => $student_details['section'],
+                "gender" => $student_details['gender'],
+                "father" => $student_details['father'],
+                "mother" => $student_details['mother'],
+                "guardian" => $student_details['guardian'],
+                "guardian_relation" => $student_details['guardian_relation'],
+                "address" => $student_details['address'],
+                "mobile" => $student_details['mobile'],
+                "cwsn" => $student_details['cwsn'],
+                "disability_type" => $student_details['disability_type'],
+                "school_id" => $student_details['school_id'],
+            ];
+            $res = $this->doUpdate(["id" => $case_id['id']], $data);
+            if ($res) {
+                log_message("info", "Student details updated in detected case table for student id:" . $case_id['id']);
+            } else {
+                log_message("info", "Student details not updated in detected case table for student id:" . $case_id['id']);
+            }
+        }
+    }
+
+    public function getCaseIds($students_id)
+    {
+        return $this->select(["id"])
+            ->where("student_id", $students_id['student_id'])
+            ->find();
     }
 
     protected function isStudentPresentInLastSevenDays($student_id, $date): bool
