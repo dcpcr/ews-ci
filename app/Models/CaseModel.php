@@ -433,14 +433,19 @@ class CaseModel extends Model
             ->join($master_db . '.school as school', 'student.school_id = school.id')
             ->where("day BETWEEN '" . $start->format("Y-m-d") . "' and '" .
                 $end->format("Y-m-d") . "'")
-            ->find();
+            ->findAll();
         $date = new DateTimeImmutable();
         $date = $date->format("Y-m-d");
-        foreach ($cases as $case) {
-            helper("ews_sms_template_helper");
-            $response = new_ews_detected_case_sms($case['mobile_number'], $case['student_id'], $case['student_name']);
-            $this->updateSmsDetailsForDetectedCase($case['case_id'], $response, $date);
+        if (!empty($cases)) {
+            foreach ($cases as $case) {
+                helper("ews_sms_template_helper");
+                $response = new_ews_detected_case_sms("8882223317", $case['student_id'], $case['student_name']);
+                $this->updateSmsDetailsForDetectedCase($case['case_id'], $response, $date);
+            }
+        } else {
+            log_message("notice", "Zero Cases to send SMS for date $date");
         }
+
     }
 
     protected function isStudentPresentInLastSevenDays($student_id, $date): bool
@@ -643,11 +648,11 @@ class CaseModel extends Model
             "download_report" => "0",
             "sms_sent_date" => "$date",
         ];
-        $res = $this->doUpdate("$case_id", $data);
+        $res = $this->doUpdate(['id' => $case_id], $data);
         if ($res) {
-            log_message("info", "SMS record updated for case id: $case_id");
+            log_message("info", "SMS record inserted after sending sms for detected case id: $case_id");
         } else {
-            log_message("error", "SMS record not updated for case id: $case_id");
+            log_message("error", "SMS record not inserted for detected case id: $case_id");
         }
     }
 }
