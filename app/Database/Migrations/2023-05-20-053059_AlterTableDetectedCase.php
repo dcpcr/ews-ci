@@ -19,67 +19,67 @@ class AlterTableDetectedCase extends Migration
 
         $this->forge->modifyColumn('detected_case', $fields);
         $fields = [
-            'name' => [
+            'student_name' => [
                 'type' => 'varchar',
                 'constraint' => '100',
                 'default' => ""
             ],
-            'dob' => [
+            'student_dob' => [
                 'type' => 'char',
                 'constraint' => '20',
             ],
-            'class' => [
+            'student_class' => [
                 'type' => 'char',
                 'constraint' => '10',
                 'NOT NULL' => true,
             ],
-            'section' => [
+            'student_section' => [
                 'type' => 'char',
                 'constraint' => '1',
             ],
-            'gender' => [
+            'student_gender' => [
                 'type' => 'char',
                 'constraint' => '20',
             ],
-            'father' => [
+            'student_father' => [
                 'type' => 'char',
                 'constraint' => '100',
             ],
-            'mother' => [
+            'student_mother' => [
                 'type' => 'char',
                 'constraint' => '100',
             ],
-            'guardian' => [
+            'student_guardian' => [
                 'type' => 'char',
                 'constraint' => '100',
             ],
-            'guardian_relation' => [
+            'student_guardian_relation' => [
                 'type' => 'char',
                 'constraint' => '100',
             ],
-            'address' => [
+            'student_address' => [
                 'type' => 'varchar',
                 'constraint' => '255',
             ],
-            'mobile' => [
+            'student_mobile' => [
                 'type' => 'CHAR',
                 'constraint' => '20',
                 'NOT NULL' => true,
             ],
-            'cwsn' => [
+            'student_cwsn' => [
                 'type' => 'CHAR',
                 'constraint' => '20',
                 'default' => "",
             ],
-            'disability_type' => [
+            'student_disability_type' => [
                 'type' => 'CHAR',
                 'constraint' => '20',
                 'default' => "",
             ],
-            'school_id' => [
+            'student_school_id' => [
                 'type' => 'INT',
                 'unsigned' => true,
-                'default' => "",
+                'default' => null,
             ],
             'sms_delivery_status' => [
                 'type' => 'varchar',
@@ -130,8 +130,8 @@ class AlterTableDetectedCase extends Migration
         ];
         $this->forge->addColumn('detected_case', $fields);
         $this->forge->addColumn('detected_case', ['`modified_detection_date` date default (curdate()) NOT NULL']);
-        $this->forge->addColumn('detected_case', ['`updated_at` date default (curdate()) NOT NULL']);
         $this->forge->addColumn('detected_case', ['`created_at` date default (curdate()) NOT NULL']);
+        $this->forge->addColumn('detected_case', ['updated_at timestamp not null default current_timestamp on update current_timestamp']);
     }
 
     public function down()
