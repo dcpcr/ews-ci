@@ -195,4 +195,18 @@ class AttendanceModel extends Model
             ->groupBy('class')
             ->findAll();
     }
+
+    public function getPresentMarkedDateAfter($date, $student_id)
+    {
+        $data = $this->select(['date'])
+            ->where("date >", $date)
+            ->where("student_id", $student_id)
+            ->where("attendance_status", "p")
+            ->findAll("1");
+        if (!empty($data)) {
+            return $data[0]['date'];
+        } else {
+            return [];
+        }
+    }
 }

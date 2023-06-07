@@ -69,22 +69,22 @@ class AlterTableDetectedCase extends Migration
             'cwsn' => [
                 'type' => 'CHAR',
                 'constraint' => '20',
-                'NOT NULL' => true,
+                'default' => "",
             ],
             'disability_type' => [
                 'type' => 'CHAR',
                 'constraint' => '20',
-                'NOT NULL' => true,
+                'default' => "",
             ],
             'school_id' => [
                 'type' => 'INT',
                 'unsigned' => true,
-                'NOT NULL' => true,
+                'default' => "",
             ],
             'sms_delivery_status' => [
                 'type' => 'varchar',
                 'constraint' => '20',
-                'NOT NULL' => true,
+                'default' => "",
             ],
             'first_present_date_after_detection' => [
                 'type' => 'char',
@@ -130,6 +130,8 @@ class AlterTableDetectedCase extends Migration
         ];
         $this->forge->addColumn('detected_case', $fields);
         $this->forge->addColumn('detected_case', ['`modified_detection_date` date default (curdate()) NOT NULL']);
+        $this->forge->addColumn('detected_case', ['`updated_at` date default (curdate()) NOT NULL']);
+        $this->forge->addColumn('detected_case', ['`created_at` date default (curdate()) NOT NULL']);
     }
 
     public function down()

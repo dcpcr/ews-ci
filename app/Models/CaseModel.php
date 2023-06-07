@@ -17,7 +17,7 @@ class CaseModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
 
-    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'name', 'dob', 'class', 'section', 'gender', 'father', 'mother', 'guardian', 'guardian_relation', 'address', 'mobile', 'cwsn', 'disability_type', 'school_id'];
+    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'name', 'dob', 'class', 'section', 'gender', 'father', 'mother', 'guardian', 'guardian_relation', 'address', 'mobile', 'cwsn', 'disability_type', 'school_id', 'first_present_date_after_detection'];
 
 
     /**
@@ -489,6 +489,36 @@ class CaseModel extends Model
         return $this->select(["id"])
             ->where("student_id", $students_id['student_id'])
             ->find();
+    }
+
+    public function getCaseIdsForDetectingPresentDateAfterDetection(): array
+    {
+        return $this->select(['id as case_id', 'day', 'student_id'])
+            ->where("first_present_date_after_detection", '')
+            ->findAll("100000");
+    }
+
+    public function updateFirstPresentDateAfterDetection($date, $case_id)
+    {
+        $data = [
+            'first_present_date_after_detection' => $date
+        ];
+        $res = $this->doUpdate(['id' => $case_id], $data);
+        if ($res) {
+            log_message("info", "first_present_date_after_detection updated for case id:" . $case_id);
+        } else {
+            log_message("Notice", "first_present_date_after_detection not updated for case id:" . $case_id);
+
+        }
+    }
+
+    public function getMessageIdsWhereStatusIsNotDelivered(): array
+    {
+        return $this->select(['message_id', 'id as case_id'])
+            ->where("sms_delivery_status !=", 'Delivered')
+            ->where("message_id!=", '')
+            ->where("report_fetched <", 4)
+            ->findAll();
     }
 
     protected function isStudentPresentInLastSevenDays($student_id, $date): bool
