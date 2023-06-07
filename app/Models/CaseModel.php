@@ -17,7 +17,7 @@ class CaseModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
 
-    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'name', 'dob', 'class', 'section', 'gender', 'father', 'mother', 'guardian', 'guardian_relation', 'address', 'mobile', 'cwsn', 'disability_type', 'school_id', 'first_present_date_after_detection'];
+    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'student_name', 'student_dob', 'student_class', 'student_section', 'student_gender', 'student_father', 'student_mother', 'student_guardian', 'student_guardian_relation', 'student_address', 'student_mobile', 'student_cwsn', 'student_disability_type', 'student_school_id', 'first_present_date_after_detection'];
 
 
     /**
@@ -451,7 +451,7 @@ class CaseModel extends Model
     public function fetchIncompleteDetailStudentIds(): array
     {
         return $this->select(["student_id"])
-            ->where("name =", "")
+            ->where("student_name =", "")
             ->findAll();
     }
 
@@ -460,26 +460,26 @@ class CaseModel extends Model
         foreach ($case_ids as $case_id) {
 
             $data = [
-                "name" => $student_details['name'],
-                "dob" => $student_details['dob'],
-                "class" => $student_details['class'],
-                "section" => $student_details['section'],
-                "gender" => $student_details['gender'],
-                "father" => $student_details['father'],
-                "mother" => $student_details['mother'],
-                "guardian" => $student_details['guardian'],
-                "guardian_relation" => $student_details['guardian_relation'],
-                "address" => $student_details['address'],
-                "mobile" => $student_details['mobile'],
-                "cwsn" => $student_details['cwsn'],
-                "disability_type" => $student_details['disability_type'],
-                "school_id" => $student_details['school_id'],
+                "student_name" => $student_details['name'],
+                "student_dob" => $student_details['dob'],
+                "student_class" => $student_details['class'],
+                "student_section" => $student_details['section'],
+                "student_gender" => $student_details['gender'],
+                "student_father" => $student_details['father'],
+                "student_mother" => $student_details['mother'],
+                "student_guardian" => $student_details['guardian'],
+                "student_guardian_relation" => $student_details['guardian_relation'],
+                "student_address" => $student_details['address'],
+                "student_mobile" => $student_details['mobile'],
+                "student_cwsn" => $student_details['cwsn'],
+                "student_disability_type" => $student_details['disability_type'],
+                "student_school_id" => $student_details['school_id'],
             ];
             $res = $this->doUpdate(["id" => $case_id['id']], $data);
             if ($res) {
-                log_message("info", "Student details updated in detected case table for student id:" . $case_id['id']);
+                log_message("info", "Student details updated in detected case table for case id:" . $case_id['id']);
             } else {
-                log_message("info", "Student details not updated in detected case table for student id:" . $case_id['id']);
+                log_message("info", "Student details not updated in detected case table for case id:" . $case_id['id']);
             }
         }
     }
