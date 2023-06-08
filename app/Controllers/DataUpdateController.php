@@ -9,50 +9,122 @@ use App\Models\StudentModel;
 
 class DataUpdateController extends BaseController
 {
-    public function updateStudentDataInDetectedCaseTable()
+    private function updateStudentDataInDetectedCaseTable()
     {
+        if (getenv('cron.data.updateStudentDataInDetectedCaseTable') == "0") {
+            log_message("info", "updateStudentDataInDetectedCaseTable is not enabled. Skipping it");
+            return;
+        }
         $case_model = new CaseModel();
         $students_ids = $case_model->fetchIncompleteDetailStudentIds();
-        $student_model = new StudentModel();
-        $count = 0;
-        foreach ($students_ids as $students_id) {
-            $student_details = $student_model->fetchStudentDetails($students_id['student_id']);
-            if ($student_details !== null) {
-                $case_ids = $case_model->getCaseIds($students_id);
-                $case_model->updateDetectedStudentDetails($student_details, $case_ids);
-                $count++;
+        log_message("info", "Total number of student record needs to be updated: " . count($students_ids));
+        if (!empty($students_ids)) {
+            $student_model = new StudentModel();
+            $count = 0;
+            foreach ($students_ids as $students_id) {
+                $student_details = $student_model->fetchStudentDetails($students_id['student_id']);
+                if ($student_details !== null) {
+                    $case_ids = $case_model->getCaseIds($students_id);
+                    $case_model->updateDetectedStudentDetails($student_details, $case_ids);
+                    $count++;
+                }
             }
+            log_message("info", "Total number of students updated: $count");
         }
-        log_message("info", "Total students updated: $count");
+
     }
 
-    public function presentDate()
+    private function presentDateAfterDetection()
     {
-
+        if (getenv('cron.data.presentDateAfterDetection') == "0") {
+            log_message("info", "presentDateAfterDetection is not enabled. Skipping it");
+            return;
+        }
         $case_model = new CaseModel();
         $case_ids = $case_model->getCaseIdsForDetectingPresentDateAfterDetection();
         $attendance_model = new AttendanceModel();
+        if (!empty($case_ids)) {
+            foreach ($case_ids as $case_id) {
+                $first_present_date = $attendance_model->getPresentMarkedDateAfter($case_id['day'], $case_id['student_id']);
+                if (!empty($first_present_date))
+                    $case_model->updateFirstPresentDateAfterDetection($first_present_date, $case_id['case_id']);
+            }
 
-        foreach ($case_ids as $case_id) {
-            $first_present_date = $attendance_model->getPresentMarkedDateAfter($case_id['day'], $case_id['student_id']);
-            if (!empty($first_present_date))
-                $case_model->updateFirstPresentDateAfterDetection($first_present_date, $case_id['case_id']);
+        } else {
+            log_message("Notice", "Zero cases for updating the latest present date after detection.");
         }
 
     }
 
-    public function updateSmsStatusReportForDetectedCases()
+    /**
+     * @throws \ReflectionException
+     */
+    private function updateSmsStatusReportForDetectedCases()
     {
+        if (getenv('cron.data.updateSmsStatusReportForDetectedCases') == "0") {
+            log_message("info", "presentDateAfterDetection is not enabled. Skipping it");
+            return;
+        }
         helper("cdac");
         $case_model = new CaseModel();
         $message_ids = $case_model->getMessageIdsWhereStatusIsNotDelivered();
         if (!empty($message_ids)) {
-            $delivery_report = fetch_sms_delivery_report($message_ids[0]['message_id']);
-            if (!empty($delivery_report)) {
-                //@Todo: update delivery status in detected_case table;
-            } else {
-                log_message("notice", "Delivery report not fetched for case id: " . $message_ids[0]['case_id']);
+            foreach ($message_ids as $message_id) {
+                $delivery_report = fetch_sms_delivery_report($message_id['message_id']);
+                if (!empty($delivery_report)) {
+                    $line = preg_split("/((\r?\n)|(\r\n?))/", $delivery_report);
+                    $line_arr = explode(',', $line[0]);
+                    $cdac_report_data = array(
+                        'id' => $message_id['case_id'],
+                        'sms_delivery_status' => $line_arr[1]
+                    );
+                    $res = $case_model->update($message_id['case_id'], $cdac_report_data);
+                    if ($res) {
+                        log_message("notice", "Delivery report updated for case id: " . $message_id['case_id']);
+                    } else {
+                        log_message("notice", "Delivery report not updated for case id: " . $message_id['case_id']);
+                    }
+                } else {
+                    log_message("notice", "Delivery report not fetched for case id: " . $message_id['case_id']);
+                }
             }
+
+        }
+    }
+
+    public function smsReport()
+    {
+
+        $this->runDailyDataUpdate(true);
+
+    }
+
+    public function syncData()
+    {
+        $this->runDailyDataUpdate();
+    }
+
+    private function runDailyDataUpdate($night = false)
+    {
+        ini_set("memory_limit", "-1");
+        if ($this->request->isCLI()) {
+            log_message('info', "Data Update Cron request");
+            $start_time = microtime(true);
+            //Call Update Data functions
+            if ($night) {
+                $this->updateSmsStatusReportForDetectedCases();
+            } else {
+                $this->updateStudentDataInDetectedCaseTable();
+                $this->presentDateAfterDetection();
+            }
+
+
+            //Calculate script execution time
+            $end_time = microtime(true);
+            $execution_time = ($end_time - $start_time);
+            log_message('info', "Execution time of script = " . $execution_time . " sec");
+        } else {
+            log_message('info', "Access to this functionally without CLI is not allowed");
         }
     }
 }

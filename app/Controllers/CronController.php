@@ -342,7 +342,7 @@ class CronController extends BaseController
             return;
         }
         $begin = $begin->modify('-1 day');
-        //Send SMS to previous day detected students
+        //Send SMS to previous day detected students at 10:00 AM
         $case_model = new CaseModel();
         $case_model->smsToDetectedCases($begin, $end);
     }
