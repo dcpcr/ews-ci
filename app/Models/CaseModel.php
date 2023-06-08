@@ -531,7 +531,6 @@ class CaseModel extends Model
             "id"=>$case_id,
             "report_fetched"=>$report_fetched['report_fetched']+1
         ];
-        var_dump($data);
         return $this->update($case_id,$data);
     }
 
