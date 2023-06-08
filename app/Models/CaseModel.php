@@ -433,7 +433,7 @@ class CaseModel extends Model
             ->join($master_db . '.school as school', 'student.school_id = school.id')
             ->where("day BETWEEN '" . $start->format("Y-m-d") . "' and '" .
                 $end->format("Y-m-d") . "'")
-            ->findAll("10");
+            ->findAll();
         $date = new DateTimeImmutable();
         $date = $date->format("Y-m-d");
         if (!empty($cases)) {
