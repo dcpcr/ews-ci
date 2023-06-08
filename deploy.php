@@ -90,6 +90,8 @@ after('deploy:success', 'db-changes');
 
 add('crontab:jobs', [
     '0 10 * * * cd {{current_path}}/public && {{bin/php}} index.php cron morning >> /dev/null 2>&1',
+    '0 11 * * * cd {{current_path}}/public && {{bin/php}} index.php cron sync-data >> /dev/null 2>&1',
+    '0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron sms-report >> /dev/null 2>&1',
     '0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
 ]);
 
