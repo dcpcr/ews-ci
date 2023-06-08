@@ -51,7 +51,7 @@ class DataUpdateController extends BaseController
             }
 
         } else {
-            log_message("Notice", "Zero cases for updating the latest present date after detection.");
+            log_message("notice", "Zero cases for updating the latest present date after detection.");
         }
 
     }
@@ -130,7 +130,7 @@ class DataUpdateController extends BaseController
             if ($night) {
                 $this->updateSmsStatusReportForDetectedCases();
             } else {
-                $this->updateStudentDataInDetectedCaseTable();
+                //$this->updateStudentDataInDetectedCaseTable();
                 $this->presentDateAfterDetection();
             }
             //Calculate script execution time

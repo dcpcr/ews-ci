@@ -495,7 +495,7 @@ class CaseModel extends Model
     {
         return $this->select(['id as case_id', 'day', 'student_id'])
             ->where("first_present_date_after_detection", '')
-            ->findAll("100000");
+            ->findAll();
     }
 
     public function updateFirstPresentDateAfterDetection($date, $case_id)

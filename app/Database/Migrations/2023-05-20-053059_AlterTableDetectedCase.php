@@ -89,6 +89,7 @@ class AlterTableDetectedCase extends Migration
             'first_present_date_after_detection' => [
                 'type' => 'char',
                 'constraint' => '20',
+                'default' => '',
             ],
             'number_of_time_sms_delivery_report_fetched' => [
                 'type' => 'int',
