@@ -72,6 +72,11 @@ class DataUpdateController extends BaseController
             foreach ($message_ids as $message_id) {
                 $delivery_report = fetch_sms_delivery_report($message_id['message_id']);
                 if (!empty($delivery_report)) {
+                    if($delivery_report=="Kindly try to generate Report within 8pm to 8am")
+                    {
+                        log_message("notice","Kindly try to generate SMS Report within 8pm to 8am");
+                        break;
+                    }
                     $line = preg_split("/((\r?\n)|(\r\n?))/", $delivery_report);
                     $line_arr = explode(',', $line[0]);
                     $cdac_report_data = array(
@@ -80,6 +85,14 @@ class DataUpdateController extends BaseController
                     );
                     $res = $case_model->update($message_id['case_id'], $cdac_report_data);
                     if ($res) {
+                        $result = $case_model->updateReportFetchedValue($message_id['case_id']);
+                        if($result)
+                        {
+                            log_message("info", "sms report fetched value updated for case id: " . $message_id['case_id']);
+                        }
+                        else{
+                            log_message("error", "sms report fetched value not updated for case id: " . $message_id['case_id']);
+                        }
                         log_message("notice", "Delivery report updated for case id: " . $message_id['case_id']);
                     } else {
                         log_message("notice", "Delivery report not updated for case id: " . $message_id['case_id']);
@@ -104,6 +117,9 @@ class DataUpdateController extends BaseController
         $this->runDailyDataUpdate();
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function runDailyDataUpdate($night = false)
     {
         ini_set("memory_limit", "-1");
@@ -117,8 +133,6 @@ class DataUpdateController extends BaseController
                 $this->updateStudentDataInDetectedCaseTable();
                 $this->presentDateAfterDetection();
             }
-
-
             //Calculate script execution time
             $end_time = microtime(true);
             $execution_time = ($end_time - $start_time);
