@@ -86,6 +86,11 @@ class AlterTableDetectedCase extends Migration
                 'constraint' => '20',
                 'default' => "",
             ],
+            'sms_delivery_time' => [
+                'type' => 'varchar',
+                'constraint' => '20',
+                'default' => "",
+            ],
             'first_present_date_after_detection' => [
                 'type' => 'char',
                 'constraint' => '20',

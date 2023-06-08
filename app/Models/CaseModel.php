@@ -17,7 +17,7 @@ class CaseModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
 
-    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'student_name', 'student_dob', 'student_class', 'student_section', 'student_gender', 'student_father', 'student_mother', 'student_guardian', 'student_guardian_relation', 'student_address', 'student_mobile', 'student_cwsn', 'student_disability_type', 'student_school_id', 'first_present_date_after_detection','sms_delivery_status','report_fetched'];
+    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'student_name', 'student_dob', 'student_class', 'student_section', 'student_gender', 'student_father', 'student_mother', 'student_guardian', 'student_guardian_relation', 'student_address', 'student_mobile', 'student_cwsn', 'student_disability_type', 'student_school_id', 'first_present_date_after_detection', 'sms_delivery_status', 'sms_delivery_status', 'report_fetched'];
 
 
     /**
@@ -528,10 +528,10 @@ class CaseModel extends Model
     {
         $report_fetched = $this->select("report_fetched")->find("$case_id");
         $data = [
-            "id"=>$case_id,
-            "report_fetched"=>$report_fetched['report_fetched']+1
+            "id" => $case_id,
+            "report_fetched" => $report_fetched['report_fetched'] + 1
         ];
-        return $this->update($case_id,$data);
+        return $this->update($case_id, $data);
     }
 
     protected function isStudentPresentInLastSevenDays($student_id, $date): bool

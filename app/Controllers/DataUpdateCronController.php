@@ -81,7 +81,8 @@ class DataUpdateCronController extends BaseController
                     $line_arr = explode(',', $line[0]);
                     $cdac_report_data = array(
                         'id' => $message_id['case_id'],
-                        'sms_delivery_status' => $line_arr[1]
+                        'sms_delivery_status' => $line_arr[1],
+                        'sms_delivery_time' => $line_arr[2]
                     );
                     $res = $case_model->update($message_id['case_id'], $cdac_report_data);
                     if ($res) {
