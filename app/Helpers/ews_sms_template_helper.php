@@ -16,6 +16,16 @@ function new_ews_detected_case_sms($mobile_number, $student_id, $student_name)
  */
 function connected_call_sms($mobile_number, $student_id, $student_name)
 {
+    $message_unicode = "दिल्ली सरकार ने ".$student_name . "(Student ID:" . $student_id .") के बारे में बात करने के लिये कॉल किया था। हम आपको दुबारा कॉल करेंगे।हमसे बात करनी है तो 01206985510 पर कॉल करे। DCPCR";
+    $template_id = "1307168309498493702";
+    return send_single_unicode_sms($message_unicode, $mobile_number, $template_id);
+}
+
+/**
+ * @throws ReflectionException
+ */
+function old_connected_call_sms($mobile_number, $student_id, $student_name)
+{
     $message_unicode = $student_name . "(Student ID:" . $student_id . ") आपसे बात करके अच्छा लगा।बच्चे को रोजाना स्कूल भेजें। बच्चे से सम्बंधित कोई भी समस्या हो तो मदद के लिए कॉल करें- 01206985700 DCPCR";
     $template_id = "1307165967755457062";
     return send_single_unicode_sms($message_unicode, $mobile_number, $template_id);
