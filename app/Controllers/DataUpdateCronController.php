@@ -7,7 +7,7 @@ use App\Models\AttendanceModel;
 use App\Models\CaseModel;
 use App\Models\StudentModel;
 
-class DataUpdateController extends BaseController
+class DataUpdateCronController extends BaseController
 {
     private function updateStudentDataInDetectedCaseTable()
     {
@@ -130,7 +130,7 @@ class DataUpdateController extends BaseController
             if ($night) {
                 $this->updateSmsStatusReportForDetectedCases();
             } else {
-                //$this->updateStudentDataInDetectedCaseTable();
+                $this->updateStudentDataInDetectedCaseTable();
                 $this->presentDateAfterDetection();
             }
             //Calculate script execution time
