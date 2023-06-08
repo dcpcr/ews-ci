@@ -439,7 +439,7 @@ class CaseModel extends Model
         if (!empty($cases)) {
             foreach ($cases as $case) {
                 helper("ews_sms_template_helper");
-                $response = new_ews_detected_case_sms("8882223317", $case['student_id'], $case['student_name']);
+                $response = new_ews_detected_case_sms($case['mobile_number'], $case['student_id'], $case['student_name']);
                 $this->updateSmsDetailsForDetectedCase($case['case_id'], $response, $date);
             }
         } else {
