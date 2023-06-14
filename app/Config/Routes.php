@@ -36,8 +36,9 @@ $routes->get('dashboard/ajax/(:segment)', 'AdminController::ajax/$1', ['as' => '
 $routes->get('dashboard/(:segment)', 'AdminController::index/$1', ['as' => 'dashboard']);
 $routes->get('dashboard/(:num)/(:any)', 'AdminController::index/$1/$2');
 $routes->cli("cron/night", "CronController::runDailyAtNight");
-$routes->cli("cron/sms-report", "DataUpdateController::smsReport");
-$routes->cli("cron/sync-data", "DataUpdateController::syncData");
+$routes->cli("cron/sms-report", "DataUpdateCornController::smsReport");
+$routes->cli("cron/sync-data", "DataUpdateCronController::syncData");
+$routes->cli("cron/sms-delivery", "DataUpdateCronController::checkSmsDeliveryStatusAndUpdateTheModifiedDetectionDate");
 $routes->cli("cron/morning", "CronController::runDailyAtMorning");
 $routes->cli("cron/detect/(:num)/(:any)", "CronController::detect/$1/$2");
 $routes->post('api_login', 'ApiController::login');

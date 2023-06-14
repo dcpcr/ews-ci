@@ -2,10 +2,10 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
 use App\Models\AttendanceModel;
 use App\Models\CaseModel;
 use App\Models\StudentModel;
+use DateTimeImmutable;
 
 class DataUpdateCronController extends BaseController
 {
@@ -84,6 +84,7 @@ class DataUpdateCronController extends BaseController
                         'sms_delivery_status' => $line_arr[1],
                         'sms_delivery_time' => $line_arr[2]
                     );
+                    $this->checkSmsDeliveryStatusAndUpdateTheModifiedDetectionDate($cdac_report_data);
                     $res = $case_model->update($message_id['case_id'], $cdac_report_data);
                     if ($res) {
                         $result = $case_model->updateReportFetchedValue($message_id['case_id']);
@@ -102,7 +103,19 @@ class DataUpdateCronController extends BaseController
                     log_message("notice", "Delivery report not fetched for case id: " . $message_id['case_id']);
                 }
             }
+        }
+    }
 
+    private function checkSmsDeliveryStatusAndUpdateTheModifiedDetectionDate($data)
+    {
+        $begin = new DateTimeImmutable();
+        $date = $begin->format('Y-m-d');
+        foreach ($data as $row){
+            if($row['sms_delivery_status']=="Delivered")
+            {
+               $case_model =  new CaseModel();
+               $case_model->updateModifiedDetectionForCaseId($row['id'],$date);
+            }
         }
     }
 

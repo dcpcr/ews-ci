@@ -17,7 +17,7 @@ class CaseModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
 
-    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'student_name', 'student_dob', 'student_class', 'student_section', 'student_gender', 'student_father', 'student_mother', 'student_guardian', 'student_guardian_relation', 'student_address', 'student_mobile', 'student_cwsn', 'student_disability_type', 'student_school_id', 'first_present_date_after_detection', 'sms_delivery_status', 'sms_delivery_status', 'report_fetched'];
+    protected $allowedFields = ['student_id', 'day', 'seven_days_criteria', 'thirty_days_criteria', 'system_bts', 'priority', 'student_name', 'student_dob', 'student_class', 'student_section', 'student_gender', 'student_father', 'student_mother', 'student_guardian', 'student_guardian_relation', 'student_address', 'student_mobile', 'student_cwsn', 'student_disability_type', 'student_school_id', 'first_present_date_after_detection', 'sms_delivery_status', 'sms_delivery_status', 'report_fetched','modified_detection_date'];
 
 
     /**
@@ -181,6 +181,7 @@ class CaseModel extends Model
             ->join($master_db . '.school as school', 'student.school_id = school.id')
             ->join($master_db . '.mobile_sms_status as sms', 'student.mobile = sms.mobile')
             ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
+            ->where("sms_status" ,"Delivered")
             ->limit($no_of_records_per_page, $offset)
             ->find();
     }
@@ -192,6 +193,8 @@ class CaseModel extends Model
         return $this->select(['id'])
             ->join($master_db . '.student as student', 'student.id = ' . $this->table . '.student_id')
             ->join($master_db . '.school as school', 'student.school_id = school.id')
+            ->join($master_db . '.mobile_sms_status as sms', 'student.mobile = sms.mobile')
+            ->where("sms_status" ,"Delivered")
             ->where("day >= '" . $from_date . "' and day <='" . $to_date . "'")
             ->countAllResults();
     }
@@ -532,6 +535,20 @@ class CaseModel extends Model
             "report_fetched" => $report_fetched['report_fetched'] + 1
         ];
         return $this->update($case_id, $data);
+    }
+
+    public function updateModifiedDetectionForCaseId($case_id, $date)
+    {
+        $data =[
+            'id'=>$case_id,
+            'modified_detection_date'=>$date
+        ];
+        $res = $this->doUpdate(['id' => $case_id], $data);
+        if ($res) {
+            log_message("info", "modified detection date based on the sms delivery report for detected case id: $case_id");
+        } else {
+            log_message("error", "modified detection date record not updated for detected case id: $case_id");
+        }
     }
 
     protected function isStudentPresentInLastSevenDays($student_id, $date): bool
