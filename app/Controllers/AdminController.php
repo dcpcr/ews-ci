@@ -274,8 +274,8 @@ class AdminController extends AuthController
     {
         $school_ids = array_keys($this->schools);
         $this->view_data['details'] = "";
-        $this->view_data['page_title'] = 'Moved out of Delhi/Changed school ';
-        $this->view_data['status'] = 'Moved out of Delhi/Changed school ';
+        $this->view_data['page_title'] = 'Moved out of Delhi';
+        $this->view_data['status'] = 'Moved out of Delhi';
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
         $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3']);
         $this->view_data['response'] = [
@@ -288,12 +288,12 @@ class AdminController extends AuthController
     {
         $school_ids = array_keys($this->schools);
         $this->view_data['details'] = "";
-        $this->view_data['page_title'] = 'Moved out of Delhi/Changed school ';
-        $this->view_data['status'] = 'Moved out of Delhi/Changed school ';
+        $this->view_data['page_title'] = 'Changed school ';
+        $this->view_data['status'] = 'Changed school ';
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
-        $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['23']);
+        $total_changed_school_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['23']);
         $this->view_data['response'] = [
-            "changed_school" => $total_moved_out_of_village_list,
+            "changed_school" => $total_changed_school_list,
         ];
         $this->view_name = 'dashboard/list';
     }

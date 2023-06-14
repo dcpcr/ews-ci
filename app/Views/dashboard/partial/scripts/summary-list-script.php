@@ -17,6 +17,9 @@ if (isset($response['yet_to_be_contacted'])) {
 elseif (isset($response['reason_for_absenteeism'])){
     $data = $response['reason_for_absenteeism'];
 }
+elseif (isset($response['changed_school'])){
+    $data = $response['changed_school'];
+}
 $counter = 0;
 $table_data = [];
 if (!empty($data)) {
