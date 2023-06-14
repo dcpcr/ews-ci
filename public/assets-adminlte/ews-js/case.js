@@ -29,15 +29,15 @@ $(function () {
       columns: [
         { data: 10, title: "Class" },
         { data: 11, title: "Section" },
-        { data: 17, title: "School Id" },
-        { data: 15, title: "Mobile" },
+        { data: 7, title: "Student Id" },
+        { data: 8, title: "Student Name" },
+        { data: 15, title: "Parent/Guardian contact number" },
         { data: 2, title: "20/30 Days", searchable: false },
         { data: 4, title: "Priority" },
         { data: 0, title: "Case Id" },
         { data: 5, title: "Day" },
         { data: 6, title: "Status" },
-        { data: 7, title: "Student Id" },
-        { data: 8, title: "Student Name" },
+        { data: 17, title: "School Id" },
         { data: 9, title: "Gender" },
         { data: 12, title: "DoB", searchable: false },
         { data: 14, title: "Father  Name", searchable: false },
@@ -63,8 +63,9 @@ $(function () {
         "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
       buttons: ["download", "copy", "print", "colvis"],
     })
-
-    .columns([6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+    //.columns([0, 5, 6, 7, 8, 9, 12, 13, 14, 16, 19, 20, 1, 18])
+    //.visible(false)
+    .columns([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
     .visible(false)
     .buttons()
     .container()
