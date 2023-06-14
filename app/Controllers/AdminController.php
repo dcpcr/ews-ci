@@ -140,6 +140,9 @@ class AdminController extends AuthController
                 case 'contact-not-established-with-dcpcr':
                     $this->prepareContactNotEstablishedStudentList();
                     break;
+                case 'changed_school':
+                    $this->prepareChangedSchoolStudentList();
+                    break;
                 case $report_type :
                     $this->prepareReasonListByReasonId($report_type, $reason_name);
                     break;
@@ -184,7 +187,9 @@ class AdminController extends AuthController
         $yet_to_be_contacted_model = new YetToBeContactedModel();
         $total_yet_to_be_contacted_cases = $yet_to_be_contacted_model->getYetToBeContactedCaseCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
-        $total_moved_out_of_village_count = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
+        $total_moved_out_of_village_count = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3']);
+        $total_changed_school = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['23']);
+        
         $total_denial_of_admission_registration_name_struck_out = $reason_for_absenteeism_model->getReasonCategoryCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['6']);
         $home_visit_model = new HomeVisitModel();
         $home_visit_count = $home_visit_model->getHomeVisitCount($school_ids, $this->classes, $this->duration['start'], $this->duration['end']);
@@ -201,6 +206,7 @@ class AdminController extends AuthController
             'total_detected_case_count' => $total_detected_case_count,
             'total_bts_case_count' => $total_bts_student_count,
             'total_moved_out_of_village_count' => $total_moved_out_of_village_count,
+            'total_changed_school' => $total_changed_school,
             'dropped_out_and_in_contact_to_bring_them_school' => $total_denial_of_admission_registration_name_struck_out,
             'contact_not_established_with_dcpcr' => $contact_not_established = $home_visit_count - $total_moved_out_of_village_count - $total_denial_of_admission_registration_name_struck_out,
             'yet_to_be_contacted_cases' => $total_yet_to_be_contacted_cases,
@@ -271,12 +277,27 @@ class AdminController extends AuthController
         $this->view_data['page_title'] = 'Moved out of Delhi/Changed school ';
         $this->view_data['status'] = 'Moved out of Delhi/Changed school ';
         $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
-        $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3', '23']);
+        $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['3']);
         $this->view_data['response'] = [
             "moved_out_of_delhi" => $total_moved_out_of_village_list,
         ];
         $this->view_name = 'dashboard/list';
     }
+
+    private function prepareChangedSchoolStudentList()
+    {
+        $school_ids = array_keys($this->schools);
+        $this->view_data['details'] = "";
+        $this->view_data['page_title'] = 'Moved out of Delhi/Changed school ';
+        $this->view_data['status'] = 'Moved out of Delhi/Changed school ';
+        $reason_for_absenteeism_model = new ReasonForAbsenteeismModel();
+        $total_moved_out_of_village_list = $reason_for_absenteeism_model->getReasonCategoryList($school_ids, $this->classes, $this->duration['start'], $this->duration['end'], ['23']);
+        $this->view_data['response'] = [
+            "changed_school" => $total_moved_out_of_village_list,
+        ];
+        $this->view_name = 'dashboard/list';
+    }
+
 
     private function prepareEnrolledInContactStudentList()
     {
