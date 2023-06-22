@@ -20,7 +20,7 @@ $(function () {
         { data: "status", title: "Status" },
         { data: "district", title: "District" },
         { data: "id", title: "Id" },
-        { data: "name", title: "Name" },
+        { data: "student_name", title: "Name" },
         { data: "class", title: "Class" },
         { data: "section", title: "Section" },
         { data: "gender", title: "Gender" },

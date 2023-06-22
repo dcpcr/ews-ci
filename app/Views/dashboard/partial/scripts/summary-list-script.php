@@ -31,7 +31,7 @@ if (!empty($data)) {
             "status" => isset($status)?$status:$case['status'],
             "district" => $case['district'],
             "id" => $case['id'],
-            "name" => $case['name'],
+            "student_name" => $case['student_name'],
             "dob" => $case['dob'],
             "class" => $case['class'],
             "section" => $case['section'],

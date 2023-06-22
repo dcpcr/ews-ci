@@ -38,6 +38,8 @@ class ReasonForAbsenteeismModel extends CaseDetailsModel
     {
         helper('general');
         $master_db = get_database_name_from_db_group('master');
+        var_dump($master_db);
+        
         return $this->select()
             ->join('reason', 'reason.id=reason_for_absenteeism.reason_id')
             ->join('detected_case', 'detected_case.id=reason_for_absenteeism.case_id')
@@ -89,7 +91,7 @@ class ReasonForAbsenteeismModel extends CaseDetailsModel
     public function getCaseListByReasonId($reason_id,$school_ids,$classes,$start,$end){
         helper('general');
         $master_db = get_database_name_from_db_group('master');
-        return $this->select()
+        return $this->select(["*","master.student.name as"])
             ->join('reason', 'reason.id=reason_for_absenteeism.reason_id')
             ->join('detected_case', 'detected_case.id=reason_for_absenteeism.case_id')
             ->join($master_db . '.student as student', 'student.id = detected_case.student_id')
