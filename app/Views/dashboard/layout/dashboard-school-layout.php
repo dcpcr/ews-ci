@@ -65,10 +65,8 @@
     </aside>
 
     <div class="content-wrapper">
-        <?php if (!$filter_permissions['viewReportsSchool']) {
-            echo $this->include('dashboard/layout/page-header-details');
-        }
-        ?>
+        <?= $this->include('dashboard/layout/page-header-details'); ?>
+
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">

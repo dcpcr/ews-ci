@@ -8,7 +8,7 @@ require 'contrib/crontab.php';
 
 set('keep_releases', 5);
 set('copy_dirs', ['app', 'public', 'system']);
-set('application', 'ews');
+set('application', 'ews-latest');
 set('rsync_src', __DIR__);
 set('rsync_dest', '{{release_path}}');
 
@@ -76,23 +76,23 @@ task('restart-http', function () {
 });
 
 task('set-permissions', function () {
-    run('find /var/www/html/ews/ -type d -exec chmod 755 {} \;');
-    run('find /var/www/html/ews/ -type f -exec chmod 644 {} \;');
-    run('chmod 777 /var/www/html/ews/current/writable/*');
-    run('chmod 777 /var/www/html/ews/current/writable/');
+    run('find /var/www/html/ews-latest/ -type d -exec chmod 755 {} \;');
+    run('find /var/www/html/ews-latest/ -type f -exec chmod 644 {} \;');
+    run('chmod 777 /var/www/html/ews-latest/current/writable/*');
+    run('chmod 777 /var/www/html/ews-latest/current/writable/');
 });
 
 after('deploy:failed', 'deploy:unlock');
 
 after('deploy:success', 'crontab:sync');
 
-after('deploy:success', 'db-changes');
+//after('deploy:success', 'db-changes');
 
 add('crontab:jobs', [
-    '0 10 * * * cd {{current_path}}/public && {{bin/php}} index.php cron morning >> /dev/null 2>&1',
-    '0 11 * * * cd {{current_path}}/public && {{bin/php}} index.php cron sync-data >> /dev/null 2>&1',
-    '0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron sms-report >> /dev/null 2>&1',
-    '0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
+    //'0 10 * * * cd {{current_path}}/public && {{bin/php}} index.php cron morning >> /dev/null 2>&1',
+    //'0 11 * * * cd {{current_path}}/public && {{bin/php}} index.php cron sync-data >> /dev/null 2>&1',
+    //'0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron sms-report >> /dev/null 2>&1',
+    //'0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
 ]);
 
 task('db-changes', function () {
