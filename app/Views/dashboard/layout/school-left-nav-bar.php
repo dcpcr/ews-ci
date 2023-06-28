@@ -10,21 +10,21 @@
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/online-attendance'); ?>" class="nav-link online-attendance"
-                   id="online-attendance-nav">
+                <a href="<?php echo site_url('dashboard/task'); ?>" class="nav-link task"
+                   id="task-nav">
                     <i class="nav-icon fas fa-tasks"></i>
                     <p>Task</p>
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/absenteeism-reason'); ?>" class="nav-link absenteeism-reason"
-                   id="absenteeism-reason-nav">
+                <a href="<?php echo site_url('dashboard/absenteeism-report'); ?>" class="nav-link absenteeism-report"
+                   id="absenteeism-report-nav">
                     <i class="nav-icon fas fa-file-contract"></i>
                     <p>Absenteeism Report</p>
                 </a>
             </li>
             <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/frequent-absenteeism'); ?>"
+                <a href="<?php echo site_url('dashboard/contact-us'); ?>"
                    class="nav-link frequent-absenteeism"
                    id="frequent-absenteeism-nav">
                     <i class="nav-icon fas fa-phone"></i>
