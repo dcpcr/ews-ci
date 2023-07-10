@@ -146,6 +146,15 @@ class SchoolController extends BaseController
             ];
             $this->view_name = 'dashboard/home-attendance-list.php';
         }
+        elseif ($list_type == "detected_student_list") {
+            $detected_case_model = new DetectedCaseModel();
+            $detected_student_list = $detected_case_model->getTotalListOfDetectedStudentsFor($school_id, $classes, $start_date, $end_date);
+            $this->view_data['response'] = [
+                "detected_student_list" => $detected_student_list
+            ];
+            $this->view_name = 'dashboard/home-detected-student-list.php';
+        }
+
 
 
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];

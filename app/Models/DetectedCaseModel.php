@@ -28,4 +28,15 @@ class DetectedCaseModel extends Model
             ->countAllResults();
 
     }
+
+    public function getTotalListOfDetectedStudentsFor(array $school_id, array $classes, $start_date, $end_date): array
+    {
+        return $this->select()
+            ->whereIn('student_school_id', $school_id)
+            ->whereIn('student_class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start_date . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end_date . "', '%m/%d/%Y')")
+            ->groupBy("student_id")
+            ->findAll();
+    }
 }

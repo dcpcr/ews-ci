@@ -29,7 +29,7 @@
                     (Detected by EWS)
                 </p>
             </div>
-            <a href="<?php echo site_url('dashboard/bts-list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="<?php echo site_url('dashboard/detected_student_list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
