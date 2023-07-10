@@ -3,7 +3,7 @@ $(function () {
         .DataTable({
             pageLength: 40,
 
-            data: homePageListData,
+            data: homePageTotalStudentListData,
             columns: [
 
                 {data: "father", title: "Father"},

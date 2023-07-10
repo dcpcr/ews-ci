@@ -136,17 +136,18 @@ class SchoolController extends BaseController
             $this->view_data['response'] = [
                 "total_student_list" => $total_student_list
             ];
-        }
-        elseif ($list_type == "marked_attendance_list") {
+            $this->view_name = 'dashboard/student-list.php';
+        } elseif ($list_type == "marked_attendance_list") {
             $attendance_model = new AttendanceModel();
             $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDateFor($school_id);
-            $marked_attendance_student_list = $attendance_model->getAttendanceMarkedStudentListFor($school_id ,$classes, $latest_marked_attendance_date[0]['date']);
+            $marked_attendance_student_list = $attendance_model->getAttendanceMarkedStudentListFor($school_id, $classes, $latest_marked_attendance_date[0]['date']);
             $this->view_data['response'] = [
                 "marked_attendance_student_list" => $marked_attendance_student_list
             ];
+            $this->view_name = 'dashboard/home-attendance-list.php';
         }
 
-        $this->view_name = 'dashboard/home-attendance-list.php';
+
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
 
     }
