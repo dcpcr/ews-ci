@@ -30,4 +30,4 @@ $data = substr_replace($data, "", -1) . "";
     const attendanceCountData = [<?=$attendanceCountData?>];
     const totalStudentCountData = [<?=$totalStudentCountData?>];
 </script>
-<script src='/assets-adminlte/ews-js/online-attendance-home.js'></script>
+<script src='/assets-adminlte/ews-js/online-attendance-home-page.js'></script>
