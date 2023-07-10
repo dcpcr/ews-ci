@@ -68,12 +68,16 @@
         <?php if (!$filter_permissions['viewReportsSchool']) {
             echo $this->include('dashboard/layout/page-header-details');
         }
+
         ?>
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
                 <?php
-                if (!$filter_permissions['viewReportsSchool']) {
+                if ($filter_permissions['viewReportsSchool']) {
+                    echo $this->include('dashboard/layout/school-filters');
+                }
+                else{
                     echo $this->include('dashboard/layout/filters');;
                 }
                 ?>

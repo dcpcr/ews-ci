@@ -6,14 +6,11 @@ use App\Models\AttendanceModel;
 use App\Models\AttendanceReportModel;
 use App\Models\CallDispositionModel;
 use App\Models\CaseModel;
-use App\Models\CaseReasonModel;
 use App\Models\DcpcrHelplineTicketModel;
 use App\Models\DistrictModel;
-use App\Models\HighRiskModel;
 use App\Models\HomeVisitModel;
 use App\Models\LatestStudentStatusModel;
 use App\Models\ReasonForAbsenteeismModel;
-use App\Models\ReasonModel;
 use App\Models\SchoolMappingModel;
 use App\Models\SchoolModel;
 use App\Models\YetToBeContactedModel;
@@ -97,6 +94,27 @@ class AdminController extends AuthController
     {
         if ($this->doesUserHavePermission()) {
             $this->initializeFilterData();
+            if (has_permission('viewReportsSchool')) {
+                $school = new SchoolController();
+                $this->view_data['user_name'] = user()->username;
+                switch ($report_type) {
+                    case 'home':
+                        $page_data = $school->prepareHomePageData($this->filters, array_keys($this->schools), $this->classes, $this->duration['start'], $this->duration['end'], $this->view_data);
+                        break;
+                    case 'task':
+                        $page_data = $school->prepareTaskPageData($this->filters, array_keys($this->schools), $this->classes, $this->duration['start'], $this->duration['end'], $this->view_data);
+                        break;
+                    case 'absenteeism-report':
+                        $page_data = $school->prepareAbsenteeismReportPageData($this->filters, array_keys($this->schools), $this->classes, $this->duration['start'], $this->duration['end'], $this->view_data);
+                        break;
+                    case $report_type :
+                        $page_data = $school->prepareReasonListByReasonId($this->filters, array_keys($this->schools), $this->classes, $this->duration['start'], $this->duration['end'], $this->view_data, $report_type, $reason_name);
+                        break;
+
+                }
+                return view($page_data['view_name'], $page_data['view_data']);
+
+            }
             switch ($report_type) {
                 case 'summary':
                     $this->prepareSummaryPageData();

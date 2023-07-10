@@ -1,13 +1,4 @@
-<div class="row">
-    <div class="col-lg-12 col-12">
-        <div>
-            <div class="inner">
-                &nbsp;
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
+<div class="row ">
     <div class="col-lg-4 col-6">
         <div class="small-box bg-success text-center">
             <div class="inner">

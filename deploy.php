@@ -60,9 +60,9 @@ task('deploy', [
     'deploy:symlink',
     'deploy:unlock',
     'deploy:cleanup',
-    'set-permissions',
-    //'restart-nginx-fpm',
-    'restart-http',
+    //'set-permissions',
+    'restart-nginx-fpm',
+    //'restart-http',
     'deploy:success'
 ]);
 
@@ -71,16 +71,16 @@ task('restart-nginx-fpm', function () {
     run('systemctl restart php-fpm');
 });
 
-task('restart-http', function () {
+/*task('restart-http', function () {
     run('systemctl restart httpd');
-});
+});*/
 
-task('set-permissions', function () {
+/*task('set-permissions', function () {
     run('find /var/www/html/ews-latest/ -type d -exec chmod 755 {} \;');
     run('find /var/www/html/ews-latest/ -type f -exec chmod 644 {} \;');
     run('chmod 777 /var/www/html/ews-latest/current/writable/*');
     run('chmod 777 /var/www/html/ews-latest/current/writable/');
-});
+});*/
 
 after('deploy:failed', 'deploy:unlock');
 

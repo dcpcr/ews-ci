@@ -8,7 +8,11 @@ class UserController extends AuthController
     {
         if ($this->checkForOperator()) {
             return redirect()->route('operator');
-        } else {
+        }
+        elseif (has_permission('viewReportsSchool')) {
+            return redirect()->route('dashboard', ['home']);
+        }
+        else{
             return redirect()->route('dashboard', ['summary']);
         }
     }

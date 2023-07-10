@@ -12,5 +12,5 @@ $this->section("table-section-2");
 echo $this->include('dashboard/partial/online-attendance-class-wise-datatable');
 $this->endSection();
 $this->section("page-specific-script-section");
-echo $this->include('dashboard/partial/scripts/online-attendance-script');
+echo $this->include('dashboard/partial/scripts/online-attendance-script-home');
 $this->endSection();
