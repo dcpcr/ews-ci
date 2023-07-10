@@ -40,8 +40,9 @@ class SchoolController extends BaseController
 
         //Total students count
         $student_model = new StudentModel();
-        $total_number_of_student = $student_model->getStudentCountFor($school_id,$classes , "school_id" );
+        $total_number_of_student = $student_model->getStudentCountFor($school_id, $classes, "school_id");
         //total student count end
+
         //attendance marked
         $total_attendance_count = $attendance_model->getDateWiseMarkedStudentAttendanceCountForHomePage($school_id, $classes, $latest_marked_attendance_date[0]['date']);
 
@@ -60,9 +61,9 @@ class SchoolController extends BaseController
             "attendance_data_for_graph" => $attendance_data_for_graph,
             "total_number_of_students" => $total_number_of_student,
             "total_attendance" => $total_attendance_count,
-            "attendance_percentage" =>  round($total_attendance_count['attendance_count']/$total_number_of_student[0]['count_total'],"2").'%',
+            "attendance_percentage" => round($total_attendance_count['attendance_count'] / $total_number_of_student[0]['count_total'], "2") . '%',
             "total_number_of_detected_students" => $total_number_of_detected_students,
-            ];
+        ];
         $this->view_name = 'dashboard/home';
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
     }
@@ -84,9 +85,9 @@ class SchoolController extends BaseController
         $this->view_data['filter_permissions'] = $permission;
         $this->view_data['details'] = "Scroll down to see quick links and overview of your school's attendance performance and daily tasks!";
         $this->view_data['page_title'] = 'Absenteeism Report';
-        $reason_wise_case_count = $this->getGenderWiseReasonsCount($school_id, $classes, $start_date, $end_date,['Female', 'Transgender', 'Male']);
+        $reason_wise_case_count = $this->getGenderWiseReasonsCount($school_id, $classes, $start_date, $end_date, ['Female', 'Transgender', 'Male']);
         $detected_case_model = new CaseModel();
-        $total_detected_cases = $detected_case_model->getCaseCount($school_id, $classes,$start_date, $end_date, ["Back to school", "Fresh"]);
+        $total_detected_cases = $detected_case_model->getCaseCount($school_id, $classes, $start_date, $end_date, ["Back to school", "Fresh"]);
         $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
         $sub_division_wise_total_dcpcr_helpline_case_count = $dcpcr_helpline_ticket_model->getDcpcrHelplineCaseDetails($school_id, $classes, $start_date, $end_date, ["New", "Closed", 'Open'], "total_ticket_count");
         $sub_division_wise_in_total_progress_dcpcr_helpline_case_count = $dcpcr_helpline_ticket_model->getDcpcrHelplineCaseDetails($school_id, $classes, $start_date, $end_date, ["New", 'Open'], "total_in_progress_ticket_count");
@@ -124,22 +125,28 @@ class SchoolController extends BaseController
 
     }
 
-    public function prepareListBy(array $permission, array $school_id, array $classes, $start_date, $end_date, array $view_data, $list_type, $id=''): array
+    public function prepareListBy(array $permission, array $school_id, array $classes, $start_date, $end_date, array $view_data, $list_type, $id = ''): array
     {
         $this->view_data = $view_data;
         $this->view_data['page_title'] = str_replace("*", "/", $list_type);
         $this->view_data['page_title'] = ucwords(str_replace("_", " ", $list_type));
-        if($list_type=="students_list")
-        {
+        if ($list_type == "students_list") {
             $student_model = new StudentModel();
-            $total_student_list  = $student_model->getStudentListFor($school_id);
+            $total_student_list = $student_model->getStudentListFor($school_id);
             $this->view_data['response'] = [
-            "total_student_list" => $total_student_list
+                "total_student_list" => $total_student_list
+            ];
+        }
+        elseif ($list_type == "marked_attendance_list") {
+            $attendance_model = new AttendanceModel();
+            $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDateFor($school_id);
+            $marked_attendance_student_list = $attendance_model->getAttendanceMarkedStudentListFor($school_id ,$classes, $latest_marked_attendance_date[0]['date']);
+            $this->view_data['response'] = [
+                "marked_attendance_student_list" => $marked_attendance_student_list
             ];
         }
 
-
-        $this->view_name = 'dashboard/home-list.php';
+        $this->view_name = 'dashboard/home-attendance-list.php';
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
 
     }

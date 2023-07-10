@@ -17,7 +17,7 @@
                     marked yesterday </br>
                 </p>
             </div>
-            <a href="<?php echo site_url('dashboard/bts-list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="<?php echo site_url('dashboard/marked_attendance_list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
 
         </div>
     </div>

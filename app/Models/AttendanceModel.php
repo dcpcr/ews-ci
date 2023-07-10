@@ -228,4 +228,15 @@ class AttendanceModel extends Model
             ->findAll();
         return $data[0];
     }
+
+    public function getAttendanceMarkedStudentListFor(array $school_id, $classes, $date):array
+    {
+        return $this->select()
+            ->join("master.student as student", "student.id=student_id")
+            ->where("attendance.date",$date)
+            ->whereIn("school_id", $school_id)
+            ->whereIn("class", $classes)
+            ->findAll();
+        var_dump("<pre>",$data);
+    }
 }
