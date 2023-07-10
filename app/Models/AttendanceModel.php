@@ -177,6 +177,14 @@ class AttendanceModel extends Model
             ->findAll();
     }
 
+    public function getLatestMarkedAttendanceDateFor($school_id): array
+    {
+        return $this->select("max(date) as date")
+            ->join("master.student as student", "student.id=student_id")
+            ->whereIn("school_id",$school_id)
+            ->findAll();
+    }
+
     public function getClassWiseMarkedAttendance($school_ids, $classes): array
     {
         helper('general');
@@ -208,5 +216,16 @@ class AttendanceModel extends Model
         } else {
             return [];
         }
+    }
+
+    public function getDateWiseMarkedStudentAttendanceCountForHomePage($school_ids, $classes, $date): array
+    {
+        $data = $this->select(['count(*) as attendance_count'])
+            ->join("master.student as student", "student.id=student_id")
+            ->where("attendance.date",$date)
+            ->whereIn("school_id", $school_ids)
+            ->whereIn("class", $classes)
+            ->findAll();
+        return $data[0];
     }
 }

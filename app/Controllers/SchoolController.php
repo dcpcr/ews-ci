@@ -7,9 +7,11 @@ use App\Models\AttendanceModel;
 use App\Models\AttendanceReportModel;
 use App\Models\CaseModel;
 use App\Models\DcpcrHelplineTicketModel;
+use App\Models\DetectedCaseModel;
 use App\Models\HomeVisitModel;
 use App\Models\LatestStudentStatusModel;
 use App\Models\ReasonForAbsenteeismModel;
+use App\Models\StudentModel;
 use App\Models\YetToBeContactedModel;
 
 class SchoolController extends BaseController
@@ -24,15 +26,30 @@ class SchoolController extends BaseController
         $this->view_data['filter_permissions'] = $permission;
         $this->view_data['details'] = "Scroll down to see quick links and overview of your school's attendance performance and daily tasks!";
         $this->view_data['page_title'] = 'Home';
+        //Attendance data
         $col_name = "class";
         $graph_lable = "class";
         $table_title = "class";
         $attendance_model = new AttendanceModel();
-        $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDate();
+        $latest_marked_attendance_date = $attendance_model->getLatestMarkedAttendanceDateFor($school_id);
         $attendance_report_model = new AttendanceReportModel();
         $attendance_data_day_wise = $attendance_report_model->getDateWiseMarkedStudentAttendanceCount($school_id, $classes, $start_date, $end_date);
         $attendance_data_class_wise = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_id, $classes, $latest_marked_attendance_date, "class", false);
         $attendance_data_for_graph = $attendance_report_model->getMarkedStudentAttendanceDataGroupByCount($school_id, $classes, $latest_marked_attendance_date, "class", true);
+        //Attendance data end
+
+        //Total students count
+        $student_model = new StudentModel();
+        $total_number_of_student = $student_model->getStudentCountFor($school_id,$classes , "school_id" );
+        //total student count end
+        //attendance marked
+        $total_attendance_count = $attendance_model->getDateWiseMarkedStudentAttendanceCountForHomePage($school_id, $classes, $latest_marked_attendance_date[0]['date']);
+
+        //dtected by EWS
+
+        $detected_case_model = new DetectedCaseModel();
+        $total_number_of_detected_students = $detected_case_model->getTotalNumberOfDetectedStudentsFor($school_id, $classes, $start_date, $end_date);
+
         $this->view_data['response'] = [
             "table_title" => $table_title,
             "graph_lable" => $graph_lable,
@@ -41,7 +58,11 @@ class SchoolController extends BaseController
             'latest_marked_attendance_date' => $latest_marked_attendance_date,
             "attendance_data_class_wise" => $attendance_data_class_wise,
             "attendance_data_for_graph" => $attendance_data_for_graph,
-        ];
+            "total_number_of_students" => $total_number_of_student,
+            "total_attendance" => $total_attendance_count,
+            "attendance_percentage" =>  round($total_attendance_count['attendance_count']/$total_number_of_student[0]['count_total'],"2").'%',
+            "total_number_of_detected_students" => $total_number_of_detected_students,
+            ];
         $this->view_name = 'dashboard/home';
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
     }

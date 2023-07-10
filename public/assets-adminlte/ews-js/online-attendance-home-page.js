@@ -119,6 +119,9 @@ $(function () {
     }).buttons().container().appendTo('#onlineattendancepercentagetable_wrapper .col-md-6:eq(0)');
 });
 
+$(document).ready(function () {
+    $("#duration").remove();
+});
 $(function () {
     //---------------------
     //- STACKED BAR CHART -
