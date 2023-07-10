@@ -51,6 +51,9 @@ class SchoolController extends BaseController
         $detected_case_model = new DetectedCaseModel();
         $total_number_of_detected_students = $detected_case_model->getTotalNumberOfDetectedStudentsFor($school_id, $classes, $start_date, $end_date);
 
+        //bts
+        $bts_with_intervention = $detected_case_model->getBTSCaseCount($school_id, $classes, $start_date, $end_date);
+        $bts_without_intervention = $detected_case_model->getBTSCaseCount($school_id, $classes, $start_date, $end_date, true);
         $this->view_data['response'] = [
             "table_title" => $table_title,
             "graph_lable" => $graph_lable,
@@ -63,6 +66,8 @@ class SchoolController extends BaseController
             "total_attendance" => $total_attendance_count,
             "attendance_percentage" => round($total_attendance_count['attendance_count'] / $total_number_of_student[0]['count_total'], "2") . '%',
             "total_number_of_detected_students" => $total_number_of_detected_students,
+            "bts_with_intervention" => $bts_with_intervention,
+            "bts_without_intervention" => $bts_without_intervention,
         ];
         $this->view_name = 'dashboard/home';
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
@@ -145,8 +150,7 @@ class SchoolController extends BaseController
                 "marked_attendance_student_list" => $marked_attendance_student_list
             ];
             $this->view_name = 'dashboard/home-attendance-list.php';
-        }
-        elseif ($list_type == "detected_student_list") {
+        } elseif ($list_type == "detected_student_list") {
             $detected_case_model = new DetectedCaseModel();
             $detected_student_list = $detected_case_model->getTotalListOfDetectedStudentsFor($school_id, $classes, $start_date, $end_date);
             $this->view_data['response'] = [
@@ -154,7 +158,23 @@ class SchoolController extends BaseController
             ];
             $this->view_name = 'dashboard/home-detected-student-list.php';
         }
+         elseif ($list_type == "back_to_school_with_EWS_intervention_list") {
+            $detected_case_model = new DetectedCaseModel();
+             $bts_with_intervention_list = $detected_case_model->getBTSList($school_id, $classes, $start_date, $end_date);
+            $this->view_data['response'] = [
+                "bts_with_intervention_list" => $bts_with_intervention_list
+            ];
+            $this->view_name = 'dashboard/home-bts-student-list.php';
+        }
 
+        elseif ($list_type == "back_to_school_without_EWS_intervention_list") {
+        $detected_case_model = new DetectedCaseModel();
+            $bts_without_intervention_list = $detected_case_model->getBTSList($school_id, $classes, $start_date, $end_date,true);
+            $this->view_data['response'] = [
+                "bts_without_intervention_list" => $bts_without_intervention_list
+            ];
+            $this->view_name = 'dashboard/home-bts-student-list.php';
+        }
 
 
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];

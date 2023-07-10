@@ -14,7 +14,6 @@ class CallDispositionMasterSeeder extends Seeder
     {
         $callDispositionMasterModel= new CallDispositionMasterModel();
 
-
         $rows = array(
             array('id' => '1', 'name' => 'Call Connected', 'active' => '1'),
             array('id' => '2', 'name' => 'No Answer', 'active' => '1'),
@@ -25,6 +24,7 @@ class CallDispositionMasterSeeder extends Seeder
             array('id' => '7', 'name' => 'Not Reachable/Out of Network', 'active' => '1'),
             array('id' => '8', 'name' => 'Received Incomplete Information', 'active' => '1'),
             array('id' => '9', 'name' => 'Switched Off', 'active' => '1'),
+            array('id' => '10', 'name' => 'Respondent refused to talk', 'active' => '1'),
 
         );
         foreach ($rows as $row) {

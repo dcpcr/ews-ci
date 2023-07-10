@@ -95,9 +95,9 @@ add('crontab:jobs', [
     //'0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
 ]);
 
-task('db-changes', function () {
+/*task('db-changes', function () {
     run ('cd {{current_path}} && php spark migrate');
-});
+});*/
 
 task('logs', function () {
     run('cat /usr/share/nginx/ews/current/writable/logs/log-2022-06-*.log');

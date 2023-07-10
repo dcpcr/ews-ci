@@ -8,13 +8,28 @@
             <div class="card-footer p-0">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            Children who received intervention through EWS <br> <button type="button" class="btn btn-outline-danger btn-sm">View Details <i class="fa fa-arrow-alt-circle-right"></i></button> <span class="float-right badge bg-primary">31</span>
+                        <a href="<?php echo site_url('dashboard/back_to_school_with_EWS_intervention_list'); ?>"
+                           class="nav-link">
+                            Children who received intervention through EWS <br>
+                            <button type="button" class="btn btn-outline-danger btn-sm">
+                                View Details<i class="fa fa-arrow-alt-circle-right"></i>
+                            </button>
+                            <span class="float-right badge bg-primary">
+                                <?= $response['bts_with_intervention'] ?>
+                            </span>
+                            </button>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            Children who returned without any EWS intervention <br> <button type="button" class="btn btn-outline-danger btn-sm">View Details <i class="fa fa-arrow-alt-circle-right"></i></button> <span class="float-right badge bg-primary">5</span>
+                        <a href="<?php echo site_url('dashboard/back_to_school_without_EWS_intervention_list'); ?>" class="nav-link">
+                            Children who returned without any EWS intervention <br>
+                                <button type="button" class="btn btn-outline-danger btn-sm">View Details
+
+                            <i class="fa fa-arrow-alt-circle-right"></i>
+                            </button>
+                        <span
+                                class="float-right badge bg-primary"><?= $response['bts_without_intervention'] ?></span>
+                        </button>
                         </a>
                     </li>
                 </ul>
@@ -32,12 +47,18 @@
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            Children who are contacted through IVRS/ SMS <br> <button type="button" class="btn btn-outline-danger btn-sm">View Details <i class="fa fa-arrow-alt-circle-right"></i></button> <span class="float-right badge bg-info">31</span>
+                            Children who are contacted through IVRS/ SMS <br>
+                            <button type="button" class="btn btn-outline-danger btn-sm">View Details <i
+                                        class="fa fa-arrow-alt-circle-right"></i></button>
+                            <span class="float-right badge bg-info">31</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            Children who are contacted though calls/ home visit <br> <button type="button" class="btn btn-outline-danger btn-sm">View Details <i class="fa fa-arrow-alt-circle-right"></i></button> <span class="float-right badge bg-info">5</span>
+                            Children who are contacted though calls/ home visit <br>
+                            <button type="button" class="btn btn-outline-danger btn-sm">View Details <i
+                                        class="fa fa-arrow-alt-circle-right"></i></button>
+                            <span class="float-right badge bg-info">5</span>
                         </a>
                     </li>
                 </ul>
