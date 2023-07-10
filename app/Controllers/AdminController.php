@@ -108,7 +108,7 @@ class AdminController extends AuthController
                         $page_data = $school->prepareAbsenteeismReportPageData($this->filters, array_keys($this->schools), $this->classes, $this->duration['start'], $this->duration['end'], $this->view_data);
                         break;
                     case $report_type :
-                        $page_data = $school->prepareReasonListByReasonId($this->filters, array_keys($this->schools), $this->classes, $this->duration['start'], $this->duration['end'], $this->view_data, $report_type, $reason_name);
+                        $page_data = $school->prepareListBy($this->filters, array_keys($this->schools), $this->classes, $this->duration['start'], $this->duration['end'], $this->view_data, $report_type, $reason_name);
                         break;
 
                 }

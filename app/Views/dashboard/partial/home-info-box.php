@@ -1,4 +1,3 @@
-
 <div class="row ">
     <div class="col-lg-4 col-6">
         <div class="small-box bg-success text-center">
@@ -7,7 +6,7 @@
                 <p class="mt-4">Total students enrolled in your school
                 </p>
             </div>
-            <a href="<?php echo site_url('dashboard/bts-list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="<?php echo site_url('dashboard/students_list'); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-4 col-6">

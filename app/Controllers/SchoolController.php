@@ -124,4 +124,24 @@ class SchoolController extends BaseController
 
     }
 
+    public function prepareListBy(array $permission, array $school_id, array $classes, $start_date, $end_date, array $view_data, $list_type, $id=''): array
+    {
+        $this->view_data = $view_data;
+        $this->view_data['page_title'] = str_replace("*", "/", $list_type);
+        $this->view_data['page_title'] = ucwords(str_replace("_", " ", $list_type));
+        if($list_type=="students_list")
+        {
+            $student_model = new StudentModel();
+            $total_student_list  = $student_model->getStudentListFor($school_id);
+            $this->view_data['response'] = [
+            "total_student_list" => $total_student_list
+            ];
+        }
+
+
+        $this->view_name = 'dashboard/home-list.php';
+        return ["view_name" => $this->view_name, "view_data" => $this->view_data];
+
+    }
+
 }
