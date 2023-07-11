@@ -257,6 +257,16 @@ class SchoolController extends BaseController
             ];
             $this->view_name = 'dashboard/parental-death-list.php';
         }
+        else{
+            $reason_model = new ReasonForAbsenteeismModel();
+            $list = $reason_model->getCaseListByReasonId($list_type, $school_id, $classes, $start_date, $end_date);
+            $this->view_data['response'] = [
+                "reason_for_absenteeism" => $list,
+            ];
+            $this->view_name = 'dashboard/list.php';
+
+        }
+
 
 
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
