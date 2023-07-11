@@ -144,4 +144,12 @@ class StudentModel extends Model
             ->findAll();
     }
 
+    public function getInvalidAndWrongMobileNumberListFor(array $school_id): array
+    {
+        return $this->select()
+            ->whereIn("school_id",$school_id)
+            ->where("length(mobile) !=10")
+            ->findAll();
+    }
+
 }

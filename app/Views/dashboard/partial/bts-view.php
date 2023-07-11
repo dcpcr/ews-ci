@@ -46,19 +46,19 @@
             <div class="card-footer p-0">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            Children who are contacted through IVRS/ SMS <br>
+                        <a href="<?php echo site_url('dashboard/children_who_are_contacted_through_SMS'); ?>" class="nav-link">
+                            Children who are contacted through SMS <br>
                             <button type="button" class="btn btn-outline-danger btn-sm">View Details <i
                                         class="fa fa-arrow-alt-circle-right"></i></button>
-                            <span class="float-right badge bg-info">31</span>
+                            <span class="float-right badge bg-info"><?= $response['yet_to_be_brought_back_to_school_via_sms_count'] ?></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            Children who are contacted though calls/ home visit <br>
+                        <a href="<?php echo site_url('dashboard/children_who_are_contacted_through_calls'); ?>" class="nav-link">
+                            Children who are contacted though calls <br>
                             <button type="button" class="btn btn-outline-danger btn-sm">View Details <i
                                         class="fa fa-arrow-alt-circle-right"></i></button>
-                            <span class="float-right badge bg-info">5</span>
+                            <span class="float-right badge bg-info"><?= $response['yet_to_be_brought_back_to_school_via_call_count'] ?></span>
                         </a>
                     </li>
                 </ul>

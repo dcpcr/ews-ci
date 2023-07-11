@@ -54,6 +54,9 @@ class SchoolController extends BaseController
         //bts
         $bts_with_intervention = $detected_case_model->getBTSCaseCount($school_id, $classes, $start_date, $end_date);
         $bts_without_intervention = $detected_case_model->getBTSCaseCount($school_id, $classes, $start_date, $end_date, true);
+        //YET TO BE BROUGHT BACK TO SCHOOL
+        $yet_to_be_brought_back_to_school_by_call = $detected_case_model->getYetToBeBroughtBackToSchoolByCall($school_id, $classes, $start_date, $end_date);
+        $yet_to_be_brought_back_to_school_by_sms = $detected_case_model->getYetToBeBroughtBackToSchoolBySMS($school_id, $classes, $start_date, $end_date);
         $this->view_data['response'] = [
             "table_title" => $table_title,
             "graph_lable" => $graph_lable,
@@ -68,6 +71,10 @@ class SchoolController extends BaseController
             "total_number_of_detected_students" => $total_number_of_detected_students,
             "bts_with_intervention" => $bts_with_intervention,
             "bts_without_intervention" => $bts_without_intervention,
+            "yet_to_be_brought_back_to_school_via_call_count" => count($yet_to_be_brought_back_to_school_by_call),
+            "yet_to_be_brought_back_to_school_via_call_list" => $yet_to_be_brought_back_to_school_by_call,
+            "yet_to_be_brought_back_to_school_via_sms_count" => count($yet_to_be_brought_back_to_school_by_sms),
+            "yet_to_be_brought_back_to_school_via_sms_list" => $yet_to_be_brought_back_to_school_by_sms,
         ];
         $this->view_name = 'dashboard/home';
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
@@ -157,23 +164,69 @@ class SchoolController extends BaseController
                 "detected_student_list" => $detected_student_list
             ];
             $this->view_name = 'dashboard/home-detected-student-list.php';
-        }
-         elseif ($list_type == "back_to_school_with_EWS_intervention_list") {
+        } elseif ($list_type == "back_to_school_with_EWS_intervention_list") {
             $detected_case_model = new DetectedCaseModel();
-             $bts_with_intervention_list = $detected_case_model->getBTSList($school_id, $classes, $start_date, $end_date);
+            $bts_with_intervention_list = $detected_case_model->getBTSList($school_id, $classes, $start_date, $end_date);
             $this->view_data['response'] = [
                 "bts_with_intervention_list" => $bts_with_intervention_list
             ];
             $this->view_name = 'dashboard/home-bts-student-list.php';
-        }
-
-        elseif ($list_type == "back_to_school_without_EWS_intervention_list") {
-        $detected_case_model = new DetectedCaseModel();
-            $bts_without_intervention_list = $detected_case_model->getBTSList($school_id, $classes, $start_date, $end_date,true);
+        } elseif ($list_type == "back_to_school_without_EWS_intervention_list") {
+            $detected_case_model = new DetectedCaseModel();
+            $bts_without_intervention_list = $detected_case_model->getBTSList($school_id, $classes, $start_date, $end_date, true);
             $this->view_data['response'] = [
                 "bts_without_intervention_list" => $bts_without_intervention_list
             ];
             $this->view_name = 'dashboard/home-bts-student-list.php';
+        } elseif ($list_type == "children_who_are_contacted_through_SMS") {
+            $detected_case_model = new DetectedCaseModel();
+            $yet_to_be_brought_back_to_school_by_call = $detected_case_model->getYetToBeBroughtBackToSchoolBySMS($school_id, $classes, $start_date, $end_date);
+            $this->view_data['response'] = [
+                "yet_to_be_brought_back_to_school_by_sms" => $yet_to_be_brought_back_to_school_by_call
+            ];
+            $this->view_name = 'dashboard/home-ytbtu-student-list.php';
+        }elseif ($list_type == "children_who_are_contacted_through_calls") {
+            $detected_case_model = new DetectedCaseModel();
+            $yet_to_be_brought_back_to_school_by_call = $detected_case_model->getYetToBeBroughtBackToSchoolByCall($school_id, $classes, $start_date, $end_date);
+            $this->view_data['response'] = [
+                "yet_to_be_brought_back_to_school_by_call" => $yet_to_be_brought_back_to_school_by_call
+            ];
+            $this->view_name = 'dashboard/home-ytbtu-student-list.php';
+        } elseif ($list_type == "wrong_number") {
+            $student_model = new StudentModel();
+            $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);
+            $this->view_data['response'] = [
+                "wrong_mobile_number_list" => $wrong_mobile_number_list
+            ];
+            $this->view_name = 'dashboard/wrong-mobile-number-list.php';
+        } elseif ($list_type == "corporal_punishment") {
+            $detected_case_model = new DetectedCaseModel();
+            $corporal_punishment_list = $detected_case_model->getCorporalPunishmentListFor($school_id, $classes, $start_date, $end_date);
+            $this->view_data['response'] = [
+                "corporal_punishment_list" => $corporal_punishment_list
+            ];
+            $this->view_name = 'dashboard/corporal-punishment-list.php';
+        } elseif ($list_type == "bullying_harassment") {
+            $student_model = new StudentModel();
+            $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);
+            $this->view_data['response'] = [
+                "wrong_mobile_number_list" => $wrong_mobile_number_list
+            ];
+            $this->view_name = 'dashboard/wrong-mobile-number-list.php';
+        } elseif ($list_type == "moved_out_of_delhi") {
+            $student_model = new StudentModel();
+            $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);
+            $this->view_data['response'] = [
+                "wrong_mobile_number_list" => $wrong_mobile_number_list
+            ];
+            $this->view_name = 'dashboard/wrong-mobile-number-list.php';
+        } elseif ($list_type == "changed_school_in_delhi") {
+            $student_model = new StudentModel();
+            $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);
+            $this->view_data['response'] = [
+                "wrong_mobile_number_list" => $wrong_mobile_number_list
+            ];
+            $this->view_name = 'dashboard/wrong-mobile-number-list.php';
         }
 
 
