@@ -239,6 +239,15 @@ class SchoolController extends BaseController
             ];
             $this->view_name = 'dashboard/changed-school-in-delhi-list.php';
         }
+        elseif ($list_type == "student_dropped_out") {
+            $detected_case_model = new DetectedCaseModel();
+            $dropped_out_list = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['6']);
+
+            $this->view_data['response'] = [
+                "dropped_out_list" => $dropped_out_list
+            ];
+            $this->view_name = 'dashboard/dropped-out-list.php';
+        }
 
 
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
