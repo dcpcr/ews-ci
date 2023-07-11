@@ -140,11 +140,11 @@ class DetectedCaseModel extends Model
 
     }
 
-    public function getCorporalPunishmentListFor(array $school_id, array $classes, $start_date, $end_date): array
+    public function getListFor(array $school_id, array $classes, $start_date, $end_date, array $reason_id ): array
     {
         return $this->select()
             ->join("reason_for_absenteeism" ,"case_id=id")
-            ->whereIn("reason_id",['8'])
+            ->whereIn("reason_id",$reason_id)
             ->whereIn('student_school_id', $school_id)
             ->whereIn('student_class', $classes)
             ->where("day BETWEEN STR_TO_DATE('" . $start_date . "' , '%m/%d/%Y') and STR_TO_DATE('" .

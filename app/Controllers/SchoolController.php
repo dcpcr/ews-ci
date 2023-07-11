@@ -185,7 +185,7 @@ class SchoolController extends BaseController
                 "yet_to_be_brought_back_to_school_by_sms" => $yet_to_be_brought_back_to_school_by_call
             ];
             $this->view_name = 'dashboard/home-ytbtu-student-list.php';
-        }elseif ($list_type == "children_who_are_contacted_through_calls") {
+        } elseif ($list_type == "children_who_are_contacted_through_calls") {
             $detected_case_model = new DetectedCaseModel();
             $yet_to_be_brought_back_to_school_by_call = $detected_case_model->getYetToBeBroughtBackToSchoolByCall($school_id, $classes, $start_date, $end_date);
             $this->view_data['response'] = [
@@ -201,18 +201,18 @@ class SchoolController extends BaseController
             $this->view_name = 'dashboard/wrong-mobile-number-list.php';
         } elseif ($list_type == "corporal_punishment") {
             $detected_case_model = new DetectedCaseModel();
-            $corporal_punishment_list = $detected_case_model->getCorporalPunishmentListFor($school_id, $classes, $start_date, $end_date);
+            $corporal_punishment_list = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['8']);
             $this->view_data['response'] = [
                 "corporal_punishment_list" => $corporal_punishment_list
             ];
             $this->view_name = 'dashboard/corporal-punishment-list.php';
         } elseif ($list_type == "bullying_harassment") {
-            $student_model = new StudentModel();
-            $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);
+            $detected_case_model = new DetectedCaseModel();
+            $bullying_harassment = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['19']);
             $this->view_data['response'] = [
-                "wrong_mobile_number_list" => $wrong_mobile_number_list
+                "bullying_harassment" => $bullying_harassment
             ];
-            $this->view_name = 'dashboard/wrong-mobile-number-list.php';
+            $this->view_name = 'dashboard/bullying-harassment-list.php';
         } elseif ($list_type == "moved_out_of_delhi") {
             $student_model = new StudentModel();
             $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);
