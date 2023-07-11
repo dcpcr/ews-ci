@@ -1,9 +1,8 @@
-<div class="">
-    <!-- /.card-header -->
+<!--<div class="">
     <p style="line-height: 1.75;">
-        <?= $page_title ?>
+        <?/*= $page_title */?>
     </p>
-</div>
+</div>-->
 <div class="row">
     <div class="col-12">
         <div class="card">

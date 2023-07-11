@@ -151,7 +151,7 @@ class SchoolController extends BaseController
     public function prepareListBy(array $permission, array $school_id, array $classes, $start_date, $end_date, array $view_data, $list_type, $id = ''): array
     {
         $this->view_data = $view_data;
-        $this->view_data['page_title'] = str_replace("*", "/", $list_type);
+        //$this->view_data['page_title'] = str_replace("*", "/", $list_type);
         $this->view_data['page_title'] = ucwords(str_replace("_", " ", $list_type));
         if ($list_type == "students_list") {
             $student_model = new StudentModel();
