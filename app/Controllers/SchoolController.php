@@ -232,12 +232,12 @@ class SchoolController extends BaseController
             ];
             $this->view_name = 'dashboard/moved-out-of-delhi-list.php';
         } elseif ($list_type == "changed_school_in_delhi") {
-            $student_model = new StudentModel();
-            $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);
+            $detected_case_model = new DetectedCaseModel();
+            $changed_school_in_delhi_list = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['23']);
             $this->view_data['response'] = [
-                "wrong_mobile_number_list" => $wrong_mobile_number_list
+                "changed_school_in_delhi_list" => $changed_school_in_delhi_list
             ];
-            $this->view_name = 'dashboard/wrong-mobile-number-list.php';
+            $this->view_name = 'dashboard/changed-school-in-delhi-list.php';
         }
 
 
