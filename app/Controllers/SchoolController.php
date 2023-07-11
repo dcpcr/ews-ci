@@ -86,7 +86,18 @@ class SchoolController extends BaseController
         $this->view_data['filter_permissions'] = $permission;
         $this->view_data['details'] = "Scroll down to see quick links and overview of your school's attendance performance and daily tasks!";
         $this->view_data['page_title'] = 'Task';
-        $this->view_data['response'] = [];
+        $detected_case_model = new DetectedCaseModel();
+        $moved_out_of_delhi_list = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['3']);
+        $changed_school_list = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['23']);
+        $dropped_out_list = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['6']);
+        $parental_death_count_list = $detected_case_model->getParentalDeathCaseListFor($school_id, $classes, $start_date, $end_date, ['22']);
+        $this->view_data['response'] = [
+            "moved_out_of_delhi_count" => count($moved_out_of_delhi_list),
+            "changed_school_count" => count($changed_school_list),
+            "dropped_out_count" => count($dropped_out_list),
+            "parental_death_count" => count($parental_death_count_list)
+        ];
+
         $this->view_name = 'dashboard/task';
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
     }
@@ -214,12 +225,12 @@ class SchoolController extends BaseController
             ];
             $this->view_name = 'dashboard/bullying-harassment-list.php';
         } elseif ($list_type == "moved_out_of_delhi") {
-            $student_model = new StudentModel();
-            $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);
+            $detected_case_model = new DetectedCaseModel();
+            $moved_out_of_delhi_list = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['3']);
             $this->view_data['response'] = [
-                "wrong_mobile_number_list" => $wrong_mobile_number_list
+                "moved_out_of_delhi" => $moved_out_of_delhi_list
             ];
-            $this->view_name = 'dashboard/wrong-mobile-number-list.php';
+            $this->view_name = 'dashboard/moved-out-of-delhi-list.php';
         } elseif ($list_type == "changed_school_in_delhi") {
             $student_model = new StudentModel();
             $wrong_mobile_number_list = $student_model->getInvalidAndWrongMobileNumberListFor($school_id);

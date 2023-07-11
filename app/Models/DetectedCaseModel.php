@@ -152,4 +152,18 @@ class DetectedCaseModel extends Model
             ->groupBy("student_id")
             ->findAll();
     }
+
+    public function getParentalDeathCaseListFor(array $school_id, array $classes, $start_date, $end_date, array $reason_id): array
+    {
+        return $this->select()
+            ->join("reason_for_absenteeism" ,"case_id=id")
+            ->whereIn("reason_id",$reason_id)
+            ->where("(who_passed_away=1 or who_passed_away=2)" )
+            ->whereIn('student_school_id', $school_id)
+            ->whereIn('student_class', $classes)
+            ->where("day BETWEEN STR_TO_DATE('" . $start_date . "' , '%m/%d/%Y') and STR_TO_DATE('" .
+                $end_date . "', '%m/%d/%Y')")
+            ->groupBy("student_id")
+            ->findAll();
+    }
 }
