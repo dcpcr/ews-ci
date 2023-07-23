@@ -92,10 +92,3 @@ Chart.pluginService.register({
         }
     }
 });
-
-
-$(document).ready(function () {
-    $("#school").remove();
-    $("#district").remove();
-    $("#zone").remove();
-});
