@@ -19,7 +19,7 @@ class AlterTableDetectedCase extends Migration
 
         $this->forge->modifyColumn('detected_case', $fields);
         $fields = [
-            'absent_reason' => [
+            'reason_for_absent' => [
                 'type' => 'varchar',
                 'constraint' => '100',
                 'default' => ""

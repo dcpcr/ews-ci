@@ -38,7 +38,7 @@ add('rsync', [
 host('10.194.73.95')
     ->set('remote_user', 'root')
     ->set('labels', ['stage' => 'staging'])
-    ->set('deploy_path', '/usr/share/nginx/{{application}}')
+    ->set('deploy_path', '/usr/share/nginx/ews')
     ->set('rsync_dest', '{{release_path}}');
 
 host('10.194.74.223')
@@ -71,7 +71,7 @@ task('restart-nginx-fpm', function () {
     run('systemctl restart php-fpm');
 });
 
-/*task('restart-http', function () {
+/*task('restart-httpd', function () {
     run('systemctl restart httpd');
 });*/
 
@@ -86,7 +86,7 @@ after('deploy:failed', 'deploy:unlock');
 
 after('deploy:success', 'crontab:sync');
 
-//after('deploy:success', 'db-changes');
+after('deploy:success', 'db-changes');
 
 add('crontab:jobs', [
     //'0 10 * * * cd {{current_path}}/public && {{bin/php}} index.php cron morning >> /dev/null 2>&1',
@@ -95,10 +95,10 @@ add('crontab:jobs', [
     //'0 21 * * * cd {{current_path}}/public && {{bin/php}} index.php cron night >> /dev/null 2>&1',
 ]);
 
-/*task('db-changes', function () {
+task('db-changes', function () {
     run ('cd {{current_path}} && php spark migrate');
-});*/
+});
 
 task('logs', function () {
-    run('cat /usr/share/nginx/ews/current/writable/logs/log-2022-06-*.log');
+    run('cat /usr/share/nginx/ews/current/writable/logs/log-2023-07-*.log');
 });

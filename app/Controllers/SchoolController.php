@@ -68,7 +68,7 @@ class SchoolController extends BaseController
             "attendance_data_for_graph" => $attendance_data_for_graph,
             "total_number_of_students" => $total_number_of_student,
             "total_attendance" => $total_attendance_count,
-            "attendance_percentage" => round($total_attendance_count['attendance_count'] / $total_number_of_student[0]['count_total'], "2") . '%',
+            "attendance_percentage" => round($total_attendance_count['attendance_count'] / $total_number_of_student[0]['count_total'], "2")*100 . '%',
             "total_number_of_detected_students" => $total_number_of_detected_students,
             "bts_with_intervention" => $bts_with_intervention,
             "bts_without_intervention" => $bts_without_intervention,
