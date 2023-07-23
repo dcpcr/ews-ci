@@ -8,8 +8,6 @@ $(function () {
                 {data: "serial_no", title: "S.No"},
                 {data: "student_name", title: "Name"},
                 {data: "status", title: "Status"},
-                {data: "created_at", title: "Created At"},
-                {data: "updated_at", title: "Updated At"},
                 {data: "dob", title: "Date of birth"},
                 {data: "father", title: "Father"},
                 {data: "mother", title: "Mother"},
