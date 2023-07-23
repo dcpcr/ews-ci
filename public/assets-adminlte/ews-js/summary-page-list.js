@@ -5,16 +5,12 @@ $(function () {
 
       data: summaryBackToSchoolList,
       columns: [
-        //{ data: "case_id", title: "Case Id" },
-        //{ data: "created_at", title: "Created At" },
-        //{ data: "updated_at", title: "Updated At" },
-        //{ data: "dob", title: "Date of birth" },
+        { data: "dob", title: "Date of birth" },
         { data: "father", title: "Father" },
         { data: "mother", title: "Mother" },
         { data: "mobile", title: "Mobile" },
         { data: "address", title: "Address" },
         { data: "date_of_bts", title: "Date of Bts" },
-
         { data: "serial_no", title: "S.No" },
         { data: "student_id", title: "Student Id" },
         { data: "status", title: "Status" },

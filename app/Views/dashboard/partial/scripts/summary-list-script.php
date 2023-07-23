@@ -41,8 +41,6 @@ if (!empty($data)) {
             "mobile" => $case['mobile'],
             "address" => $case['address'],
             "school_id" => $case['school_id'],
-            "created_at" => $case['created_at'],
-            "updated_at" => $case['updated_at'],
             "seven_days_criteria" => $case['seven_days_criteria'],
             "thirty_days_criteria" => $case['thirty_days_criteria'],
             "date_of_bts" => $case['date_of_bts'],

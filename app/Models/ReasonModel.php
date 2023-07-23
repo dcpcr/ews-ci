@@ -39,4 +39,10 @@ class ReasonModel extends Model
     protected $afterFind = [];
     protected $beforeDelete = [];
     protected $afterDelete = [];
+
+
+    public function getReasonIds():array
+    {
+        return $this->select()->findAll();
+    }
 }

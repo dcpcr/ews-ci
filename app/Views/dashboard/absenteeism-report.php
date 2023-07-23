@@ -4,5 +4,5 @@ $this->section("graph-section");
 echo $this->include('dashboard/partial/absenteeism-report-table-partial-view');
 $this->endSection();
 $this->section("page-specific-script-section");
-//echo $this->include('dashboard/partial/scripts/absenteeism-script');
+echo $this->include('dashboard/partial/scripts/absenteeism-report-script');
 $this->endSection();

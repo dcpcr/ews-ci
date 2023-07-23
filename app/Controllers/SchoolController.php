@@ -11,6 +11,7 @@ use App\Models\DetectedCaseModel;
 use App\Models\HomeVisitModel;
 use App\Models\LatestStudentStatusModel;
 use App\Models\ReasonForAbsenteeismModel;
+use App\Models\ReasonModel;
 use App\Models\StudentModel;
 use App\Models\YetToBeContactedModel;
 
@@ -108,28 +109,32 @@ class SchoolController extends BaseController
         $this->view_data['filter_permissions'] = $permission;
         $this->view_data['details'] = "Scroll down to see quick links and overview of your school's attendance performance and daily tasks!";
         $this->view_data['page_title'] = 'Absenteeism Report';
-        $reason_wise_case_count = $this->getGenderWiseReasonsCount($school_id, $classes, $start_date, $end_date, ['Female', 'Transgender', 'Male']);
+        $reason_model = new ReasonModel();
+        $reason_ids_and_name = $reason_model->getReasonIds();
+        $case_reason_model = new ReasonForAbsenteeismModel();
+        $sickness_data = $case_reason_model->prepareReasonWiseDataForSickness($school_id, $classes, $start_date, $end_date);
+        $death_data = $case_reason_model->prepareReasonWiseDataForDeath($school_id, $classes, $start_date, $end_date);
+        $other_reason_wise_count_data = $case_reason_model->getReasonsCountCategoriesOtherThanSicknessAndDeath($school_id, $classes, $start_date, $end_date);
         $detected_case_model = new CaseModel();
         $total_detected_cases = $detected_case_model->getCaseCount($school_id, $classes, $start_date, $end_date, ["Back to school", "Fresh"]);
-        $dcpcr_helpline_ticket_model = new DcpcrHelplineTicketModel();
-        $sub_division_wise_total_dcpcr_helpline_case_count = $dcpcr_helpline_ticket_model->getDcpcrHelplineCaseDetails($school_id, $classes, $start_date, $end_date, ["New", "Closed", 'Open'], "total_ticket_count");
-        $sub_division_wise_in_total_progress_dcpcr_helpline_case_count = $dcpcr_helpline_ticket_model->getDcpcrHelplineCaseDetails($school_id, $classes, $start_date, $end_date, ["New", 'Open'], "total_in_progress_ticket_count");
+        $detected_case_model = new DetectedCaseModel();
+        $detected_student_list = $detected_case_model->getTotalListOfDetectedStudentsFor($school_id, $classes, $start_date, $end_date);
         $this->view_data['response'] = [
-            'reason_wise_case_count' => $reason_wise_case_count,
+            'sickness_data' => $sickness_data,
+            'death_data' => $death_data,
+            'other_reason_wise_case_count' => $other_reason_wise_count_data,
             'total_detected_cases' => $total_detected_cases,
-            'sub_division_wise_total_dcpcr_helpline_case_count' => $sub_division_wise_total_dcpcr_helpline_case_count,
-            'sub_division_wise_in_total_progress_dcpcr_helpline_case_count' => $sub_division_wise_in_total_progress_dcpcr_helpline_case_count,
+            'detected_student_list' => $detected_student_list,
         ];
-
         $this->view_name = 'dashboard/absenteeism-report';
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
+
     }
 
     public function prepareReasonListByReasonId(array $permission, array $school_id, array $classes, $start_date, $end_date, array $view_data, $reason_name, $id): array
     {
         $this->view_data = $view_data;
         $this->view_data['page_title'] = str_replace("*", "/", $reason_name);
-
         $reason_model = new ReasonForAbsenteeismModel();
         $list = $reason_model->getCaseListByReasonId($id, $school_id, $classes, $start_date, $end_date);
         $this->view_data['response'] = [
@@ -238,8 +243,7 @@ class SchoolController extends BaseController
                 "changed_school_in_delhi_list" => $changed_school_in_delhi_list
             ];
             $this->view_name = 'dashboard/changed-school-in-delhi-list.php';
-        }
-        elseif ($list_type == "student_dropped_out") {
+        } elseif ($list_type == "student_dropped_out") {
             $detected_case_model = new DetectedCaseModel();
             $dropped_out_list = $detected_case_model->getListFor($school_id, $classes, $start_date, $end_date, ['6']);
 
@@ -247,26 +251,30 @@ class SchoolController extends BaseController
                 "dropped_out_list" => $dropped_out_list
             ];
             $this->view_name = 'dashboard/dropped-out-list.php';
-        }
-
-        elseif ($list_type == "absent_due_to_parental_death") {
+        } elseif ($list_type == "absent_due_to_parental_death") {
             $detected_case_model = new DetectedCaseModel();
             $parental_death_list = $detected_case_model->getParentalDeathCaseListFor($school_id, $classes, $start_date, $end_date, ['22']);
             $this->view_data['response'] = [
                 "parental_death_list" => $parental_death_list
             ];
             $this->view_name = 'dashboard/parental-death-list.php';
-        }
-        else{
+        } else {
+            $reason_name = $id;
+            $id = $list_type;
             $reason_model = new ReasonForAbsenteeismModel();
-            $list = $reason_model->getCaseListByReasonId($list_type, $school_id, $classes, $start_date, $end_date);
+            if ($id == 1) {
+                $list = $reason_model->getCaseListByReasonIdForSickness($id, $reason_name, $school_id, $classes, $start_date, $end_date);
+            } elseif ($id == 22) {
+                $list = $reason_model->getCaseListByReasonIdForDeath($id,$reason_name, $school_id, $classes, $start_date, $end_date);
+            }else{
+                $list = $reason_model->getCaseListByReasonId($id, $school_id, $classes, $start_date, $end_date);
+            }
             $this->view_data['response'] = [
                 "reason_for_absenteeism" => $list,
             ];
             $this->view_name = 'dashboard/list.php';
 
         }
-
 
 
         return ["view_name" => $this->view_name, "view_data" => $this->view_data];
