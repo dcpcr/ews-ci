@@ -14,7 +14,6 @@ $(function () {
                 {data: "class", title: "Class"},
                 {data: "section", title: "Section"},
                 {data: "gender", title: "Gender"},
-                {data: "school_id", title: "School Id"},
             ],
             columnDefs: [{visible: false, targets: [0, 1, , 3, 4]}],
             responsive: true,

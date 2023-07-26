@@ -19,8 +19,6 @@ $(function () {
                 {data: "section", title: "Section"},
                 {data: "gender", title: "Gender"},
                 {data: "school_id", title: "School Id"},
-                {data: "seven_days_criteria", title: "7 days criteria"},
-                {data: "thirty_days_criteria", title: "30 days criteria"},
                 {data: "priority", title: "Priority"},
                 {data: "day", title: "Day"},
             ],

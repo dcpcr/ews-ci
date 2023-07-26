@@ -137,7 +137,7 @@ class StudentModel extends Model
             ->find($students_id);
     }
 
-    public function getStudentListFor(array $school_id)
+    public function getStudentListFor(array $school_id): array
     {
         return $this->select()
             ->whereIn("school_id",$school_id)

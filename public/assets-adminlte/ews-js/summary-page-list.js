@@ -15,7 +15,6 @@ $(function () {
                 {data: "date_of_bts", title: "Date of Bts"},
                 {data: "status", title: "Status"},
                 {data: "district", title: "District"},
-                {data: "id", title: "Id"},
                 {data: "student_name", title: "Name"},
                 {data: "class", title: "Class"},
                 {data: "section", title: "Section"},
