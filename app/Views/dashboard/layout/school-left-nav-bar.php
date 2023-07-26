@@ -23,14 +23,6 @@
                     <p>Absenteeism Report</p>
                 </a>
             </li>
-            <li class="nav-item mb-1 mt-1">
-                <a href="<?php echo site_url('dashboard/contact-us'); ?>"
-                   class="nav-link frequent-absenteeism"
-                   id="frequent-absenteeism-nav">
-                    <i class="nav-icon fas fa-phone"></i>
-                    <p>Contact Us</p>
-                </a>
-            </li>
         </ul>
     </nav>
 </div>
