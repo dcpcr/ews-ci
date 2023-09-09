@@ -44,7 +44,7 @@ host('10.194.73.95')
 host('10.194.74.223')
     ->set('remote_user', 'root')
     ->set('labels', ['stage' => 'prod'])
-    ->set('deploy_path', '/var/www/html/{{application}}')
+    ->set('deploy_path', '/var/www/html/ews')
     ->set('rsync_dest', '{{release_path}}');
 
 // Tasks
@@ -60,9 +60,9 @@ task('deploy', [
     'deploy:symlink',
     'deploy:unlock',
     'deploy:cleanup',
-    //'set-permissions',
-    'restart-nginx-fpm',
-    //'restart-http',
+    'set-permissions',
+    //'restart-nginx-fpm',
+    'restart-httpd',
     'deploy:success'
 ]);
 
@@ -71,16 +71,16 @@ task('restart-nginx-fpm', function () {
     run('systemctl restart php-fpm');
 });
 
-/*task('restart-httpd', function () {
+task('restart-httpd', function () {
     run('systemctl restart httpd');
-});*/
+});
 
-/*task('set-permissions', function () {
-    run('find /var/www/html/ews-latest/ -type d -exec chmod 755 {} \;');
-    run('find /var/www/html/ews-latest/ -type f -exec chmod 644 {} \;');
-    run('chmod 777 /var/www/html/ews-latest/current/writable/*');
-    run('chmod 777 /var/www/html/ews-latest/current/writable/');
-});*/
+task('set-permissions', function () {
+    run('find /var/www/html/ews/ -type d -exec chmod 755 {} \;');
+    run('find /var/www/html/ews/ -type f -exec chmod 644 {} \;');
+    run('chmod 777 /var/www/html/ews/current/writable/*');
+    run('chmod 777 /var/www/html/ews/current/writable/');
+});
 
 after('deploy:failed', 'deploy:unlock');
 

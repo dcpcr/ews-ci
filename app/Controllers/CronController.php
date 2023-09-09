@@ -96,7 +96,8 @@ class CronController extends BaseController
         if ($this->request->isCLI()) {
             log_message('info', "in detect, function value = " . $function_no);
             $case_model = new CaseModel();
-            $case_model->detectCases(new DateTimeImmutable($date), $function_no);
+            //$case_model->detectCases(new DateTimeImmutable($date), $function_no);
+            $case_model->newDetectCases(new DateTimeImmutable($date), $function_no);
         } else {
             log_message('info', "Access to this functionally without CLI is not allowed");
         }
@@ -127,7 +128,7 @@ class CronController extends BaseController
         for ($date = $from_date; $date <= $to_date; $date = $date->modify('+1 day')) {
             exec("cd " . FCPATH);
             $pids = [];
-            for ($i = 1; $i <= 4; $i++) {
+            for ($i = 1; $i <= getenv("number_of_function"); $i++) {
                 $pids [] = exec(
                     "php index.php cron detect"
                     . " " . $i
@@ -372,6 +373,8 @@ class CronController extends BaseController
     private function runDaily($morning)
     {
         ini_set("memory_limit", "-1");
+        ini_set("mysqli.allow_local_infile", "1");
+        ini_set("mysqli.local_infile_directory", "1");
         if ($this->request->isCLI()) {
             log_message('info', "Cron request");
             $start_time = microtime(true); //Find a better mechanism of logging time of execution

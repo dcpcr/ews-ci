@@ -46,6 +46,31 @@ class CaseModel extends Model
         log_message('info', $update_count . " cases updated on date - " . $date->format("d/m/Y"));
     }
 
+    //new_detection_function
+    public function newDetectCases(DateTimeInterface $date, $function_no)
+    {
+        $attendance_model = new AttendanceModel();
+        $attendance_count = $attendance_model->select('student_id')
+            ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")
+            ->countAllResults();
+        $limit = ceil($attendance_count / 4);
+        $offset = $limit * ($function_no - 1);
+        $marked_students = $attendance_model->distinct()->select('student_id')
+            ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")
+            ->findAll($limit, $offset);
+        if (empty($marked_students)) {
+            log_message("info", "No students' attendance is marked for the day " . $date->format("d/m/Y"));
+        }
+        $open_cases = $this->distinct()->select('student_id')->where("status != 'Back To School'")
+            ->orderBy("student_id")->findAll();
+
+        list($insert_count, $update_count) = $this->new_Detect($marked_students, $open_cases, $date);
+
+        log_message('info', $insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
+        log_message('info', $update_count . " cases updated on date - " . $date->format("d/m/Y"));
+    }
+
+
     public function getCasesForIds($caseIds): array
     {
         return $this->whereIn('id', $caseIds)->findAll();
@@ -354,6 +379,59 @@ class CaseModel extends Model
             }
         }
         return array($insert_count, $update_count);
+    }
+
+   //new function for detection
+
+    protected function new_Detect(array $marked_students, array $open_cases, DateTimeInterface $date): array
+    {
+        $attendance_model = new AttendanceModel();
+        $insert_count = 0;
+        $insert_data_array = array();
+
+        foreach ($marked_students as $student) {
+            $student_id = $student['student_id'];
+            if (!in_array("$student_id", array_column($open_cases, 'student_id'), true)) {
+                $student_attendance = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, $date, 30);
+                $detected = false;
+                $flag_seven = false;
+                if ($this->isDetectedSevenDays($student_attendance)) {
+                    $flag_seven = true;
+                    $detected = true;
+                }
+                $flag_thirty = false;
+                if ($this->isDetectedThirtyDays($student_attendance)) {
+                    $flag_thirty = true;
+                    $detected = true;
+                }
+                if ($detected) {
+                    $day = $date->format("Y/m/d");
+                    if ($flag_thirty && $flag_seven) {
+                        $priority = "High";
+                    } else {
+                        $priority = "Medium";
+                    }
+                    $data = [
+                        'student_id' => $student_id,
+                        'seven_days_criteria' => $flag_seven ? 1 : 0,
+                        'thirty_days_criteria' => $flag_thirty ? 1 : 0,
+                        'priority' => "$priority",
+                        'day' => "$day",
+                    ];
+                    $insert_data_array [] = $data;
+                    $insert_count++;
+                }
+            }
+        }
+        $insert_count = count($insert_data_array);
+        if ($insert_count > 0) {
+            try {
+                $this->insertBatch($insert_data_array);
+            } catch (ReflectionException $e) {
+                log_message("error", "Case Insert Failed! There were " . $insert_count . " cases detected. on date - " . $date->format("d/m/Y"));
+            }
+        }
+        return array($insert_count, 0);
     }
 
 
