@@ -53,8 +53,8 @@ class CaseModel extends Model
         $attendance_count = $attendance_model->select('student_id')
             ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")
             ->countAllResults();
-        $limit = ceil($attendance_count / 4);
-        $offset = $limit * ($function_no - 1);
+         $limit = ceil($attendance_count / getenv("number_of_function"));
+         $offset = $limit * ($function_no - 1);
         $marked_students = $attendance_model->distinct()->select('student_id')
             ->where("date = STR_TO_DATE('" . $date->format("d/m/Y") . "', '%d/%m/%Y')")
             ->findAll($limit, $offset);
@@ -64,10 +64,8 @@ class CaseModel extends Model
         $open_cases = $this->distinct()->select('student_id')->where("status != 'Back To School'")
             ->orderBy("student_id")->findAll();
 
-        list($insert_count, $update_count) = $this->new_Detect($marked_students, $open_cases, $date);
-
-        log_message('info', $insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
-        log_message('info', $update_count . " cases updated on date - " . $date->format("d/m/Y"));
+        list($insert_count) = $this->new_Detect($marked_students, $open_cases, $date);
+        log_message('info', "function number-> $function_no detected ".$insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
     }
 
 
