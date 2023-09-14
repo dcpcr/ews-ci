@@ -64,7 +64,7 @@ class CaseModel extends Model
         $open_cases = $this->distinct()->select('student_id')->where("status != 'Back To School'")
             ->orderBy("student_id")->findAll();
 
-        list($insert_count) = $this->new_Detect($marked_students, $open_cases, $date);
+        list($insert_count) = $this->new_Detect($marked_students, $open_cases, $date, $function_no);
         log_message('info', "function number-> $function_no detected ".$insert_count . " new cases detected for date - " . $date->format("d/m/Y"));
     }
 
@@ -381,14 +381,15 @@ class CaseModel extends Model
 
    //new function for detection
 
-    protected function new_Detect(array $marked_students, array $open_cases, DateTimeInterface $date): array
+    protected function new_Detect(array $marked_students, array $open_cases, DateTimeInterface $date, $function_no): array
     {
         $attendance_model = new AttendanceModel();
         $insert_count = 0;
         $insert_data_array = array();
-
+        log_message("info","function number $function_no is working for ".count($marked_students)." students");
         foreach ($marked_students as $student) {
             $student_id = $student['student_id'];
+            log_message("info","function number $function_no is working on student ID: $student_id");
             if (!in_array("$student_id", array_column($open_cases, 'student_id'), true)) {
                 $student_attendance = $attendance_model->getStudentAttendanceForLastNDaysFrom($student_id, $date, 30);
                 $detected = false;
@@ -429,7 +430,7 @@ class CaseModel extends Model
                 log_message("error", "Case Insert Failed! There were " . $insert_count . " cases detected. on date - " . $date->format("d/m/Y"));
             }
         }
-        return array($insert_count, 0);
+        return array($insert_count);
     }
 
 
@@ -509,6 +510,7 @@ class CaseModel extends Model
             ->join($master_db . '.school as school', 'student.school_id = school.id')
             ->where("day BETWEEN '" . $start->format("Y-m-d") . "' and '" .
                 $end->format("Y-m-d") . "'")
+            ->where("student.mobile!=","")
             ->findAll();
         $date = new DateTimeImmutable();
         $date = $date->format("Y-m-d");
