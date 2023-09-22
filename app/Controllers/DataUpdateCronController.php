@@ -119,6 +119,18 @@ class DataUpdateCronController extends BaseController
         }
     }
 
+    public function removeOldAttendanceRecords()
+    {
+
+        $date = new DateTimeImmutable();
+        $old_date= $date->modify("-14 Months");
+        $attendance_model = new AttendanceModel();
+        $attendance_model->removeDataForDate($old_date);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
     public function smsReport()
     {
 
@@ -126,6 +138,9 @@ class DataUpdateCronController extends BaseController
 
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function syncData()
     {
         $this->runDailyDataUpdate();
@@ -146,6 +161,7 @@ class DataUpdateCronController extends BaseController
             } else {
                 $this->updateStudentDataInDetectedCaseTable();
                 $this->presentDateAfterDetection();
+                $this->removeOldAttendanceRecords();
             }
             //Calculate script execution time
             $end_time = microtime(true);

@@ -154,7 +154,7 @@ class StudentModel extends Model
 
     public function getStudentIds(): array
     {
-        return $data = $this->distinct()->select("id")->findAll("10");
+        return $data = $this->distinct()->select("id")->findAll();
 
     }
 
