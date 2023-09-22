@@ -239,4 +239,35 @@ class AttendanceModel extends Model
             ->findAll();
         var_dump("<pre>",$data);
     }
+
+    public function removeDataForDate(DateTimeImmutable $old_date)
+    {
+        $student_model = new StudentModel();
+        $students_ids = $student_model->getStudentIds();
+        $count=0;
+        if (!empty($students_ids)) {
+            foreach ($students_ids as $students_id) {
+                $response = $this->removeAttendanceData($students_id['id'], $old_date);
+                if ($response) {
+                   $count++;
+                }
+            }
+            log_message("info","Total record deleted = $count");
+        }
+
+
+    }
+
+    /**
+     * @param $students_id
+     * @param $date
+     * @return void
+     */
+    function removeAttendanceData($students_id, $date): bool
+    {
+        $date = $date->format("Y-m-d");
+        $sql_query = "DELETE from attendance where student_id = $students_id and date <'" . $date . "'";
+        return $this->db->query($sql_query);
+
+    }
 }

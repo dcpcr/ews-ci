@@ -152,4 +152,10 @@ class StudentModel extends Model
             ->findAll();
     }
 
+    public function getStudentIds(): array
+    {
+        return $data = $this->distinct()->select("id")->findAll("10");
+
+    }
+
 }
